@@ -123,10 +123,10 @@ class Menu:
 
     async def _validate_pages(self) -> None:
         if len(self.pages) <= 1:
-            raise NotEnoughPagesError('The pages attribute must have more than one page. Must be two or more.')
+            raise NotEnoughPagesError('The pages list must have more than one page.')
 
         if self.pages[-1].func is not None:
-            raise NoFinalPageError('The pages attribute is missing a final page. Define it on your Page with `None` in the function parameter.')
+            raise NoFinalPageError('The pages list is missing a final page. Define a Page with `None` as the func parameter.')
 
     async def _get_input(self) -> Message:
         """Collects user input and places it into the input_message attribute."""

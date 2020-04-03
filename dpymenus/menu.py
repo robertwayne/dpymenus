@@ -31,6 +31,7 @@ from discord.abc import GuildChannel
 from discord.colour import Colour
 from discord.ext.commands import Bot, Context
 
+from dpymenus.exceptions import NoFinalPageError, NotEnoughPagesError
 from dpymenus.page import Page
 
 
@@ -38,7 +39,7 @@ class Menu:
     """Represents a menu.
 
     A Menu is a composable, dynamically generated object that contains state information for a user-interactable menu.
-    It contains Page objects which represent new Menu states, that call methods for validation and handling.
+    It contains Page objects which represent new Menu states that call methods for validation and handling.
 
     Attributes:
         client: A reference to the bot client.
@@ -119,6 +120,13 @@ class Menu:
 
         for attr, value in captures.items():
             self.__setattr__(attr, value)
+
+    async def _validate_pages(self) -> None:
+        if len(self.pages) <= 1:
+            raise NotEnoughPagesError('The pages attribute must have more than one page. Must be two or more.')
+
+        if self.pages[-1].func is not None:
+            raise NoFinalPageError('The pages attribute is missing a final page. Define it on your Page with `None` in the function parameter.')
 
     async def _get_input(self) -> Message:
         """Collects user input and places it into the input_message attribute."""

@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 import asyncio
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from discord import Embed, Message
 from discord.abc import GuildChannel
@@ -52,7 +52,7 @@ class Menu:
         delay: A float representing the delay between deleting message objects.
     """
 
-    def __init__(self, client: Bot, ctx: Context, pages: List[Page], capture_fields: Dict[str, Optional[str]] = None):
+    def __init__(self, client: Bot, ctx: Context, pages: List[Page], capture_fields: Dict[str, Any] = None):
         self.client = client
         self.ctx = ctx
         self.pages = pages

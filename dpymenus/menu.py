@@ -71,7 +71,7 @@ class Menu:
         return f'Menu({self.client}, {self.ctx}, {self.message}, {self.input_message}, {self.input_message}, {self.page}, {self.pages})'
 
     async def run(self) -> None:
-        """The entry point to a new Menu instance. This will start a loop until the `close` method is called.
+        """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         self.message = await self.ctx.send(embed=self.page.embed)
 
@@ -87,11 +87,8 @@ class Menu:
     async def next_page(self, specific_page: str = None, quiet_output: bool = False) -> None:
         """Sets a specific Page object to go to and calls the ``menu.send_message`` to display the embed.
 
-        :param specific_page
-        A specific Page object name.
-        If this is not set, the next Page in the list will be called.
-        :param quiet_output
-        Whether to send the message after setting the Page or not. Defaults to False.
+        :param specific_page: A specific Page object name. If this is not set, the next Page in the list will be called.
+        :param quiet_output: Whether to send the message after setting the Page or not. Defaults to False.
         """
 
         for i, page in enumerate(self.pages):
@@ -117,8 +114,7 @@ class Menu:
 
         Applies these attributes and values dynamically on the Menu instance.
 
-        :param captures
-        A dictionary containing fields that should be dynamically set on the menu instance. Can contain default values or None.
+        :param captures: A dictionary containing fields that should be dynamically set on the menu instance. Can contain default values or None.
         """
 
         for attr, value in captures.items():
@@ -126,6 +122,7 @@ class Menu:
 
     async def _get_input(self) -> Message:
         """Collects user input and places it into the input_message attribute."""
+
         try:
             message = await self.client.wait_for('message', timeout=3600, check=lambda m: m.author == self.ctx.author)
 
@@ -137,6 +134,7 @@ class Menu:
 
     async def _is_cancelled(self) -> bool:
         """Checks user_input for a cancellation string. If found, calls menu._cancelled and then returns True."""
+
         if self.input_message.content in ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c'):
             await self._cancelled()
             return True
@@ -144,18 +142,14 @@ class Menu:
 
     async def _cancelled(self) -> None:
         """Sends a cancelled message."""
-        embed = Embed(
-            title=self.page.embed.title,
-            description='Menu selection cancelled -- no progress was saved.',
-            color=Colour.red())
+
+        embed = Embed(title=self.page.embed.title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
         await self._send_message(embed)
 
     async def _timeout(self) -> None:
         """Sends a timeout message."""
-        embed = Embed(
-            title=self.page.embed.title,
-            description='You timed out at menu selection -- no progress was saved.',
-            color=Colour.red())
+
+        embed = Embed(title=self.page.embed.title, description='You timed out at menu selection -- no progress was saved.', color=Colour.red())
         await self._send_message(embed)
 
     async def _cleanup_input(self) -> None:

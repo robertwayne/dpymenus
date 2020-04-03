@@ -25,22 +25,22 @@ Capture fields can be declared with a dictionary:
 
     captures = {'username': None, 'favorite_color': None}
     
-Finally, we can create our menu object:
+Finally, you can create our menu object:
 
     menu = Menu(self.client, ctx, pages=[new_page, new_page2], capture_fields=captures)
     
-Once that is done, we simply call the `run()` method on our new Menu object:
+Once that is done, you simply call the `run()` method on our new Menu object:
 
     await menu.run()
     
-...and we're *(mostly)* finished! A menu loop will spawn and handle user input when the command is 
+...and you're *(mostly)* finished! A menu loop will spawn and handle user input when the command is 
 called until it times out or is cancelled by the user.
 
 Your function or method references inside the pages should include a 'final' page where the
 function is `None`. When the final page in your pages list is displayed, the menu will call a
 close method and end the loop.
 
-Your function or method reference should call the `menu.next_page()` method whenever they have
+Your function or method reference should call the `menu.next_page()` method whenever it has
 successfully handled input. `next_page()` also takes 2 optional arguments: 
 
 `specific_page`: jumps to a specific page by name. Useful for edit options or non-linear menus.

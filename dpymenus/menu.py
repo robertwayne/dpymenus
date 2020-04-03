@@ -29,7 +29,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from discord import Embed, Message
 from discord.abc import GuildChannel
 from discord.colour import Colour
-from discord.ext.commands import Bot, Context
+from discord.ext.commands import Context
 
 from dpymenus.exceptions import NoFinalPageError, NotEnoughPagesError
 from dpymenus.page import Page
@@ -42,14 +42,14 @@ class Menu:
     It contains Page objects which represent new Menu states that call methods for validation and handling.
 
     Attributes:
-        client: A reference to the bot client.
         ctx: A reference to the command Context.
-        active: Whether or not the menu is active or not.
-        message: Reference to the Discord Message object that contains the Page embed.
-        input_message: Reference to the Discord Message object that contains player input.
-        page: Reference to the current Page object.
         pages: A list containing references to Page objects.
+        page: Index value of the current page.
         delay: A float representing the delay between deleting message objects.
+        active: Whether or not the menu is active or not.
+        input: A reference to the captured user input message object.
+        output: A reference to the menus output message.
+        data: A dictionary containing dynamic state data you wish to pass around the menu.
     """
 
     # Generic values used for matching against user input.
@@ -57,23 +57,20 @@ class Menu:
     generic_deny = ('n', 'no', 'deny', 'negative', 'back', 'return')
     generic_quit = ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c')
 
-    def __init__(self, client: Bot, ctx: Context, pages: List[Page], capture_fields: Dict[str, Any] = None):
-        self.client = client
+    def __init__(self, ctx: Context, pages: List[Page], capture_fields: Dict[str, Any] = None):
         self.ctx = ctx
         self.pages = pages
-        self.page = pages[0]
-        self.delay = 0.250
-        self.active = True
-        self.message = None
-        self.input_message = None
+        self.page: int = 0
+        self.delay: float = 0.250
+        self.active: bool = True
+        self.input: Optional[Message] = None
+        self.output: Optional[Message] = None
+        self.data = {}
 
         if capture_fields:
             self._capture(capture_fields)
 
         self._validate_pages()
-
-    def __str__(self):
-        return f'Pages: {self.pages}\nCurrent Page: {self.page}\n{self.input_message}\n{self.message}'
 
     def __repr__(self):
         return f'<Menu pages={[p.__str__() for p in self.pages]}, capture_fields={({k: v for k, v in self.data.items()})}, delay={self.delay}, active={self.active} page={self.page}>'
@@ -81,16 +78,16 @@ class Menu:
     async def run(self) -> None:
         """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        self.message = await self.ctx.send(embed=self.page.embed)
+        self.output = await self.ctx.send(embed=self.pages[self.page].embed)
 
         while self.active:
-            self.input_message = await self._get_input()
+            self.input = await self._get_input()
             await self._cleanup_input()
 
             if await self._is_cancelled():
                 return
 
-            await self.page.func(self)
+            await self.pages[self.page].func(self)
 
     async def next_page(self, specific_page: str = None, quiet_output: bool = False) -> None:
         """Sets a specific Page object to go to and calls the ``menu.send_message`` to display the embed.
@@ -102,19 +99,19 @@ class Menu:
         for i, page in enumerate(self.pages):
             if specific_page is not None:
                 if specific_page == page.name:
-                    self.page = page
+                    self.page = self.pages.index(page)
                     break
 
             else:
-                self.page = self.pages[self.pages.index(self.page) + 1]
+                self.page += 1
 
-                if self.page.func is None:
+                if self.pages[self.page].func is None:
                     await self.close()
 
                 break
 
         if not quiet_output:
-            await self.send_message(self.page.embed)
+            await self.send_message(self.pages[self.page].embed)
 
     async def close(self) -> None:
         """Closes the active Menu instance."""
@@ -123,7 +120,7 @@ class Menu:
     async def send_message(self, embed: Embed) -> Message:
         """Edits a message if the channel is in a Guild, otherwise sends it to the current channel."""
         if isinstance(self.ctx.channel, GuildChannel):
-            return await self.message.edit(embed=embed)
+            return await self.output.edit(embed=embed)
         return await self.ctx.send(embed=embed)
 
     @classmethod
@@ -144,8 +141,8 @@ class Menu:
         :param captures: A dictionary containing fields that should be dynamically set on the menu instance. Can contain default values or None.
         """
 
-        for attr, value in captures.items():
-            self.__setattr__(attr, value)
+        for key, value in captures.items():
+            self.data.update({key: value})
 
     def _validate_pages(self) -> None:
         if len(self.pages) <= 1:
@@ -158,7 +155,7 @@ class Menu:
         """Collects user input and places it into the input_message attribute."""
 
         try:
-            message = await self.client.wait_for('message', timeout=3600, check=lambda m: m.author == self.ctx.author)
+            message = await self.ctx.bot.wait_for('message', timeout=3600, check=lambda m: m.author == self.ctx.author)
 
         except asyncio.TimeoutError:
             await self._timeout()
@@ -169,7 +166,7 @@ class Menu:
     async def _is_cancelled(self) -> bool:
         """Checks user_input for a cancellation string. If found, calls menu._cancelled and then returns True."""
 
-        if self.input_message.content in self.generic_quit:
+        if self.input.content in self.generic_quit:
             await self._cancelled()
             return True
         return False
@@ -177,16 +174,16 @@ class Menu:
     async def _cancelled(self) -> None:
         """Sends a cancelled message."""
 
-        embed = Embed(title=self.page.embed.title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
+        embed = Embed(title=self.pages[self.page].embed.title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
         await self.send_message(embed)
 
     async def _timeout(self) -> None:
         """Sends a timeout message."""
 
-        embed = Embed(title=self.page.embed.title, description='You timed out at menu selection -- no progress was saved.', color=Colour.red())
+        embed = Embed(title=self.pages[self.page].embed.title, description='You timed out at menu selection -- no progress was saved.', color=Colour.red())
         await self.send_message(embed)
 
     async def _cleanup_input(self) -> None:
         """Deletes a Discord client user message."""
         if isinstance(self.ctx.channel, GuildChannel):
-            await self.input_message.delete(delay=self.delay)
+            await self.input.delete(delay=self.delay)

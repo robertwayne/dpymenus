@@ -95,17 +95,21 @@ class Menu:
         """
 
         for i, page in enumerate(self.pages):
-            if specific_page and page.name == specific_page:
-                self.page = page
+            if specific_page is not None:
+                if specific_page == page.name:
+                    self.page = page
+                    break
+
             else:
-                if len(self.pages) - 1 >= self.pages[::-1].index(self.pages[-1]) - 1:
-                    self.page = self.pages[-1]
+                self.page = self.pages[self.pages.index(self.page) + 1]
+
+                if self.page.func is None:
                     await self.close()
-                else:
-                    self.page = self.pages[i]
+
+                break
 
         if not quiet_output:
-            await self._send_message(self.page.embed)
+            await self.send_message(self.page.embed)
 
     async def close(self) -> None:
         """Closes the active Menu instance."""
@@ -154,20 +158,20 @@ class Menu:
         """Sends a cancelled message."""
 
         embed = Embed(title=self.page.embed.title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
-        await self._send_message(embed)
+        await self.send_message(embed)
 
     async def _timeout(self) -> None:
         """Sends a timeout message."""
 
         embed = Embed(title=self.page.embed.title, description='You timed out at menu selection -- no progress was saved.', color=Colour.red())
-        await self._send_message(embed)
+        await self.send_message(embed)
 
     async def _cleanup_input(self) -> None:
         """Deletes a Discord client user message."""
         if isinstance(self.ctx.channel, GuildChannel):
             await self.input_message.delete(delay=self.delay)
 
-    async def _send_message(self, embed: Embed) -> Message:
+    async def send_message(self, embed: Embed) -> Message:
         """Edits a message if the channel is in a Guild, otherwise sends it to the current channel."""
         if isinstance(self.ctx.channel, GuildChannel):
             return await self.message.edit(embed=embed)

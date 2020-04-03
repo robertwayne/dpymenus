@@ -65,10 +65,7 @@ class Menu:
         self.active: bool = True
         self.input: Optional[Message] = None
         self.output: Optional[Message] = None
-        self.data = {}
-
-        if capture_fields:
-            self._capture(capture_fields)
+        self.data = capture_fields if capture_fields else {}
 
         self._validate_pages()
 
@@ -132,18 +129,6 @@ class Menu:
         """
         setattr(cls, f'generic_{value_type}', replacement)
 
-    def _capture(self, captures: Dict[str, Optional[str]]) -> None:
-        """Accepts a dictionary of strings that you wish to store data They can take a default
-        value (to pass data among local methods), or None to imply collection needed via a get_input method.
-
-        Applies these attributes and values dynamically on the Menu instance.
-
-        :param captures: A dictionary containing fields that should be dynamically set on the menu instance. Can contain default values or None.
-        """
-
-        for key, value in captures.items():
-            self.data.update({key: value})
-
     def _validate_pages(self) -> None:
         if len(self.pages) <= 1:
             raise NotEnoughPagesError('The pages list must have more than one page.')
@@ -152,7 +137,7 @@ class Menu:
             raise NoFinalPageError('The pages list is missing a final page. Define a Page with `None` as the func parameter.')
 
     async def _get_input(self) -> Message:
-        """Collects user input and places it into the input_message attribute."""
+        """Collects user input and places it into the input attribute."""
 
         try:
             message = await self.ctx.bot.wait_for('message', timeout=3600, check=lambda m: m.author == self.ctx.author)
@@ -164,7 +149,7 @@ class Menu:
             return message
 
     async def _is_cancelled(self) -> bool:
-        """Checks user_input for a cancellation string. If found, calls menu._cancelled and then returns True."""
+        """Checks input for a cancellation string. If there is a match, it calls menu._cancelled and then returns True."""
 
         if self.input.content in self.generic_quit:
             await self._cancelled()

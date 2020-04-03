@@ -65,6 +65,8 @@ class Menu:
         if capture_fields:
             self._capture(capture_fields)
 
+        self._validate_pages()
+
     def __str__(self):
         return f'Pages: {self.pages}\nCurrent Page: {self.page}\n{self.input_message}\n{self.message}'
 

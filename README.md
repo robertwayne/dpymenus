@@ -19,17 +19,10 @@ Page creation is simple:
 The page name is a string and can be anything you want. The embed should point to a Discord
 Embed object. The func should point to a function or method which will handle validation and
 other features you want your menu to accomodate.
-
-In addition, optional 'capture fields' can be named for more advanced menus that need to store
-many user input variables *(eg. storing a user name and favorite color for storage in a DB later)*.
-
-Capture fields can be declared with a dictionary:
-
-    captures = {'username': None, 'favorite_color': None}
     
 Finally, you can create our menu object:
 
-    menu = Menu(self.client, ctx, pages=[new_page, new_page2], capture_fields=captures)
+    menu = Menu(self.client, ctx, pages=[new_page, new_page2])
     
 Once that is done, you simply call the `run()` method on our new Menu object:
 
@@ -80,12 +73,33 @@ class Ping(commands.Cog):
 
     @staticmethod
     async def confirm(m: Menu) -> None:
-        if m.input_message.content in m.generic_confirm:
+        if m.input.content in m.generic_confirm:
             await m.next_page()
 
 def setup(client: commands.Bot):
     client.add_cog(Ping(client))
 ```
+### Capture Fields
+In addition to standard menu setup, optional 'capture fields' can be named for more advanced 
+menus that need to store many user input variables *(eg. storing a user name and favorite 
+color for storage in a DB later)*.
+
+Capture fields can be declared with a dictionary:
+
+    captures = {'username': None, 'favorite_color': None}
+
+... and then passed into your menu on initialization:
+
+    menu = Menu(self.client, ctx, pages, captures)
+
+If you have set your menus capture fields, it will be accessible via the data attribute on your
+menu object *(ie. `x = menu.data['value']`)*.
+
+*As it is simply a dictionary, you can set more than simple input strings. For instance,
+transferring objects across functions by setting the value to an object. Ideally, the menu 
+object should contain all your state until it is ready to be processed. This also simplifies
+your code by limiting the amount of parameters functions need to accept when handling
+multiple objects related to a single menu.*
 
 ### Generic Input Matching
 The Menu class contains several generic values ready for matching against user input. These values
@@ -103,10 +117,3 @@ generic_confirm = ('y', 'yes', 'ok', 'k', 'kk', 'ready', 'rdy', 'r', 'confirm', 
 generic_deny = ('n', 'no', 'deny', 'negative', 'back', 'return')
 generic_quit = ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c')
 ```
-
-
-### Todo
-- Allow user to replace the Discord Colour class with their own class or file.
-- Clean up and rewrite doc strings.
-- Flesh out Exception handling.
-- Add examples for complex / non-linear menus.

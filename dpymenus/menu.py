@@ -123,7 +123,7 @@ class Menu:
         for attr, value in captures.items():
             self.__setattr__(attr, value)
 
-    async def _validate_pages(self) -> None:
+    def _validate_pages(self) -> None:
         if len(self.pages) <= 1:
             raise NotEnoughPagesError('The pages list must have more than one page.')
 

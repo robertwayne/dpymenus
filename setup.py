@@ -16,11 +16,11 @@ setuptools.setup(
         classifiers=[
             'Programming Language :: Python :: 3.8',
             'License :: OSI Approved :: MIT License',
-            'Operating System :: OS Independent'
+            'Operating System :: OS Independent',
             'Typing :: Typed',
-            'Topic :: Communications :: Chat'
+            'Topic :: Communications :: Chat',
             'Intended Audience :: Developers',
-            'Development Status :: 5 - Production/Stable'
+            'Development Status :: 5 - Production/Stable',
         ],
         python_requires='>=3.8',
 )

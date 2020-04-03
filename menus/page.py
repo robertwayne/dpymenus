@@ -1,4 +1,5 @@
-
+# -*- coding: utf-8 -*-
+"""
 The MIT License (MIT)
 
 Copyright (c) 2020 Rob Wagner
@@ -20,3 +21,24 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+from typing import Callable, Optional
+
+from discord import Embed
+
+
+class Page:
+    """Represents a single page inside a menu.
+
+    Attributes:
+        name: The page name.
+        embed: A Discord.Embed object; used for displaying the page.
+        func: Reference to a function called when the page loads. Should be None on the last page.
+    """
+    __slots__ = ('name', 'embed', 'func')
+
+    def __init__(self, name: str, embed: Embed, func: Optional[Callable]):
+        self.name = name
+        self.embed = embed
+        self.func = func

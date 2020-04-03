@@ -91,3 +91,5 @@ def setup(client: commands.Bot):
 ### Todo
 - Allow user to replace the Discord Colour class with their own class or file.
 - Clean up and rewrite doc strings.
+- Flesh out Exception handling.
+- Add examples for complex / non-linear menus.

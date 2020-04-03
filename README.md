@@ -97,6 +97,13 @@ in your code to replace them completely.
 
 `replacement` is a tuple of strings containing your new values.
 
+The defaults are:
+```python
+generic_confirm = ('y', 'yes', 'ok', 'k', 'kk', 'ready', 'rdy', 'r', 'confirm', 'okay')
+generic_deny = ('n', 'no', 'deny', 'negative', 'back', 'return')
+generic_quit = ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c')
+```
+
 
 ### Todo
 - Allow user to replace the Discord Colour class with their own class or file.

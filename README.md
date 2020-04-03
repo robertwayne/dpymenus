@@ -1,9 +1,9 @@
 # Discord Menus
-`discord-menus` is an add-on for the `discord.py` library that lets your quickly build stateful
+`dpymenus` is an add-on for the `discord.py` library that lets your quickly build stateful
 menus that respond to chat input within the Discord client.
 
 ### Installation
-`pip install discord-menus`
+`pip install dpymenus`
 
 ### Usage
 First, you must instantiate a new Menu. You must pass in a reference to your bot client and 
@@ -50,14 +50,12 @@ successfully handled input. `next_page()` also takes 2 optional arguments:
 ### Example
 This is an example of a simple cog that confirms if you want to send the 'ping' or not.
 ```python
-# test.py
-
 import discord
 from discord.ext import commands
 from discord.colour import Colour
 
-from menus.menu import Menu
-from menus.page import Page
+from dpymenus.menu import Menu
+from dpymenus.page import Page
 
 class Ping(commands.Cog):
     def __init__(self, client: commands.Bot):

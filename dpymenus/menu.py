@@ -31,7 +31,7 @@ from discord.abc import GuildChannel
 from discord.colour import Colour
 from discord.ext.commands import Bot, Context
 
-from menus.page import Page
+from dpymenus.page import Page
 
 
 class Menu:
@@ -61,7 +61,8 @@ class Menu:
         self.message = None
         self.input_message = None
 
-        self._capture(capture_fields)
+        if capture_fields:
+            self._capture(capture_fields)
 
     def __str__(self):
         return f'Pages: {self.pages}\nCurrent Page: {self.page}\n{self.input_message}\n{self.message}'

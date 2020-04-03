@@ -4,11 +4,11 @@ with open('README.md', 'r') as file:
     long_description = file.read()
 
 setuptools.setup(
-        name='discord-menus-rob-wagner',
+        name='dpymenus',
         version='1.0.0',
         author='Rob Wagner',
         author_email='rob.wagner@outlook.com',
-        description='Dynamic, composable menus for use with the discord.py library.',
+        description='Dynamic, composable dpymenus for use with the discord.py library.',
         long_description=long_description,
         long_description_content_type='text/markdown',
         url='https://github.com/robertwayne/discord-menus',

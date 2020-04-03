@@ -127,13 +127,13 @@ class Menu:
         return await self.ctx.send(embed=embed)
 
     @classmethod
-    def override_generic_values(cls, response_type: str, replacement: Tuple[str]):
+    def override_generic_values(cls, value_type: str, replacement: Tuple[str]):
         """Allows generic input matching values built into the Menu class to be overridden.
 
-        :param response_type: Either 'confirm', 'deny', or 'quit'.
+        :param value_type: Either 'confirm', 'deny', or 'quit'.
         :param replacement: A tuple containing strings of values that act as your generic input matches.
         """
-        setattr(cls, f'generic_{response_type}', replacement)
+        setattr(cls, f'generic_{value_type}', replacement)
 
     def _capture(self, captures: Dict[str, Optional[str]]) -> None:
         """Accepts a dictionary of strings that you wish to store data They can take a default

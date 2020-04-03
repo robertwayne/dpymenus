@@ -87,6 +87,16 @@ def setup(client: commands.Bot):
     client.add_cog(Ping(client))
 ```
 
+### Generic Input Matching
+The Menu class contains several generic values ready for matching against user input. These values
+are generally universal, but should you wish to override them with your own values, there is a 
+class method called `override_generic_values(value_type, replacement)` that can be called anywhere
+in your code to replace them completely.
+
+`value_type` is one of three strings: `'confirm'`, `'deny'`, or `'quit'`.
+
+`replacement` is a tuple of strings containing your new values.
+
 
 ### Todo
 - Allow user to replace the Discord Colour class with their own class or file.

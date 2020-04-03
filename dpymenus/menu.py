@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 import asyncio
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from discord import Embed, Message
 from discord.abc import GuildChannel
@@ -51,6 +51,11 @@ class Menu:
         pages: A list containing references to Page objects.
         delay: A float representing the delay between deleting message objects.
     """
+
+    # Generic values used for matching against user input.
+    generic_confirm = ('y', 'yes', 'ok', 'k', 'kk', 'ready', 'rdy', 'r', 'confirm', 'okay')
+    generic_deny = ('n', 'no', 'deny', 'negative', 'back', 'return')
+    generic_quit = ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c')
 
     def __init__(self, client: Bot, ctx: Context, pages: List[Page], capture_fields: Dict[str, Any] = None):
         self.client = client
@@ -115,6 +120,21 @@ class Menu:
         """Closes the active Menu instance."""
         self.active = False
 
+    async def send_message(self, embed: Embed) -> Message:
+        """Edits a message if the channel is in a Guild, otherwise sends it to the current channel."""
+        if isinstance(self.ctx.channel, GuildChannel):
+            return await self.message.edit(embed=embed)
+        return await self.ctx.send(embed=embed)
+
+    @classmethod
+    def override_generic_values(cls, value_type: str, replacement: Tuple[str]):
+        """Allows generic input matching values built into the Menu class to be overridden.
+
+        :param value_type: Either 'confirm', 'deny', or 'quit'.
+        :param replacement: A tuple containing strings of values that act as your generic input matches.
+        """
+        setattr(cls, f'generic_{value_type}', replacement)
+
     def _capture(self, captures: Dict[str, Optional[str]]) -> None:
         """Accepts a dictionary of strings that you wish to store data They can take a default
         value (to pass data among local methods), or None to imply collection needed via a get_input method.
@@ -149,7 +169,7 @@ class Menu:
     async def _is_cancelled(self) -> bool:
         """Checks user_input for a cancellation string. If found, calls menu._cancelled and then returns True."""
 
-        if self.input_message.content in ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c'):
+        if self.input_message.content in self.generic_deny:
             await self._cancelled()
             return True
         return False
@@ -170,9 +190,3 @@ class Menu:
         """Deletes a Discord client user message."""
         if isinstance(self.ctx.channel, GuildChannel):
             await self.input_message.delete(delay=self.delay)
-
-    async def send_message(self, embed: Embed) -> Message:
-        """Edits a message if the channel is in a Guild, otherwise sends it to the current channel."""
-        if isinstance(self.ctx.channel, GuildChannel):
-            return await self.message.edit(embed=embed)
-        return await self.ctx.send(embed=embed)

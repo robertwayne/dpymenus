@@ -5,7 +5,7 @@ with open('README.md', 'r') as file:
 
 setuptools.setup(
         name='dpymenus',
-        version='1.0.3',
+        version='0.1.3',
         author='Rob Wagner',
         author_email='rob.wagner@outlook.com',
         description='Dynamic, composable dpymenus for use with the discord.py library.',
@@ -20,7 +20,7 @@ setuptools.setup(
             'Typing :: Typed',
             'Topic :: Communications :: Chat',
             'Intended Audience :: Developers',
-            'Development Status :: 5 - Production/Stable',
+            'Development Status :: 4 - Beta',
         ],
         python_requires='>=3.8',
 )

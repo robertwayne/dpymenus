@@ -169,7 +169,7 @@ class Menu:
     async def _is_cancelled(self) -> bool:
         """Checks user_input for a cancellation string. If found, calls menu._cancelled and then returns True."""
 
-        if self.input_message.content in self.generic_deny:
+        if self.input_message.content in self.generic_quit:
             await self._cancelled()
             return True
         return False

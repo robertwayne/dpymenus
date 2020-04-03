@@ -80,7 +80,7 @@ class Ping(commands.Cog):
 
     @staticmethod
     async def confirm(m: Menu) -> None:
-        if m.input_message.content in ('y', 'yes'):
+        if m.input_message.content in m.generic_confirm:
             await m.next_page()
 
 def setup(client: commands.Bot):

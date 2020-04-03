@@ -42,3 +42,9 @@ class Page:
         self.name = name
         self.embed = embed
         self.func = func
+
+    def __str__(self):
+        return f'<Page {self.name}>'
+
+    def __repr__(self):
+        return f'Page(name={self.name}, embed={self.embed}, func={self.func})'

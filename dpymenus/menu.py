@@ -76,7 +76,7 @@ class Menu:
         return f'Pages: {self.pages}\nCurrent Page: {self.page}\n{self.input_message}\n{self.message}'
 
     def __repr__(self):
-        return f'Menu({self.client}, {self.ctx}, {self.message}, {self.input_message}, {self.input_message}, {self.page}, {self.pages})'
+        return f'<Menu pages={[p.__str__() for p in self.pages]}, capture_fields={({k: v for k, v in self.data.items()})}, delay={self.delay}, active={self.active} page={self.page}>'
 
     async def run(self) -> None:
         """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.

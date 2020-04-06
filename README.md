@@ -74,7 +74,7 @@ class Ping(commands.Cog):
     @staticmethod
     async def confirm(m: Menu) -> None:
         if m.input.content in m.generic_confirm:
-            await m.next_page()
+            await m.next()
 
 def setup(client: commands.Bot):
     client.add_cog(Ping(client))

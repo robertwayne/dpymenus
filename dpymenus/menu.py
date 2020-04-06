@@ -86,28 +86,26 @@ class Menu:
 
             await self.pages[self.page].func(self)
 
-    async def next_page(self, specific_page: str = None, quiet_output: bool = False) -> None:
+    async def next(self, name: str = None, quiet: bool = False) -> None:
         """Sets a specific Page object to go to and calls the ``menu.send_message`` to display the embed.
 
-        :param specific_page: A specific Page object name. If this is not set, the next Page in the list will be called.
-        :param quiet_output: Whether to send the message after setting the Page or not. Defaults to False.
+        :param name: A specific Page object name. If this is not set, the next Page in the list will be called.
+        :param quiet: Whether to send the message after setting the Page or not. Defaults to False.
         """
 
-        for i, page in enumerate(self.pages):
-            if specific_page is not None:
-                if specific_page == page.name:
+        if name is None:
+            self.page += 1
+
+            if self.pages[self.page].func is None:
+                await self.close()
+
+        else:
+            for i, page in enumerate(self.pages):
+                if name == page.name:
                     self.page = self.pages.index(page)
                     break
 
-            else:
-                self.page += 1
-
-                if self.pages[self.page].func is None:
-                    await self.close()
-
-                break
-
-        if not quiet_output:
+        if not quiet:
             await self.send_message(self.pages[self.page].embed)
 
     async def close(self) -> None:

@@ -1,56 +1,57 @@
 [![PyPI version](https://badge.fury.io/py/dpymenus.svg)](https://badge.fury.io/py/dpymenus)
 
 # Discord Menus
-`dpymenus` is an add-on for the `discord.py` library that lets your quickly build stateful
+`dpymenus` is an add-on for the `discord.py` library that lets you quickly build stateful
 menus that respond to chat input within the Discord client.
 
 ### Installation
 `pip install dpymenus`
 
 ### Usage
-First, you must instantiate a new Menu. You must pass in a reference to your bot client and 
-the message context. In addition, you must build a list of Page objects.
+First, you must build a list of Page objects. Pages extend discord.py
+Embed objects, so you construct it the exact same way, but you add a `func` paramater.
 
-Page creation is simple:
+As an example:
 
-    new_page = Page('page_1', embed, func)
-    new_page2 = Page('page_2', embed2, func2)
+    new_page1 = Page(title='First Page', description='This is a test.', func=<FUNCTION_REFERENCE>)
+    new_page2 = Page(title='Second Page', description='This is also a test.')
 
-The page name is a string and can be anything you want. The embed should point to a Discord
-Embed object. The func should point to a function or method which will handle validation and
-other features you want your menu to accomodate.
+The `func` should point to a function which will be called when the page is opened. This is
+where you do validation and handle user input.
     
-Finally, you can create our menu object:
+Then you can create your menu object *(it must take the command Context as its first param)*:
 
-    menu = Menu(self.client, ctx, pages=[new_page, new_page2])
+    menu = Menu(ctx, pages=[new_page, new_page2])
     
-Once that is done, you simply call the `run()` method on our new Menu object:
+Lastly, call the `run()` method on it:
 
     await menu.run()
     
 ...and you're *(mostly)* finished! A menu loop will spawn and handle user input when the command is 
 called until it times out or is cancelled by the user.
 
-Your function or method references inside the pages should include a 'final' page where the
+Your function references inside the pages should include a 'final' page where the
 function is `None`. When the final page in your pages list is displayed, the menu will call a
 close method and end the loop.
 
-Your function or method reference should call the `menu.next_page()` method whenever it has
-successfully handled input. `next_page()` also takes 2 optional arguments: 
+Your function reference should call the `menu.next()` method whenever it has
+successfully handled input. `next()` also takes 2 optional arguments: 
 
-`specific_page`: jumps to a specific page by name. Useful for edit options or non-linear menus.
+`name`: jumps to a specific page by its function reference name. Useful for non-linear menus.
 
-`quiet_output`: prevents the page from displaying its embed when called.
+`quiet`: prevents the page from displaying its embed when called.
+
+You denote a final page, or 'ending' to the menu, by not supplying an empty `func` parameter *(or passing `None`)*.
     
 ### Example
 This is an example of a simple cog that confirms if you want to send the 'ping' or not.
 ```python
-import discord
 from discord.ext import commands
 from discord.colour import Colour
 
 from dpymenus.menu import Menu
 from dpymenus.page import Page
+
 
 class Ping(commands.Cog):
     def __init__(self, client: commands.Bot):
@@ -58,42 +59,38 @@ class Ping(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx: commands.Context) -> None:
-        confirm_embed = discord.Embed(title=f'Ping Menu',
-                                      description=f'Are you absolutely sure you want to send a ping command?\n\n'
-                                                  'Type `yes` if you are sure.\nType `quit` to cancel this menu.',
-                                      color=Colour.red())
+        confirm_page = Page(title=f'Ping Menu', color=Colour.red(), func=self.confirm,
+                            description=f'Are you absolutely sure you want to send a ping command?\n\n'
+                                          'Type `yes` if you are sure.\nType `quit` to cancel this menu.')
 
-        complete_embed = discord.Embed(title='Ping Menu', 
-                                       description='Pong!', 
-                                       color=Colour.green())
+        complete_page = Page(title='Ping Menu', color=Colour.green(),
+                            description='Pong!')
 
-        menu = Menu(self.client, ctx, pages=[Page('confirm', confirm_embed, self.confirm), 
-                                             Page('complete', complete_embed, None)])
+        menu = Menu(ctx, pages=[confirm_page, complete_page])
         await menu.run()
 
     @staticmethod
     async def confirm(m: Menu) -> None:
         if m.input.content in m.generic_confirm:
-            await m.next_page()
+            await m.next()
+
 
 def setup(client: commands.Bot):
     client.add_cog(Ping(client))
 ```
-### Capture Fields
-In addition to standard menu setup, optional 'capture fields' can be named for more advanced 
-menus that need to store many user input variables *(eg. storing a user name and favorite 
-color for storage in a DB later)*.
+### State Fields
+In addition to standard menu setup, optional `state_fields` can be defined for variables or objects you
+want to pass around in page functions.
 
-Capture fields can be declared with a dictionary:
+State fields should be defined in a dictionary:
 
-    captures = {'username': None, 'favorite_color': None}
+    state_fields = {'username': None, 'favorite_color': None}
 
-... and then passed into your menu on initialization:
+...and then passed into your menu on initialization:
 
-    menu = Menu(self.client, ctx, pages, captures)
+    menu = Menu(ctx, pages, state_fields)
 
-If you have set your menus capture fields, it will be accessible via the data attribute on your
-menu object *(ie. `x = menu.data['value']`)*.
+You can then access these like any objects attributes *(ie. `x = menu.state_fields['value']`)*.
 
 *As it is simply a dictionary, you can set more than simple input strings. For instance,
 transferring objects across functions by setting the value to an object. Ideally, the menu 

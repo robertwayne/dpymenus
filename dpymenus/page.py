@@ -23,28 +23,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Callable, Optional
-
 from discord import Embed
 
 
-class Page:
+class Page(Embed):
     """Represents a single page inside a menu.
 
     Attributes:
-        name: The page name.
-        embed: A Discord.Embed object; used for displaying the page.
         func: Reference to a function called when the page loads. Should be None on the last page.
     """
-    __slots__ = ('name', 'embed', 'func')
 
-    def __init__(self, name: str, embed: Embed, func: Optional[Callable]):
-        self.name = name
-        self.embed = embed
-        self.func = func
+    def __init__(self, **kwargs):
+        self.func = kwargs.get('func', None)
+        super().__init__(**kwargs)
 
     def __str__(self):
-        return f'<Page {self.name}>'
+        return f'<Page {self.title}>'
 
     def __repr__(self):
-        return f'Page(name={self.name}, embed={self.embed}, func={self.func})'
+        return f'Page(title={self.title} func={self.func})'

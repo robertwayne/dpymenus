@@ -31,7 +31,7 @@ from discord.abc import GuildChannel
 from discord.colour import Colour
 from discord.ext.commands import Context
 
-from dpymenus.exceptions import NoFinalPageError, NotEnoughPagesError
+from dpymenus.exceptions import NotEnoughPagesError
 from dpymenus.page import Page
 
 
@@ -49,7 +49,7 @@ class Menu:
         active: Whether or not the menu is active or not.
         input: A reference to the captured user input message object.
         output: A reference to the menus output message.
-        data: A dictionary containing dynamic state data you wish to pass around the menu.
+        state_fields: A dictionary containing dynamic state state_fields you wish to pass around the menu.
     """
 
     # Generic values used for matching against user input.
@@ -57,7 +57,7 @@ class Menu:
     generic_deny = ('n', 'no', 'deny', 'negative', 'back', 'return')
     generic_quit = ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c')
 
-    def __init__(self, ctx: Context, pages: List[Page], capture_fields: Dict[str, Any] = None):
+    def __init__(self, ctx: Context, pages: List[Page], state_fields: Dict[str, Any] = None):
         self.ctx = ctx
         self.pages = pages
         self.page: int = 0
@@ -65,19 +65,20 @@ class Menu:
         self.active: bool = True
         self.input: Optional[Message] = None
         self.output: Optional[Message] = None
-        self.data = capture_fields if capture_fields else {}
+        self.state_fields = state_fields if state_fields else {}
 
         self._validate_pages()
 
     def __repr__(self):
-        return f'<Menu pages={[p.__str__() for p in self.pages]}, capture_fields={({k: v for k, v in self.data.items()})}, delay={self.delay}, active={self.active} page={self.page}>'
+        return f'<Menu pages={[p.__str__() for p in self.pages]}, capture_fields={({k: v for k, v in self.state_fields.items()})}, delay={self.delay}, active={self.active} page={self.page}>'
 
     async def run(self) -> None:
         """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        self.output = await self.ctx.send(embed=self.pages[self.page].embed)
+        self.output = await self.ctx.send(embed=self.pages[self.page])
 
         while self.active:
+            print(self.pages[self.page])
             self.input = await self._get_input()
             await self._cleanup_input()
 
@@ -86,29 +87,27 @@ class Menu:
 
             await self.pages[self.page].func(self)
 
-    async def next_page(self, specific_page: str = None, quiet_output: bool = False) -> None:
+    async def next(self, name: str = None, quiet: bool = False) -> None:
         """Sets a specific Page object to go to and calls the ``menu.send_message`` to display the embed.
 
-        :param specific_page: A specific Page object name. If this is not set, the next Page in the list will be called.
-        :param quiet_output: Whether to send the message after setting the Page or not. Defaults to False.
+        :param name: A specific Page object name. If this is not set, the next Page in the list will be called.
+        :param quiet: Whether to send the message after setting the Page or not. Defaults to False.
         """
 
-        for i, page in enumerate(self.pages):
-            if specific_page is not None:
-                if specific_page == page.name:
+        if name is None:
+            self.page += 1
+
+        else:
+            for page in self.pages:
+                if page.func.__name__ == name:
                     self.page = self.pages.index(page)
                     break
 
-            else:
-                self.page += 1
+        if self.pages[self.page].func is None:
+            await self.close()
 
-                if self.pages[self.page].func is None:
-                    await self.close()
-
-                break
-
-        if not quiet_output:
-            await self.send_message(self.pages[self.page].embed)
+        if not quiet:
+            await self.send_message(self.pages[self.page])
 
     async def close(self) -> None:
         """Closes the active Menu instance."""
@@ -133,9 +132,6 @@ class Menu:
         if len(self.pages) <= 1:
             raise NotEnoughPagesError('The pages list must have more than one page.')
 
-        if self.pages[-1].func is not None:
-            raise NoFinalPageError('The pages list is missing a final page. Define a Page with `None` as the func parameter.')
-
     async def _get_input(self) -> Message:
         """Collects user input and places it into the input attribute."""
 
@@ -159,13 +155,13 @@ class Menu:
     async def _cancelled(self) -> None:
         """Sends a cancelled message."""
 
-        embed = Embed(title=self.pages[self.page].embed.title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
+        embed = Embed(title=self.pages[self.page].title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
         await self.send_message(embed)
 
     async def _timeout(self) -> None:
         """Sends a timeout message."""
 
-        embed = Embed(title=self.pages[self.page].embed.title, description='You timed out at menu selection -- no progress was saved.', color=Colour.red())
+        embed = Embed(title=self.pages[self.page].title, description='You timed out at menu selection -- no progress was saved.', color=Colour.red())
         await self.send_message(embed)
 
     async def _cleanup_input(self) -> None:

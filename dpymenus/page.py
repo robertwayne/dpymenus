@@ -31,10 +31,12 @@ class Page(Embed):
 
     Attributes:
         func: Reference to a function called when the page loads. Should be None on the last page.
+        buttons: A list of button objects
     """
 
     def __init__(self, **kwargs):
         self.func = kwargs.get('func', None)
+        self.buttons = kwargs.get('buttons', None)
         super().__init__(**kwargs)
 
     def __str__(self):

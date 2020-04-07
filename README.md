@@ -1,8 +1,16 @@
 [![PyPI version](https://badge.fury.io/py/dpymenus.svg)](https://badge.fury.io/py/dpymenus)
 
 # Discord Menus
+
 `dpymenus` is an add-on for the `discord.py` library that lets you quickly build stateful
 menus that respond to chat input within the Discord client.
+
++ [Installation](#installation)
++ [Usage](#usage)
++ [State Fields](#state-fields)
++ [Generic Input Matching](#generic-input-matching)
++ [Reaction Buttons](#reaction-buttons)
++ [Examples](#examples)
 
 ### Installation
 `pip install dpymenus`

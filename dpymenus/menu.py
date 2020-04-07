@@ -26,11 +26,11 @@ SOFTWARE.
 import asyncio
 from typing import Any, Dict, List, Optional, Tuple
 
-import discord.utils
 from discord import Embed, Emoji, Message, PartialEmoji
 from discord.abc import GuildChannel
 from discord.colour import Colour
 from discord.ext.commands import Context
+
 from dpymenus.exceptions import NotEnoughPagesError
 from dpymenus.page import Page
 
@@ -98,7 +98,6 @@ class Menu:
         """Sets a specific Page object to go to and calls the ``menu.send_message`` to display the embed.
 
         :param name: A specific Page object name. If this is not set, the next Page in the list will be called.
-        :param quiet: Whether to send the message after setting the Page or not. Defaults to False.
         """
         if name is None:
             self.page += 1
@@ -186,7 +185,7 @@ class Menu:
             await self.output.clear_reactions()
 
     @classmethod
-    def override_generic_values(cls, value_type: str, replacement: Tuple[str]):
+    def override_generic_values(cls, value_type: str, replacement: Tuple[str]) -> None:
         """Allows generic input matching values built into the Menu class to be overridden.
 
         :param value_type: Either 'confirm', 'deny', or 'quit'.

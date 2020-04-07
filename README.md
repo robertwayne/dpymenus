@@ -140,6 +140,7 @@ A simple, non-linear cog that demonstrates a reactive button-based menu.
 import discord.utils
 from discord.colour import Colour
 from discord.ext import commands
+
 from dpymenus.menu import Menu
 from dpymenus.page import Page
 

@@ -27,11 +27,11 @@ from discord import Embed
 
 
 class Page(Embed):
-    """Represents a single page inside a menu.
+    """Represents a single page inside a menu. Subclasses the discord.py Embed class.
 
     Attributes:
-        func: Reference to a function called when the page loads. Should be None on the last page.
-        buttons: A list of button objects
+        func: Reference to a Callable.
+        buttons: A list of button objects.
     """
 
     def __init__(self, **kwargs):

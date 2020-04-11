@@ -97,7 +97,7 @@ class Menu:
     async def next(self, name: str = None) -> None:
         """Sets a specific Page object to go to and calls the ``menu.send_message`` to display the embed.
 
-        :param name: A specific Page object name. If this is not set, the next Page in the list will be called.
+        :param str name: A specific Page object name. If this is not set, the next Page in the list will be called.
         """
         if name is None:
             self.page += 1
@@ -127,7 +127,10 @@ class Menu:
         await self.close()  # explicitly close the menu so reactive pages require less code
 
     async def send_message(self, embed: Embed) -> Message:
-        """Edits a message if the channel is in a Guild, otherwise sends it to the current channel."""
+        """Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
+
+        :param :py:class:`Embed` embed: A Discord :py:class:`Embed` object.
+        """
         if isinstance(self.ctx.channel, GuildChannel):
             return await self.output.edit(embed=embed)
         return await self.ctx.send(embed=embed)
@@ -188,7 +191,7 @@ class Menu:
     def override_generic_values(cls, value_type: str, replacement: Tuple[str]) -> None:
         """Allows generic input matching values built into the Menu class to be overridden.
 
-        :param value_type: Either 'confirm', 'deny', or 'quit'.
-        :param replacement: A tuple containing strings of values that act as your generic input matches.
+        :param str value_type: Either 'confirm', 'deny', or 'quit'.
+        :param Tiple[str] replacement: A tuple containing strings of values that act as your generic input matches.
         """
         setattr(cls, f'generic_{value_type}', replacement)

@@ -106,7 +106,7 @@ A simple, linear cog that demonstrates a text-based menu.
 from discord.ext import commands
 from discord.colour import Colour
 
-from dpymenus.menu import Menu
+from dpymenus.text_menu import Menu
 from dpymenus.page import Page
 
 
@@ -141,7 +141,7 @@ import discord.utils
 from discord.colour import Colour
 from discord.ext import commands
 
-from dpymenus.menu import Menu
+from dpymenus.text_menu import Menu
 from dpymenus.page import Page
 
 

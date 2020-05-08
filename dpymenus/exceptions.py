@@ -5,3 +5,7 @@ class MenuError(Exception):
 
 class NotEnoughPagesError(MenuError):
     pass
+
+
+class NoButtonsError(MenuError):
+    pass

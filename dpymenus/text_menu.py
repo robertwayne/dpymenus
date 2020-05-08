@@ -1,9 +1,8 @@
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from discord.ext.commands import Context
 
-from dpymenus.base_menu import BaseMenu
-from dpymenus.page import Page
+from dpymenus import BaseMenu
 
 
 class TextMenu(BaseMenu):
@@ -14,13 +13,12 @@ class TextMenu(BaseMenu):
 
     Attributes:
         ctx: A reference to the command Context.
-        pages: A list containing references to Page objects.
         timeout: How long (in seconds) to wait before timing out.
         state_fields: A dictionary containing dynamic state state_fields you wish to pass around the menu.
     """
 
-    def __init__(self, ctx: Context, pages: List[Page], timeout: int = 300, state_fields: Optional[Dict] = None):
-        super().__init__(ctx, pages, timeout)
+    def __init__(self, ctx: Context, timeout: int = 300, state_fields: Optional[Dict] = None):
+        super().__init__(ctx, timeout)
         self.state_fields = state_fields if state_fields else {}
 
     def __repr__(self):
@@ -30,13 +28,16 @@ class TextMenu(BaseMenu):
     async def run(self):
         """The entry point to a new TextMenu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
+        await super().run()
+
         self.output = await self.ctx.send(embed=self.pages[self.page])
 
         while self.active:
+
             self.input = await self._get_input()
             await self._cleanup_input()
 
             if await self._is_cancelled():
                 return
 
-            await self.pages[self.page].func(self)
+            await self.pages[self.page].callback(self)

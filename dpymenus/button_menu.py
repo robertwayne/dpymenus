@@ -1,12 +1,12 @@
 import asyncio
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from discord import Emoji, Message, PartialEmoji
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus.base_menu import BaseMenu
-from dpymenus.page import Page
+from dpymenus import BaseMenu
+from dpymenus.exceptions import NoButtonsError
 
 
 class ButtonMenu(BaseMenu):
@@ -17,13 +17,12 @@ class ButtonMenu(BaseMenu):
 
     Attributes:
         ctx: A reference to the command Context.
-        pages: A list containing references to Page objects.
         timeout: How long (in seconds) to wait before timing out.
         state_fields: A dictionary containing dynamic state state_fields you wish to pass around the menu.
     """
 
-    def __init__(self, ctx: Context, pages: List[Page], timeout: int = 300, state_fields: Optional[Dict] = None):
-        super().__init__(ctx, pages, timeout)
+    def __init__(self, ctx: Context, timeout: int = 300, state_fields: Optional[Dict] = None):
+        super().__init__(ctx, timeout)
         self.state_fields = state_fields if state_fields else {}
 
     def __repr__(self):
@@ -33,6 +32,8 @@ class ButtonMenu(BaseMenu):
     async def run(self):
         """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
+        await super().run()
+
         self.output = await self.ctx.send(embed=self.pages[self.page])
 
         while self.active:
@@ -41,7 +42,7 @@ class ButtonMenu(BaseMenu):
             self.input = await self._get_reaction()
             await self._cleanup_reactions()
 
-            await self.pages[self.page].func(self)
+            await self.pages[self.page].callback(self)
 
     async def close(self):
         """Closes the active Menu instance."""
@@ -67,3 +68,11 @@ class ButtonMenu(BaseMenu):
     async def _cleanup_reactions(self) -> None:
         if isinstance(self.ctx.channel, GuildChannel):
             await self.output.clear_reactions()
+
+    def _validate_buttons(self):
+        for page in self.pages:
+            if page.callback is None:
+                return
+
+            if len(page.buttons) <= 1:
+                raise NoButtonsError('Your primary pages must have at least one button.')

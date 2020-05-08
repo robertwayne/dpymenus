@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
 from discord import Embed, Message
 from discord.abc import GuildChannel
@@ -32,18 +32,17 @@ class BaseMenu:
     generic_deny = ('n', 'no', 'deny', 'negative', 'back', 'return')
     generic_quit = ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c')
 
-    def __init__(self, ctx: Context, pages: List[Page], timeout: int = 300):
+    def __init__(self, ctx: Context, timeout: int = 300):
         self.ctx = ctx
-        self.pages = pages
         self.timeout = timeout
+        self.pages: List[Page] = []
         self.page: int = 0
         self.type: Optional[str] = None
         self.delay: float = 0.250
         self.active: bool = True
         self.input: Optional[Message] = None
         self.output: Optional[Message] = None
-
-        self._validate_pages()
+        self.state_fields = None
 
     def __repr__(self):
         return f'<Menu pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \
@@ -52,7 +51,7 @@ class BaseMenu:
     async def run(self):
         """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        pass
+        self._validate_pages()
 
     async def next(self, name: str = None):
         """Sets a specific Page object to go to and calls the ``menu.send_message`` to display the embed.
@@ -64,14 +63,20 @@ class BaseMenu:
 
         else:
             for page in self.pages:
-                if page.func.__name__ == name:
+                if page.callback.__name__ == name:
                     self.page = self.pages.index(page)
                     break
 
-        if self.pages[self.page].func is None:
+        if self.pages[self.page].callback is None:
             await self.close()
 
         await self.send_message(self.pages[self.page])
+
+    async def add_page(self, callback: Optional[Callable] = None, buttons: List = None, **kwargs) -> Page:
+        _page = Page(callback, buttons, **kwargs)
+        self.pages.append(_page)
+
+        return _page
 
     async def cancel(self):
         """Sends a cancelled message."""

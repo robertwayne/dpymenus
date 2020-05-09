@@ -3,5 +3,9 @@ class MenuError(Exception):
         self.message = message
 
 
-class NotEnoughPagesError(MenuError):
+class PagesError(MenuError):
+    pass
+
+
+class ButtonsError(MenuError):
     pass

@@ -5,10 +5,10 @@ with open('README.md', 'r') as file:
 
 setuptools.setup(
         name='dpymenus',
-        version='0.1.9',
+        version='0.2.0',
         author='Rob Wagner',
         author_email='rob.wagner@outlook.com',
-        description='Dynamic, composable dpymenus for use with the discord.py library.',
+        description='Dynamic, composable menus and polls for use with the discord.py library.',
         long_description=long_description,
         long_description_content_type='text/markdown',
         url='https://github.com/robertwayne/dpymenus',

@@ -13,21 +13,21 @@ class MyButtonMenu(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def buttons(self, ctx: commands.Context) -> None:
+    async def buttons(self, ctx: commands.Context):
         menu = ButtonMenu(ctx)
 
         await menu.add_page(title='Button Menu', description='Follow the arrows!', color=Colour.red(),
-                            callback=self.first, buttons=[forward_arrow, x_mark])
+                            on_next=self.first, buttons=[forward_arrow, x_mark])
 
         await menu.add_page(title='Button Menu', description='So many buttons! What do they do?', color=Colour.orange(),
-                            callback=self.second, buttons=[forward_arrow, back_arrow, x_mark])
+                            on_next=self.second, buttons=[forward_arrow, back_arrow, x_mark])
 
         await menu.add_page(title='Button Menu', description='We reached the end!', color=Colour.green())
 
         await menu.open()
 
     @staticmethod
-    async def first(m: ButtonMenu) -> None:
+    async def first(m: ButtonMenu):
         if m.input == forward_arrow:  # we move forward
             await m.next()
 
@@ -35,7 +35,7 @@ class MyButtonMenu(commands.Cog):
             await m.cancel()
 
     @staticmethod
-    async def second(m: ButtonMenu) -> None:
+    async def second(m: ButtonMenu):
         if m.input == forward_arrow:
             await m.next()
 

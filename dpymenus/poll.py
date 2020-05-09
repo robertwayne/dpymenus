@@ -1,5 +1,5 @@
 import asyncio
-from typing import Set
+from typing import Dict, Set
 
 from discord import User
 from discord.ext.commands import Context
@@ -9,9 +9,9 @@ from dpymenus.exceptions import NoButtonsError
 
 
 class Poll(ButtonMenu):
-    """Represents a button-based response menu.
+    """Represents a Poll menu.
 
-    A ButtonMenu is a composable, dynamically generated object that contains state information for a user-interactable menu.
+    A Poll is a composable, dynamically generated object that contains state information for a user-interactable polls.
     It contains Page objects which represent new Menu states that call methods for validation and handling.
 
     Attributes:
@@ -23,7 +23,6 @@ class Poll(ButtonMenu):
     def __init__(self, ctx: Context, timeout: int = 300):
         super().__init__(ctx, timeout)
         self.voted: Set[User] = set()
-        self.cheaters: int = 0
 
     def __repr__(self):
         return f'<Menu pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, active={self.active} page={self.page},' \
@@ -35,42 +34,112 @@ class Poll(ButtonMenu):
         self._set_state_fields()
 
         self.output = await self.ctx.send(embed=self.pages[self.page])
-        await self.add_buttons()
+        await self._add_buttons()
 
+        pending = set()
         while self.active:
-            await asyncio.sleep(self.timeout)
-            msg = await self.ctx.channel.fetch_message(self.output.id)
-            for reaction in msg.reactions:
-                if reaction.me is True:
-                    users = set(await reaction.users().flatten())
-                    users.remove(self.ctx.bot.user)
-                    self.state_fields[reaction.emoji] = await self.valid_votes(users)
+            try:
+                done, pending = await asyncio.wait([asyncio.create_task(self._get_vote_add()), asyncio.create_task(self._get_vote_remove()),
+                                                    asyncio.create_task(self._poll_timer())], return_when=asyncio.FIRST_COMPLETED)
+            finally:
+                for task in pending:
+                    task.cancel()
 
-            for k, v in self.state_fields.items():
-                self.state_fields[k] = max(0, v - self.cheaters)
+                await self._finish_poll()
 
-            await self.pages[self.page].callback(self)
+    # Utility Methods
+    async def results(self) -> Dict[str, int]:
+        """Utility method to get a dictionary of poll results."""
+        return {k: len(v) for k, v in self.state_fields.items()}
 
-    async def valid_votes(self, users: Set[User]) -> int:
-        count = 0
-        for user in users:
-            if user not in self.voted:
-                count += 1
-                self.voted.add(user)
+    async def add_results_fields(self):
+        """Utility method to add new fields to your next page automatically."""
+        for k, v in self.state_fields.items():
+            self.pages[self.page + 1].add_field(name=k, value=str(len(v)))
+
+    async def generate_results_page(self):
+        """Utility method to build your entire results page automatically."""
+        next_page = self.pages[self.page + 1]
+
+        await self.add_results_fields()
+
+        highest_value = max(self.state_fields.values())
+        winning_key = {key for key, value in self.state_fields.items() if value == highest_value}
+
+        if len(highest_value) == 0:
+            next_page.description = ' '.join([next_page.description, f"It's a draw!"])
+
+        else:
+            next_page.description = ' '.join([next_page.description, f'{str(next(iter(winning_key)))} wins!'])
+
+    # Internal Methods
+    async def _get_vote_add(self):
+        """Watches for a user adding a reaction on the Poll. Adds them to the relevant state_field values."""
+        while True:
+            try:
+                reaction, user = await self.ctx.bot.wait_for('reaction_add', timeout=self.timeout, check=lambda _, u: u != self.ctx.bot.user)
+
+            except asyncio.TimeoutError:
+                return
+
             else:
-                self.cheaters += 1
-        return count
+                if reaction.emoji in self.pages[self.page].buttons:
+                    self.state_fields[reaction.emoji].add(user.id)
 
-    async def validate_vote(self):
-        return True if self.ctx.author not in self.voted else False
+    async def _get_vote_remove(self):
+        """Watches for a user removing a reaction on the Poll. Removes them from the relevant state_field values."""
+        while True:
+            try:
+                reaction, user = await self.ctx.bot.wait_for('reaction_remove', timeout=self.timeout, check=lambda _, u: u != self.ctx.bot.user)
+
+            except asyncio.TimeoutError:
+                return
+
+            else:
+                if reaction.emoji in self.pages[self.page].buttons:
+                    self.state_fields[reaction.emoji].remove(user.id)
+
+    async def _poll_timer(self):
+        """Handles poll duration."""
+        await asyncio.sleep(self.timeout)
+
+    async def _finish_poll(self):
+        """Removes multi-votes and calls the Page callback function when finished."""
+        check_cheaters = False
+        for value in self.state_fields.values():
+            if value:
+                check_cheaters = True
+                break
+
+        if check_cheaters:
+            cheaters = await self._get_cheaters()
+            for voter_set in self.state_fields.values():
+                voter_set -= cheaters
+
+        await self.pages[self.page].callback(self)
+
+    async def _get_cheaters(self) -> Set[int]:
+        """Returns a set of user ID's that appear in more than one state_field value."""
+        seen = set()
+        repeated = set()
+        for voter_set in self.state_fields.values():
+            for voter in voter_set:
+                if voter in seen:
+                    repeated.add(voter)
+                else:
+                    seen.add(voter)
+
+        return repeated
 
     def _set_state_fields(self):
+        """Internally sets state field keys and values based on the current Page button properties."""
         self._validate_buttons()
 
         for button in self.pages[self.page].buttons:
-            self.state_fields.update({button: 0})
+            self.state_fields.update({button: set()})
 
     def _validate_buttons(self):
+        """Checks that Poll objects always have more than two buttons."""
         for page in self.pages:
             if page.callback is None:
                 return
@@ -78,3 +147,7 @@ class Poll(ButtonMenu):
             if len(page.buttons) <= 1:
                 raise NoButtonsError('A Poll primary page must have at least two buttons.')
 
+    @staticmethod
+    async def get_voters(users: Set[User]) -> Set[User]:
+        """Returns a set of user ID's."""
+        return {user.id for user in users}

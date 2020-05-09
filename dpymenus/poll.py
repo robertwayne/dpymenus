@@ -118,6 +118,7 @@ class Poll(ButtonMenu):
             for voter_set in self.data.values():
                 voter_set -= cheaters
 
+        await self.output.clear_reactions()
         await self.page.on_next(self)
 
     async def _get_cheaters(self) -> Set[int]:

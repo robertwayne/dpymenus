@@ -25,10 +25,10 @@ class TextMenu(BaseMenu):
         return f'<Menu pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \
                f'active={self.active} page={self.page}, state_fields={self.state_fields}>'
 
-    async def run(self):
+    async def open(self):
         """The entry point to a new TextMenu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        await super().run()
+        await super().open()
 
         self.output = await self.ctx.send(embed=self.pages[self.page])
 

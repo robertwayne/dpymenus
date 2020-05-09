@@ -5,7 +5,7 @@ from discord import User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu
-from dpymenus.exceptions import NoButtonsError
+from dpymenus.exceptions import ButtonsError, PagesError
 
 
 class Poll(ButtonMenu):
@@ -28,9 +28,10 @@ class Poll(ButtonMenu):
         return f'<Menu pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, active={self.active} page={self.page},' \
                f'state_fields={self.state_fields}>'
 
-    async def run(self):
+    async def open(self):
         """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
+        self._validate_pages()
         self._set_state_fields()
 
         self.output = await self.ctx.send(embed=self.pages[self.page])
@@ -135,17 +136,19 @@ class Poll(ButtonMenu):
         """Internally sets state field keys and values based on the current Page button properties."""
         self._validate_buttons()
 
+        print(self.pages[0].buttons)
         for button in self.pages[self.page].buttons:
             self.state_fields.update({button: set()})
 
     def _validate_buttons(self):
         """Checks that Poll objects always have more than two buttons."""
-        for page in self.pages:
-            if page.callback is None:
-                return
+        if len(self.pages[0].buttons) < 2:
+            raise ButtonsError('A Poll primary page must have at least two buttons.')
 
-            if len(page.buttons) <= 1:
-                raise NoButtonsError('A Poll primary page must have at least two buttons.')
+    def _validate_pages(self):
+        """Checks that the Menu contains at least one Page."""
+        if len(self.pages) != 2:
+            raise PagesError('A Poll can only have two pages.')
 
     @staticmethod
     async def get_voters(users: Set[User]) -> Set[User]:

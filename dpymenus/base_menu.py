@@ -6,7 +6,7 @@ from discord.abc import GuildChannel
 from discord.colour import Colour
 from discord.ext.commands import Context
 
-from dpymenus.exceptions import NotEnoughPagesError
+from dpymenus.exceptions import PagesError
 from dpymenus.page import Page
 
 
@@ -48,7 +48,7 @@ class BaseMenu:
         return f'<Menu pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \
                f'active={self.active} page={self.page}>'
 
-    async def run(self):
+    async def open(self):
         """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         self._validate_pages()
@@ -97,6 +97,12 @@ class BaseMenu:
         """Closes the active Menu instance."""
         self.active = False
 
+    async def cancel(self):
+        """Sends a cancelled message."""
+        embed = Embed(title=self.pages[self.page].title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
+        await self.send_message(embed)
+        await self.close()  # explicitly close the menu so reactive pages require less code
+
     # Utility Methods
     def get_page(self, n: int = 0) -> Page:
         """Utility method to make accessing the current page cleaner.
@@ -106,12 +112,6 @@ class BaseMenu:
         return self.pages[self.page + n]
 
     # Internal Methods
-    async def _cancel(self):
-        """Sends a cancelled message."""
-        embed = Embed(title=self.pages[self.page].title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
-        await self.send_message(embed)
-        await self.close()  # explicitly close the menu so reactive pages require less code
-
     async def _cleanup_input(self):
         """Deletes a Discord client user message."""
         if isinstance(self.ctx.channel, GuildChannel):
@@ -125,7 +125,7 @@ class BaseMenu:
     async def _is_cancelled(self) -> bool:
         """Checks input for a cancellation string. If there is a match, it calls the ``menu.cancel()`` method and returns True."""
         if self.input.content in self.generic_quit:
-            await self._cancel()
+            await self.cancel()
             return True
         return False
 
@@ -143,7 +143,7 @@ class BaseMenu:
     def _validate_pages(self):
         """Checks that the Menu contains at least one Page."""
         if len(self.pages) <= 1:
-            raise NotEnoughPagesError('The pages list must have more than one page.')
+            raise PagesError('The pages list must have more than one page.')
 
     # Class Methods
     @classmethod

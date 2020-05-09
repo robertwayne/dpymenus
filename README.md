@@ -36,7 +36,7 @@ Lastly, call the `open()` method on it:
     
 ...and you're *(mostly)* finished! A menu loop will spawn and handle user input when the command is 
 called until it times out or is cancelled by the user. Note that you should have at least one Page
-without a callback. This denotes to the library that your menu will be closed when you reach this page.
+without a callback. This denotes to the handler that your menu will be closed when you reach this page.
 
 Your callback method should call the `menu.next()` method whenever it has
 successfully handled input. `next()` also takes 1 optional argument: 
@@ -64,7 +64,7 @@ functions internally. You can start the same as other menus:
     from dpymenus import Poll
     menu3 = Poll(ctx, timeout=60)
     
-Note the timeout parameter. This is the time, in seconds, before the poll ends. It defaults to 5 minutes.
+Note the timeout argument. This is the time, in seconds, before the poll ends. It defaults to 5 minutes.
     
 It is important that you only add two pages here.
     

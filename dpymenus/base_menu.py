@@ -18,13 +18,14 @@ class BaseMenu:
 
     Attributes:
         ctx: A reference to the command Context.
+        timeout: How long (in seconds) to wait before timing out.
         pages: A list containing references to Page objects.
         page: Index value of the current page.
         delay: A float representing the delay between deleting message objects.
         active: Whether or not the menu is active or not.
         input: A reference to the captured user input message object.
         output: A reference to the menus output message.
-        timeout: How long (in seconds) to wait before timing out.
+        state_fields: A dictionary containing dynamic state information.
     """
 
     # Generic values used for matching against user input.
@@ -37,7 +38,6 @@ class BaseMenu:
         self.timeout = timeout
         self.pages: List[Page] = []
         self.page: int = 0
-        self.type: Optional[str] = None
         self.delay: float = 0.250
         self.active: bool = True
         self.input: Optional[Message] = None
@@ -54,7 +54,7 @@ class BaseMenu:
         self._validate_pages()
 
     async def next(self, name: str = None):
-        """Sets a specific Page object to go to and calls the ``menu.send_message`` to display the embed.
+        """Sets a specific Page object to go to and calls the ``menu.send_message()`` method to display the embed.
 
         :param str name: A specific Page object name. If this is not set, the next Page in the list will be called.
         """
@@ -73,16 +73,16 @@ class BaseMenu:
         await self.send_message(self.pages[self.page])
 
     async def add_page(self, callback: Optional[Callable] = None, buttons: List = None, **kwargs) -> Page:
+        """Adds a new page object to the Menu.
+
+        :param Optional[Callable] callback: A reference to a function that is called when ``menu.next()`` is called.
+        :param List buttons: A list of reactions that will be displayed on the Page.
+        :param kwargs: Discord Embed keywords for defining your Page display.
+        """
         _page = Page(callback, buttons, **kwargs)
         self.pages.append(_page)
 
         return _page
-
-    async def cancel(self):
-        """Sends a cancelled message."""
-        embed = Embed(title=self.pages[self.page].title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
-        await self.send_message(embed)
-        await self.close()  # explicitly close the menu so reactive pages require less code
 
     async def send_message(self, embed: Embed) -> Message:
         """Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
@@ -97,6 +97,21 @@ class BaseMenu:
         """Closes the active Menu instance."""
         self.active = False
 
+    # Utility Methods
+    def get_page(self, n: int = 0) -> Page:
+        """Utility method to make accessing the current page cleaner.
+
+        :param int n: Optional. Amount to add to the current page index.
+        """
+        return self.pages[self.page + n]
+
+    # Internal Methods
+    async def _cancel(self):
+        """Sends a cancelled message."""
+        embed = Embed(title=self.pages[self.page].title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
+        await self.send_message(embed)
+        await self.close()  # explicitly close the menu so reactive pages require less code
+
     async def _cleanup_input(self):
         """Deletes a Discord client user message."""
         if isinstance(self.ctx.channel, GuildChannel):
@@ -108,9 +123,9 @@ class BaseMenu:
         await self.send_message(embed)
 
     async def _is_cancelled(self) -> bool:
-        """Checks input for a cancellation string. If there is a match, it calls menu.cancel() and then returns True."""
+        """Checks input for a cancellation string. If there is a match, it calls the ``menu.cancel()`` method and returns True."""
         if self.input.content in self.generic_quit:
-            await self.cancel()
+            await self._cancel()
             return True
         return False
 
@@ -126,9 +141,11 @@ class BaseMenu:
             return message
 
     def _validate_pages(self):
+        """Checks that the Menu contains at least one Page."""
         if len(self.pages) <= 1:
             raise NotEnoughPagesError('The pages list must have more than one page.')
 
+    # Class Methods
     @classmethod
     def override_generic_values(cls, value_type: str, replacement: Tuple[str]):
         """Allows generic input matching values built into the Menu class to be overridden.

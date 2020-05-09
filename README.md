@@ -1,5 +1,7 @@
 [![PyPI version](https://badge.fury.io/py/dpymenus.svg)](https://badge.fury.io/py/dpymenus)
 
+![Demo of Buttons](demo/buttons_example.gif)
+
 # Discord Menus
 
 `dpymenus` is an add-on for the `discord.py` library that lets you quickly compose stateful menus and polls 
@@ -152,3 +154,5 @@ a draw.
 Example code has been moved into the *examples* directory above.
 Can't find something you were looking for? Open an issue and I'll
 try to add a relevant example!
+
+![Demo of Polls](demo/poll_example.gif)

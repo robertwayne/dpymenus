@@ -32,8 +32,8 @@ class Poll(ButtonMenu):
     async def open(self):
         """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        self._validate_pages()
-        self._set_data()
+        await self._validate_pages()
+        await self._set_data()
 
         self.output = await self.ctx.send(embed=self.page)
         await self._add_buttons()
@@ -133,28 +133,28 @@ class Poll(ButtonMenu):
 
         return repeated
 
-    def _set_data(self):
+    async def _set_data(self):
         """Internally sets data field keys and values based on the current Page button properties."""
-        self._validate_buttons()
+        await self._validate_buttons()
 
         for button in self.page.buttons:
             self.data.update({button: set()})
 
-    def _validate_buttons(self):
+    async def _validate_buttons(self):
         """Checks that Poll objects always have more than two buttons."""
-        if len(self.pages[0].buttons) < 2:
-            raise ButtonsError('A Poll primary page must have at least two buttons.')
+        if len(self.page.buttons) < 2:
+            raise ButtonsError(f'A Poll primary page must have at least two buttons. Expected at least 2, found {len(self.page.buttons)}.')
 
-    def _validate_pages(self):
+    async def _validate_pages(self):
         """Checks that the Menu contains at least one Page."""
         if len(self.pages) != 2:
-            raise PagesError('A Poll can only have two pages.')
+            raise PagesError(f'A Poll can only have two pages. Expected 2, found {len(self.pages)}.')
 
         if self.page.on_cancel or self.page.on_fail or self.page.on_timeout:
             raise CallbackError('A Poll can not have `on_cancel`, `on_fail`, or `on_timeout` callbacks.')
 
         if len(self.page.buttons) > 5:
-            warn('Adding more than 5 buttons to a message at once may result in throttling.')
+            warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
 
     @staticmethod
     async def get_voters(users: Set[User]) -> Set[User]:

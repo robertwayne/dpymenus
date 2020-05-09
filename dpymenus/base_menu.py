@@ -53,7 +53,7 @@ class BaseMenu:
     async def open(self):
         """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        self._validate_pages()
+        pass
 
     async def next(self, name: str = None):
         """Sets a specific Page object to go to and calls the ``menu.send_message()`` method to display the embed.
@@ -154,10 +154,10 @@ class BaseMenu:
         else:
             return message
 
-    def _validate_pages(self):
+    async def _validate_pages(self):
         """Checks that the Menu contains at least one Page."""
         if len(self.pages) <= 1:
-            raise PagesError('The pages list must have more than one page.')
+            raise PagesError(f'There must be more than one page in a menu. Expected at least 2, found {len(self.pages)}.')
 
     # Class Methods
     @classmethod

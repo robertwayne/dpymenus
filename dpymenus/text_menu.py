@@ -28,7 +28,7 @@ class TextMenu(BaseMenu):
     async def open(self):
         """The entry point to a new TextMenu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        await super().open()
+        await super()._validate_pages()
 
         self.output = await self.ctx.send(embed=self.page)
 

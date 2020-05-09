@@ -1,12 +1,13 @@
 [![PyPI version](https://badge.fury.io/py/dpymenus.svg)](https://badge.fury.io/py/dpymenus)
 
-![Demo of Buttons](demo/buttons_example.gif)
-
 # Discord Menus
 
 `dpymenus` is an add-on for the `discord.py` library that lets you quickly compose stateful menus and polls 
 which react to chat input (text, reaction buttons).
 
+<img align="right" src="demo/buttons_example.gif">
+
+### Table of Contents
 + [Installation](#installation)
 + [Usage](#usage)
 + [Button Menus](#button-menus)

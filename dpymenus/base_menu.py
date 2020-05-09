@@ -119,7 +119,7 @@ class BaseMenu:
 
     async def _timeout(self):
         """Sends a timeout message."""
-        embed = Embed(title=self.pages[self.page].title, description='You timed out at menu selection -- no progress was saved.', color=Colour.red())
+        self.active = False
         await self.send_message(embed)
 
     async def _is_cancelled(self) -> bool:

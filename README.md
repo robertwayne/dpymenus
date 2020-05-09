@@ -2,16 +2,17 @@
 
 # Discord Menus
 
-`dpymenus` is an add-on for the `discord.py` library that lets you quickly build stateful
-menus that respond to chat input within the Discord client.
+`dpymenus` is an add-on for the `discord.py` library that lets you quickly compose stateful menus and polls 
+which react to chat input (text, reaction buttons).
 
 + [Installation](#installation)
 + [Usage](#usage)
 + [Button Menus](#button-menus)
 + [Polls](#polls)
-+ [State Fields](#state-fields)
++ [Data Field](#data-field)
 + [Generic Input Matching](#generic-input-matching)
 + [Reaction Buttons](#reaction-buttons)
++ [Event Callbacks](#event-callbacks)
 + [Poll Utilities](#poll-utilities)
 + [Examples](#examples)
 
@@ -25,10 +26,10 @@ Create a menu object *(it must take the Command Context as its first param)*:
     menu1 = TextMenu(ctx)
    
 Add some pages to it *(a Page subclasses an Embed, so you construct it the same way with some additional parameters:
-the `callback` )*:
+the `on_next` )*:
     
     await menu.add_page(title='Test Page', description=f'This is just a test!', color=discord.Color.green()
-                        callback=some_func_here)
+                        on_next=some_func_here)
     
 Lastly, call the `open()` method on it:
 
@@ -36,9 +37,9 @@ Lastly, call the `open()` method on it:
     
 ...and you're *(mostly)* finished! A menu loop will spawn and handle user input when the command is 
 called until it times out or is cancelled by the user. Note that you should have at least one Page
-without a callback. This denotes to the handler that your menu will be closed when you reach this page.
+without a on_next. This denotes to the handler that your menu will be closed when you reach this page.
 
-Your callback method should call the `menu.next()` method whenever it has
+Your on_next method should call the `menu.next()` method whenever it has
 successfully handled input. `next()` also takes 1 optional argument: 
 
 `name`: jumps to a specific page by its function reference name. Useful for non-linear menus.
@@ -52,7 +53,7 @@ You can also construct a menu which uses reactions as 'buttons' to handle user i
 Similiar to a `TextMenu`, you need to add some pages. This time, we also need to pass in a list of buttons as such:
 
         await menu.add_page(title='Test Page', description=f'This is just a test!', color=discord.Color.green()
-                        callback=some_func_here, buttons=['\U00002600', '\U0001F315'])
+                        on_next=some_func_here, buttons=['\U00002600', '\U0001F315'])
                         
 The buttons here are unicode, but you can use any Discord Emoji object. See the [Reaction Buttons](#reaction-buttons) section for
 more details.
@@ -66,22 +67,23 @@ functions internally. You can start the same as other menus:
     
 Note the timeout argument. This is the time, in seconds, before the poll ends. It defaults to 5 minutes.
     
+    
 It is important that you only add two pages here.
     
-### State Fields
-In addition to standard menu setup, optional `state_fields` can be defined for variables or objects you
-want to pass around in page functions. Note that `state_fields` are managed internally by Polls, so you
+### Data Field
+In addition to standard menu setup, an optional parameter called `data` can be defined for variables or objects you
+want to pass around in menu functions. Note that `data` is managed internally by Polls, so you
 should only be passing this in for a `TextMenu` or `ButtonMenu`.
 
 State fields should be defined as a dictionary:
 
-    my_states = {'username': None, 'favorite_color': None}
+    my_data = {'username': None, 'favorite_color': None}
 
 ...and then passed into your menu on initialization:
 
-    menu = Menu(ctx, state_fields=my_states)
+    menu = Menu(ctx, data=my_data)
 
-You can then access these like any objects attributes *(ie. `x = menu.state_fields['value']`)*.
+You can then access these like any objects attributes *(ie. `x = menu.data['value']`)*.
 
 *As it is a dictionary, you can set more than strings. For instance,
 transferring objects across functions by setting the value to an object. Ideally, the menu 
@@ -115,6 +117,25 @@ btn3 = '<:example2:35434643573451>'  # guild emoji
 btn4 = '\N{SNAKE}'  # unicode emoji as text
 btn5 = '\U00002714'  # unicode emoji codepoint :heavy_check_mark:
 ```
+
+### Event Callbacks
+By default, the base Menu object implements methods for all events except `on_next`, which should
+be handled by the user. However, all of these events can be overridden by passing in a method reference
+when you instantiate your menu.
+
+**Events**
+
+`on_next` -- Called when the menu instance calls `.next()`. 
+
+`on_fail` -- Called when user input on a page is invalid. Only usable in TextMenus.
+
+`on_timeout` -- Called when a menu times out. You can set the `timeout` on menu instantiation.
+ Only usable in TextMenus or ButtonMenus.
+
+`on_cancel` -- Called when a menu is cancelled from user input. Only usable in TextMenus or ButtonMenus.
+
+See the `event_override_example.py` and `user_tips_example.py` files in the examples directory 
+on how to use your own callbacks.
 
 ### Poll Utilities
 Polls are a fairly complex Menu type, which often require a lot of boiler-plate to be written. dpymenus provides

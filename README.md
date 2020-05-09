@@ -134,8 +134,6 @@ when you instantiate your menu.
 
 `on_cancel` -- Called when a menu is cancelled from user input. Only usable in TextMenus or ButtonMenus.
 
-See the `event_override_example.py` and `user_tips_example.py` files in the examples directory 
-on how to use your own callbacks.
 
 ### Poll Utilities
 Polls are a fairly complex Menu type, which often require a lot of boiler-plate to be written. dpymenus provides

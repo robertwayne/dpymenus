@@ -12,27 +12,32 @@ class TextMenu(BaseMenu):
     It contains Page objects which represent new Menu states that call methods for validation and handling.
 
     Attributes:
-        ctx: A reference to the command Context.
+        ctx: A reference to the command context.
         timeout: How long (in seconds) to wait before timing out.
-        state_fields: A dictionary containing dynamic state state_fields you wish to pass around the menu.
+        data: A dictionary containing variables to pass around menu functions.
     """
 
-    def __init__(self, ctx: Context, timeout: int = 300, state_fields: Optional[Dict] = None):
+    def __init__(self, ctx: Context, timeout: int = 300, data: Optional[Dict] = None):
         super().__init__(ctx, timeout)
-        self.state_fields = state_fields if state_fields else {}
+        self.data = data if data else {}
 
     def __repr__(self):
         return f'<Menu pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \
-               f'active={self.active} page={self.page}, state_fields={self.state_fields}>'
+               f'active={self.active} page={self.page_index}, data={self.data}>'
 
     async def open(self):
         """The entry point to a new TextMenu instance. This will start a loop until a Page object with None as its function is set.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         await super().open()
 
-        self.output = await self.ctx.send(embed=self.pages[self.page])
+        self.output = await self.ctx.send(embed=self.page)
 
+        _iteration = 0
         while self.active:
+            if _iteration > 0 and self.page.on_fail:
+                return await self.page.on_fail()
+
+            _iteration += 1
 
             self.input = await self._get_input()
             await self._cleanup_input()
@@ -40,4 +45,4 @@ class TextMenu(BaseMenu):
             if await self._is_cancelled():
                 return
 
-            await self.pages[self.page].callback(self)
+            await self.page.on_next(self)

@@ -20,12 +20,13 @@ class BaseMenu:
         ctx: A reference to the command Context.
         timeout: How long (in seconds) to wait before timing out.
         pages: A list containing references to Page objects.
-        page: Index value of the current page.
+        page_index: Index value of the current page.
+        page: Current Page object.
         delay: A float representing the delay between deleting message objects.
         active: Whether or not the menu is active or not.
         input: A reference to the captured user input message object.
         output: A reference to the menus output message.
-        state_fields: A dictionary containing dynamic state information.
+        data: A dictionary containing dynamic state information.
     """
 
     # Generic values used for matching against user input.
@@ -37,16 +38,17 @@ class BaseMenu:
         self.ctx = ctx
         self.timeout = timeout
         self.pages: List[Page] = []
-        self.page: int = 0
+        self.page_index: int = 0
+        self.page: Optional[Page] = None
         self.delay: float = 0.250
         self.active: bool = True
         self.input: Optional[Message] = None
         self.output: Optional[Message] = None
-        self.state_fields = None
+        self.data = None
 
     def __repr__(self):
         return f'<Menu pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \
-               f'active={self.active} page={self.page}>'
+               f'active={self.active} page={self.page_index}>'
 
     async def open(self):
         """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.
@@ -59,30 +61,42 @@ class BaseMenu:
         :param str name: A specific Page object name. If this is not set, the next Page in the list will be called.
         """
         if name is None:
-            self.page += 1
+            self.page_index += 1
+            self.page = self.page
 
         else:
             for page in self.pages:
-                if page.callback.__name__ == name:
-                    self.page = self.pages.index(page)
+                if page.on_next.__name__ == name:
+                    self.page_index = self.pages.index(page)
                     break
 
-        if self.pages[self.page].callback is None:
-            await self.close()
+        #  if the next page has no on_next callback, we end the menu loop
+        if self.page.on_next is None:
+            self.active = False
 
-        await self.send_message(self.pages[self.page])
+        await self.send_message(self.page)
 
-    async def add_page(self, callback: Optional[Callable] = None, buttons: List = None, **kwargs) -> Page:
+    async def add_page(self, on_next: Optional[Callable] = None, buttons: List = None, **kwargs) -> Page:
         """Adds a new page object to the Menu.
 
-        :param Optional[Callable] callback: A reference to a function that is called when ``menu.next()`` is called.
+        :param Optional[Callable] on_next: A reference to a function that is called when ``menu.next()`` is called.
         :param List buttons: A list of reactions that will be displayed on the Page.
         :param kwargs: Discord Embed keywords for defining your Page display.
         """
-        _page = Page(callback, buttons, **kwargs)
-        self.pages.append(_page)
+        page = Page(on_next, buttons, **kwargs)
+        self.pages.append(page)
 
-        return _page
+        if self.pages:
+            self.page = self.pages[0]
+
+        return page
+
+    async def add_pages(self, pages: List[Page]):
+        """Helper method to add a list of pre-instantiated pages to a menu."""
+        for page in pages:
+            self.pages.append(page)
+
+        self.page = self.pages[0]
 
     async def send_message(self, embed: Embed) -> Message:
         """Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
@@ -93,23 +107,14 @@ class BaseMenu:
             return await self.output.edit(embed=embed)
         return await self.ctx.send(embed=embed)
 
-    async def close(self):
-        """Closes the active Menu instance."""
-        self.active = False
-
-    async def cancel(self):
+    async def cancel(self) -> None:
         """Sends a cancelled message."""
-        embed = Embed(title=self.pages[self.page].title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
+        if self.page.on_cancel:
+            return await self.page.on_cancel()
+
+        embed = Embed(title=self.page.title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
         await self.send_message(embed)
-        await self.close()  # explicitly close the menu so reactive pages require less code
-
-    # Utility Methods
-    def get_page(self, n: int = 0) -> Page:
-        """Utility method to make accessing the current page cleaner.
-
-        :param int n: Optional. Amount to add to the current page index.
-        """
-        return self.pages[self.page + n]
+        self.active = False
 
     # Internal Methods
     async def _cleanup_input(self):
@@ -120,6 +125,11 @@ class BaseMenu:
     async def _timeout(self):
         """Sends a timeout message."""
         self.active = False
+
+        if self.page.on_timeout:
+            return await self.page.on_timeout()
+
+        embed = Embed(title=self.page.title, description='You timed out at menu selection -- no progress was saved.', color=Colour.red())
         await self.send_message(embed)
 
     async def _is_cancelled(self) -> bool:
@@ -135,7 +145,11 @@ class BaseMenu:
             message = await self.ctx.bot.wait_for('message', timeout=self.timeout, check=lambda m: m.author == self.ctx.author)
 
         except asyncio.TimeoutError:
-            await self._timeout()
+            if self.page.on_timeout:
+                await self.page.on_timeout()
+
+            else:
+                await self._timeout()
 
         else:
             return message

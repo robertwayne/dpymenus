@@ -9,3 +9,7 @@ class PagesError(MenuError):
 
 class ButtonsError(MenuError):
     pass
+
+
+class CallbackError(MenuError):
+    pass

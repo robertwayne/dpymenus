@@ -1,7 +1,7 @@
 import asyncio
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple, Union
 
-from discord import Embed, Message
+from discord import Embed, Emoji, Message, PartialEmoji
 from discord.abc import GuildChannel
 from discord.colour import Colour
 from discord.ext.commands import Context
@@ -62,12 +62,13 @@ class BaseMenu:
         """
         if name is None:
             self.page_index += 1
-            self.page = self.page
+            self.page = self.pages[self.page_index]
 
         else:
             for page in self.pages:
                 if page.on_next.__name__ == name:
                     self.page_index = self.pages.index(page)
+                    self.page = self.pages[self.page_index]
                     break
 
         #  if the next page has no on_next callback, we end the menu loop
@@ -76,14 +77,14 @@ class BaseMenu:
 
         await self.send_message(self.page)
 
-    async def add_page(self, on_next: Optional[Callable] = None, buttons: List = None, **kwargs) -> Page:
+    async def add_page(self, on_next: Optional[Callable] = None, buttons: Optional[List[Union[str, Emoji, PartialEmoji]]] = None, **kwargs) -> Page:
         """Adds a new page object to the Menu.
 
         :param Optional[Callable] on_next: A reference to a function that is called when ``menu.next()`` is called.
         :param List buttons: A list of reactions that will be displayed on the Page.
         :param kwargs: Discord Embed keywords for defining your Page display.
         """
-        page = Page(on_next, buttons, **kwargs)
+        page = Page(on_next=on_next, buttons=buttons, **kwargs)
         self.pages.append(page)
 
         if self.pages:
@@ -107,7 +108,7 @@ class BaseMenu:
             return await self.output.edit(embed=embed)
         return await self.ctx.send(embed=embed)
 
-    async def cancel(self) -> None:
+    async def cancel(self):
         """Sends a cancelled message."""
         if self.page.on_cancel:
             return await self.page.on_cancel()

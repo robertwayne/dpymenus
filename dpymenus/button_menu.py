@@ -1,7 +1,7 @@
 import asyncio
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
-from discord import Emoji, Message, PartialEmoji
+from discord import Emoji, PartialEmoji
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -37,7 +37,7 @@ class ButtonMenu(BaseMenu):
         self.output = await self.ctx.send(embed=self.pages[self.page])
 
         while self.active:
-            await self.add_buttons()
+            await self._add_buttons()
 
             self.input = await self._get_reaction()
             await self._cleanup_reactions()
@@ -49,12 +49,14 @@ class ButtonMenu(BaseMenu):
         await self._cleanup_reactions()
         self.active = False
 
-    async def add_buttons(self, ) -> None:
+    # Internal Methods
+    async def _add_buttons(self, ) -> None:
+        """Adds reactions to the message object based on what was passed into the Page's buttons."""
         for button in self.pages[self.page].buttons:
             await self.output.add_reaction(button)
 
-    async def _get_reaction(self) -> Message:
-        """Collects a user reaction and places it into the input attribute."""
+    async def _get_reaction(self) -> Union[Emoji, str]:
+        """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
         try:
             reaction, user = await self.ctx.bot.wait_for('reaction_add', timeout=self.timeout, check=lambda _, u: u == self.ctx.author)
         except asyncio.TimeoutError:
@@ -66,10 +68,12 @@ class ButtonMenu(BaseMenu):
             return reaction.emoji
 
     async def _cleanup_reactions(self) -> None:
+        """Removes all reactions from the output message object."""
         if isinstance(self.ctx.channel, GuildChannel):
             await self.output.clear_reactions()
 
     def _validate_buttons(self):
+        """Ensures that a button menu was passed the appropriate amount of buttons."""
         for page in self.pages:
             if page.callback is None:
                 return

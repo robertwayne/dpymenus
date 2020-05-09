@@ -47,7 +47,7 @@ class ButtonMenu(BaseMenu):
             await self.page.on_next(self)
 
     # Internal Methods
-    async def _add_buttons(self, ) -> None:
+    async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
         for button in self.page.buttons:
             await self.output.add_reaction(button)
@@ -64,22 +64,30 @@ class ButtonMenu(BaseMenu):
                 return reaction.emoji.name
             return reaction.emoji
 
-    async def _cleanup_reactions(self) -> None:
+    async def _cleanup_reactions(self):
         """Removes all reactions from the output message object."""
         if isinstance(self.ctx.channel, GuildChannel):
             await self.output.clear_reactions()
 
-    def _validate_buttons(self):
+    async def _validate_buttons(self):
         """Ensures that a button menu was passed the appropriate amount of buttons."""
+        _cb_count = 0
         for page in self.pages:
-            if page.on_next is None:
-                return
+            if page.buttons is None:
+                break
+
+            if page.on_next:
+                _cb_count += 1
 
             if len(page.buttons) <= 1:
-                raise ButtonsError('Your primary pages must have at least one button.')
+                raise ButtonsError('Any page with an `on_next` callback must have at least one button.')
 
-            if self.page.on_fail:
-                raise CallbackError('A ButtonMenu can not have an `on_fail` callback.')
+            if len(page.buttons) > 5:
+                warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
 
-            if len(self.page.buttons) > 5:
-                warn('Adding more than 5 buttons to a message at once may result in throttling.')
+        if self.page.on_fail:
+            raise CallbackError('A ButtonMenu can not have an `on_fail` callback.')
+
+        if _cb_count < len(self.pages) - 1:
+            raise CallbackError(f'ButtonMenu missing `on_next` callbacks. Expected {len(self.pages) - 1}, found {_cb_count}.')
+

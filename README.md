@@ -156,4 +156,4 @@ Example code has been moved into the *examples* directory above.
 Can't find something you were looking for? Open an issue and I'll
 try to add a relevant example!
 
-![Demo of Polls](demo/poll_example.gif)
+<img align="left" width="400" src="demo/poll_example.gif"> <img align="right" width="400" src="demo/text_example.gif">

@@ -7,63 +7,83 @@ menus that respond to chat input within the Discord client.
 
 + [Installation](#installation)
 + [Usage](#usage)
++ [Button Menus](#button-menus)
++ [Polls](#polls)
 + [State Fields](#state-fields)
 + [Generic Input Matching](#generic-input-matching)
 + [Reaction Buttons](#reaction-buttons)
++ [Poll Utilities](#poll-utilities)
 + [Examples](#examples)
 
 ### Installation
 `pip install dpymenus`
 
 ### Usage
-First, you must build a list of Page objects. Pages extend discord.py
-Embed objects, so you construct it the exact same way, but you add a `func` paramater.
+Create a menu object *(it must take the Command Context as its first param)*:
 
-As an example:
-
-    new_page1 = Page(title='First Page', description='This is a test.', func=<FUNCTION_REFERENCE>)
-    new_page2 = Page(title='Second Page', description='This is also a test.')
-
-The `func` should point to a function which will be called when the page is opened. This is
-where you do validation and handle user input.
+    from dpymenus import TextMenu
+    menu1 = TextMenu(ctx)
+   
+Add some pages to it *(a Page subclasses an Embed, so you construct it the same way with some additional parameters:
+the `callback` )*:
     
-Then you can create your menu object *(it must take the command Context as its first param)*:
-
-    menu = Menu(ctx, pages=[new_page, new_page2])
+    await menu.add_page(title='Test Page', description=f'This is just a test!', color=discord.Color.green()
+                        callback=some_func_here)
     
-Lastly, call the `run()` method on it:
+Lastly, call the `open()` method on it:
 
-    await menu.run()
+    await menu.open()
     
 ...and you're *(mostly)* finished! A menu loop will spawn and handle user input when the command is 
-called until it times out or is cancelled by the user.
+called until it times out or is cancelled by the user. Note that you should have at least one Page
+without a callback. This denotes to the library that your menu will be closed when you reach this page.
 
-Your function references inside the pages should include a 'final' page where the
-function is `None`. When the final page in your pages list is displayed, the menu will call a
-close method and end the loop.
-
-Your function reference should call the `menu.next()` method whenever it has
+Your callback method should call the `menu.next()` method whenever it has
 successfully handled input. `next()` also takes 1 optional argument: 
 
 `name`: jumps to a specific page by its function reference name. Useful for non-linear menus.
 
-You denote a final page, or 'ending' to the menu, by not supplying an empty `func` parameter *(or passing `None`)*.
+### Button Menus
+You can also construct a menu which uses reactions as 'buttons' to handle user input.
+
+    from dpymenus import ButtonMenu
+    menu2 = ButtonMenu(ctx)
+    
+Similiar to a `TextMenu`, you need to add some pages. This time, we also need to pass in a list of buttons as such:
+
+        await menu.add_page(title='Test Page', description=f'This is just a test!', color=discord.Color.green()
+                        callback=some_func_here, buttons=['\U00002600', '\U0001F315'])
+                        
+The buttons here are unicode, but you can use any Discord Emoji object. See the [Reaction Buttons](#reaction-buttons) section for
+more details.
+
+### Polls
+The final type of menu you can construct is a Poll. Polls are slightly unique because they handle a lot of
+functions internally. You can start the same as other menus:
+
+    from dpymenus import Poll
+    menu3 = Poll(ctx, timeout=60)
+    
+Note the timeout parameter. This is the time, in seconds, before the poll ends. It defaults to 5 minutes.
+    
+It is important that you only add two pages here.
     
 ### State Fields
 In addition to standard menu setup, optional `state_fields` can be defined for variables or objects you
-want to pass around in page functions.
+want to pass around in page functions. Note that `state_fields` are managed internally by Polls, so you
+should only be passing this in for a `TextMenu` or `ButtonMenu`.
 
-State fields should be defined in a dictionary:
+State fields should be defined as a dictionary:
 
-    state_fields = {'username': None, 'favorite_color': None}
+    my_states = {'username': None, 'favorite_color': None}
 
 ...and then passed into your menu on initialization:
 
-    menu = Menu(ctx, pages, state_fields)
+    menu = Menu(ctx, state_fields=my_states)
 
 You can then access these like any objects attributes *(ie. `x = menu.state_fields['value']`)*.
 
-*As it is simply a dictionary, you can set more than simple input strings. For instance,
+*As it is a dictionary, you can set more than strings. For instance,
 transferring objects across functions by setting the value to an object. Ideally, the menu 
 object should contain all your state until it is ready to be processed. This also simplifies
 your code by limiting the amount of parameters functions need to accept when handling
@@ -87,10 +107,6 @@ generic_quit = ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c')
 ```
 
 ### Reaction Buttons
-If you are interested in using emoji-based reaction buttons on your
-menu instead of text, they are easy to plug in. Each Page object can
-be passed a list of emojis with the `buttons` parameter.
-
 Here are some examples of how to acquire emojis in discord.py:
 ```python
 btn1 = client.get_emoji(3487239849812123)  # guild emoji
@@ -100,94 +116,20 @@ btn4 = '\N{SNAKE}'  # unicode emoji as text
 btn5 = '\U00002714'  # unicode emoji codepoint :heavy_check_mark:
 ```
 
+### Poll Utilities
+Polls are a fairly complex Menu type, which often require a lot of boiler-plate to be written. dpymenus provides
+a handful of quick utility methods on your Poll object that should make using them simpler and faster for basic
+use case scenarios.
+
+`.results()` -- Returns a dictionary where the keys are the poll choices, and the values are the final tally.
+
+`.add_results_fields()` -- Adds all the result fields to your closing page.
+
+`.generate_results_page()` -- Adds all the result fields to your closing page as well as calculates the winner or 
+a draw.
+
+
 ### Examples
-A simple, linear cog that demonstrates a text-based menu.
-```python
-from discord.ext import commands
-from discord.colour import Colour
-
-from dpymenus.text_menu import Menu
-from dpymenus.page import Page
-
-
-class Ping(commands.Cog):
-    def __init__(self, client: commands.Bot):
-        self.client = client
-
-    @commands.command()
-    async def ping(self, ctx: commands.Context) -> None:
-        confirm_page = Page(title=f'Ping Menu', color=Colour.red(), func=self.confirm,
-                            description=f'Are you absolutely sure you want to send a ping command?\n\n'
-                                          'Type `yes` if you are sure.\nType `quit` to cancel this menu.')
-
-        complete_page = Page(title='Ping Menu', color=Colour.green(),
-                            description='Pong!')
-
-        menu = Menu(ctx, pages=[confirm_page, complete_page])
-        await menu.run()
-
-    @staticmethod
-    async def confirm(m: Menu) -> None:
-        if m.input.content in m.generic_confirm:
-            await m.next()
-
-
-def setup(client: commands.Bot):
-    client.add_cog(Ping(client))
-```
-A simple, non-linear cog that demonstrates a reactive button-based menu.
-```python
-import discord.utils
-from discord.colour import Colour
-from discord.ext import commands
-
-from dpymenus.text_menu import Menu
-from dpymenus.page import Page
-
-
-class ButtonsCog(commands.Cog):
-    def __init__(self, client: commands.Bot):
-        self.client = client
-
-@commands.command()
-async def buttons(self, ctx: commands.Context) -> None:
-    # if you copy this example, you will need to change these custom guild emoji lines
-    btn1 = self.client.get_emoji(552018703357837312)  # guild emoji :mana:
-    btn2 = discord.utils.get(ctx.guild.emojis, name='health')  # guild emoji
-    btn3 = '<:low_gold:548414699243307028>'  # guild emoji
-    btn4 = '\N{SNAKE}'  # unicode emoji as text
-    btn5 = '\U00002714'  # unicode emoji codepoint :heavy_check_mark:
-
-    confirm_page = Page(title=f'Ping Menu', color=Colour.red(), func=self.confirm, buttons=[btn1, btn2],
-                        description=f'The mana emoji moves on, the health emoji cancels the menu.')
-
-    second_confirm_page = Page(title='So many buttons!', color=Colour.orange(), func=self.confirm_again, buttons=[btn3, btn4, btn5])
-
-    complete_page = Page(title='Ping Menu', color=Colour.green(), description='Pong!')
-
-    menu = Menu(ctx, pages=[confirm_page, second_confirm_page, complete_page])
-    await menu.run()
-
-@staticmethod
-async def confirm(m: Menu) -> None:
-    if m.input == 'mana':
-        await m.next()
-
-    elif m.input == 'health':
-        await m.cancel()
-
-@staticmethod
-async def confirm_again(m: Menu) -> None:
-    if m.input == 'low_gold':
-        await m.next()
-
-    elif m.input == '\N{SNAKE}':
-        await m.next('confirm')  # this will take us back to the previous page
-
-    elif m.input == '\U00002714':
-        await m.cancel()
-
-
-def setup(client: commands.Bot):
-    client.add_cog(ButtonsCog(client))
-```
+Example code has been moved into the *examples* directory above.
+Can't find something you were looking for? Open an issue and I'll
+try to add a relevant example!

@@ -5,6 +5,9 @@
 `dpymenus` is an add-on for the `discord.py` library that lets you quickly compose stateful menus and polls 
 which react to chat input (text, reaction buttons).
 
+<img align="right" src="demo/buttons_example.gif">
+
+### Table of Contents
 + [Installation](#installation)
 + [Usage](#usage)
 + [Button Menus](#button-menus)
@@ -152,3 +155,5 @@ a draw.
 Example code has been moved into the *examples* directory above.
 Can't find something you were looking for? Open an issue and I'll
 try to add a relevant example!
+
+<img align="left" width="400" src="demo/poll_example.gif"> <img align="right" width="400" src="demo/text_example.gif">

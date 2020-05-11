@@ -3,9 +3,9 @@ from discord.ext import commands
 
 from dpymenus import ButtonMenu
 
-forward_arrow = '\U000027A1'
-back_arrow = '\U00002B05'
-x_mark = '\U0000274C'
+forward = '⏩'
+reverse = '⏪'
+stop = '⏹️'
 
 
 class MyButtonMenu(commands.Cog):
@@ -17,10 +17,10 @@ class MyButtonMenu(commands.Cog):
         menu = ButtonMenu(ctx)
 
         await menu.add_page(title='Button Menu', description='Follow the arrows!', color=Colour.red(),
-                            on_next=self.first, buttons=[forward_arrow, x_mark])
+                            on_next=self.first, buttons=[forward, stop])
 
         await menu.add_page(title='Button Menu', description='So many buttons! What do they do?', color=Colour.orange(),
-                            on_next=self.second, buttons=[forward_arrow, back_arrow, x_mark])
+                            on_next=self.second, buttons=[reverse, forward, stop])
 
         await menu.add_page(title='Button Menu', description='We reached the end!', color=Colour.green())
 
@@ -28,21 +28,21 @@ class MyButtonMenu(commands.Cog):
 
     @staticmethod
     async def first(m: ButtonMenu):
-        if m.input == forward_arrow:  # we move forward
+        if m.input == forward:
             await m.next()
 
-        elif m.input == x_mark:
+        elif m.input == stop:
             await m.cancel()
 
     @staticmethod
     async def second(m: ButtonMenu):
-        if m.input == forward_arrow:
+        if m.input == reverse:
+            await m.next('first')  # we can pass in the name of a callback function (on_next) to go to that page
+
+        elif m.input == forward:
             await m.next()
 
-        elif m.input == back_arrow:
-            await m.next('first')  # this will take us back to the previous page
-
-        elif m.input == x_mark:
+        elif m.input == stop:
             await m.cancel()
 
 

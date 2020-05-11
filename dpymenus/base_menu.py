@@ -18,11 +18,11 @@ class BaseMenu:
 
     Attributes:
         ctx: A reference to the command Context.
+        delay: A float representing the delay between deleting message objects.
         timeout: How long (in seconds) to wait before timing out.
         pages: A list containing references to Page objects.
         page_index: Index value of the current page.
         page: Current Page object.
-        delay: A float representing the delay between deleting message objects.
         active: Whether or not the menu is active or not.
         input: A reference to the captured user input message object.
         output: A reference to the menus output message.
@@ -34,13 +34,13 @@ class BaseMenu:
     generic_deny = ('n', 'no', 'deny', 'negative', 'back', 'return')
     generic_quit = ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c')
 
-    def __init__(self, ctx: Context, timeout: int = 300):
+    def __init__(self, ctx: Context, delay: float = 0.250, timeout: int = 300):
         self.ctx = ctx
+        self.delay = delay
         self.timeout = timeout
         self.pages: List[Page] = []
         self.page_index: int = 0
         self.page: Optional[Page] = None
-        self.delay: float = 0.250
         self.active: bool = True
         self.input: Optional[Message] = None
         self.output: Optional[Message] = None

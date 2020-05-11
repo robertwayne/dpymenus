@@ -65,6 +65,7 @@ class BaseMenu:
             self.page = self.pages[self.page_index]
 
         else:
+            # get a page index from its on_next callback function name and assign it
             for page in self.pages:
                 if page.on_next.__name__ == name:
                     self.page_index = self.pages.index(page)

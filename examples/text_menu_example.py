@@ -2,6 +2,7 @@ from discord.colour import Colour
 from discord.ext import commands
 
 from dpymenus import TextMenu
+from dpymenus.constants import DENY
 
 
 class Ping(commands.Cog):
@@ -9,7 +10,7 @@ class Ping(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def ping(self, ctx: commands.Context):
+    async def ping(self, ctx: commands.Context) -> None:
         menu = TextMenu(ctx)
 
         await menu.add_page(title='Ping Menu', color=Colour.red(), on_next=self.confirm,
@@ -21,8 +22,8 @@ class Ping(commands.Cog):
         await menu.open()
 
     @staticmethod
-    async def confirm(m: TextMenu):
-        if m.input.content in m.generic_confirm:  # we check if the user types in a variation of 'yes'
+    async def confirm(m: TextMenu) -> None:
+        if m.input.content in DENY:  # we check if the user types in a variation of 'yes'
             await m.next()  # we go to the next page, which happens to be our finaly page (because it has no `on_next` callback)
 
 

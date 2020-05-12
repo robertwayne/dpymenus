@@ -41,8 +41,8 @@ class Poll(ButtonMenu):
         pending = set()
         while self.active:
             try:
-                done, pending = await asyncio.wait([asyncio.create_task(self._get_vote_add()), asyncio.create_task(self._get_vote_remove()),
-                                                    asyncio.create_task(self._poll_timer())], return_when=asyncio.FIRST_COMPLETED)
+                _, pending = await asyncio.wait([asyncio.create_task(self._get_vote_add()), asyncio.create_task(self._get_vote_remove()),
+                                                 asyncio.create_task(self._poll_timer())], return_when=asyncio.FIRST_COMPLETED)
             finally:
                 for task in pending:
                     task.cancel()

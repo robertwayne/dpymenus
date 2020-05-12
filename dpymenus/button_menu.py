@@ -50,11 +50,7 @@ class ButtonMenu(BaseMenu):
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
         for button in self.page.buttons:
-            if button.is_usable():
-                await self.output.add_reaction(button)
-
-            else:
-                raise ButtonsError(f'The bot client was passed an unusable {type(button)}: {button}.')
+            await self.output.add_reaction(button)
 
     async def _get_reaction(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""

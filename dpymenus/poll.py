@@ -52,21 +52,22 @@ class Poll(ButtonMenu):
     # Utility Methods
     async def results(self) -> Dict[str, int]:
         """Utility method to get a dictionary of poll results."""
-        return {k: len(v) for k, v in self.data.items()}
+        return {choice: len(voters) for choice, voters in self.data.items()}
 
     async def add_results_fields(self):
         """Utility method to add new fields to your next page automatically."""
-        for k, v in self.data.items():
-            self.pages[self.page_index + 1].add_field(name=k, value=str(len(v)))
+        for choice, voters in self.data.items():
+            next_page = await self.get_next_page()
+            next_page.add_field(name=choice, value=str(len(voters)))
 
     async def generate_results_page(self):
         """Utility method to build your entire results page automatically."""
-        next_page = self.pages[self.page_index + 1]
+        next_page = await self.get_next_page()
 
         await self.add_results_fields()
 
         highest_value = max(self.data.values())
-        winning_key = {key for key, value in self.data.items() if value == highest_value}
+        winning_key = {choice for choice, voters in self.data.items() if voters == highest_value}
 
         if len(highest_value) == 0:
             next_page.description = ' '.join([next_page.description, f"It's a draw!"])
@@ -107,16 +108,9 @@ class Poll(ButtonMenu):
 
     async def _finish_poll(self):
         """Removes multi-votes and calls the Page on_next function when finished."""
-        check_cheaters = False
-        for value in self.data.values():
-            if value:
-                check_cheaters = True
-                break
-
-        if check_cheaters:
-            cheaters = await self._get_cheaters()
-            for voter_set in self.data.values():
-                voter_set -= cheaters
+        cheaters = await self._get_cheaters()
+        for voters in self.data.values():
+            voters -= cheaters
 
         await self.output.clear_reactions()
         await self.page.on_next(self)
@@ -125,12 +119,9 @@ class Poll(ButtonMenu):
         """Returns a set of user ID's that appear in more than one state_field value."""
         seen = set()
         repeated = set()
-        for voter_set in self.data.values():
-            for voter in voter_set:
-                if voter in seen:
-                    repeated.add(voter)
-                else:
-                    seen.add(voter)
+        for voters in self.data.values():
+            for voter in voters:
+                repeated.add(voter) if voter in seen else seen.add(voter)
 
         return repeated
 

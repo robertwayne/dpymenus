@@ -17,8 +17,8 @@ class TextMenu(BaseMenu):
         data: A dictionary containing variables to pass around menu functions.
     """
 
-    def __init__(self, ctx: Context, timeout: int = 300, data: Optional[Dict] = None):
-        super().__init__(ctx, timeout)
+    def __init__(self, ctx: Context, delay: float = 0.250, timeout: int = 300, data: Optional[Dict] = None):
+        super().__init__(ctx, delay, timeout)
         self.data = data if data else {}
 
     def __repr__(self):

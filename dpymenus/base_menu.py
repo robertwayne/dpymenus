@@ -1,14 +1,14 @@
 import asyncio
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Union
 
 from discord import Embed, Emoji, Message, PartialEmoji
 from discord.abc import GuildChannel
 from discord.colour import Colour
 from discord.ext.commands import Context
 
-from dpymenus.exceptions import PagesError
-from dpymenus import Page
 from dpymenus.constants import DENY
+from dpymenus.exceptions import PagesError
+from dpymenus.page import Page
 
 
 class BaseMenu:
@@ -113,6 +113,10 @@ class BaseMenu:
         embed = Embed(title=self.page.title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
         await self.send_message(embed)
         self.active = False
+
+    async def get_next_page(self) -> Page:
+        """Utility method that returns the next page based on the current pages index."""
+        return self.pages[self.page_index + 1]
 
     # Internal Methods
     async def _cleanup_input(self):

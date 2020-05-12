@@ -7,7 +7,8 @@ from discord.colour import Colour
 from discord.ext.commands import Context
 
 from dpymenus.exceptions import PagesError
-from dpymenus.page import Page
+from dpymenus import Page
+from dpymenus.constants import DENY
 
 
 class BaseMenu:
@@ -28,11 +29,6 @@ class BaseMenu:
         output: A reference to the menus output message.
         data: A dictionary containing dynamic state information.
     """
-
-    # Generic values used for matching against user input.
-    generic_confirm = ('y', 'yes', 'ok', 'k', 'kk', 'ready', 'rdy', 'r', 'confirm', 'okay')
-    generic_deny = ('n', 'no', 'deny', 'negative', 'back', 'return')
-    generic_quit = ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c')
 
     def __init__(self, ctx: Context, delay: float = 0.250, timeout: int = 300):
         self.ctx = ctx
@@ -136,7 +132,7 @@ class BaseMenu:
 
     async def _is_cancelled(self) -> bool:
         """Checks input for a cancellation string. If there is a match, it calls the ``menu.cancel()`` method and returns True."""
-        if self.input.content in self.generic_quit:
+        if self.input.content in DENY:
             await self.cancel()
             return True
         return False
@@ -160,13 +156,3 @@ class BaseMenu:
         """Checks that the Menu contains at least one Page."""
         if len(self.pages) <= 1:
             raise PagesError(f'There must be more than one page in a menu. Expected at least 2, found {len(self.pages)}.')
-
-    # Class Methods
-    @classmethod
-    def override_generic_values(cls, value_type: str, replacement: Tuple[str]):
-        """Allows generic input matching values built into the Menu class to be overridden.
-
-        :param str value_type: Either 'confirm', 'deny', or 'quit'.
-        :param Tiple[str] replacement: A tuple containing strings of values that act as your generic input matches.
-        """
-        setattr(cls, f'generic_{value_type}', replacement)

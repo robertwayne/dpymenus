@@ -5,7 +5,7 @@
 `dpymenus` is an add-on for the `discord.py` library that lets you quickly compose stateful menus and polls 
 which react to chat input (text, reaction buttons).
 
-<img align="right" src="demo/buttons_example.gif">
+<img align="right" src="demos/buttons_example.gif">
 
 ### Table of Contents
 + [Installation](#installation)
@@ -95,20 +95,16 @@ your code by limiting the amount of parameters functions need to accept when han
 multiple objects related to a single menu.*
 
 ### Generic Input Matching
-The Menu class contains several generic values ready for matching against user input. These values
-are generally universal, but should you wish to override them with your own values, there is a 
-class method called `override_generic_values(value_type, replacement)` that can be called anywhere
-in your code to replace them completely.
+There are also some preset constant variables to use for menus in the constants directory. You can
+import what you need as such:
 
-`value_type` is one of three strings: `'confirm'`, `'deny'`, or `'quit'`.
-
-`replacement` is a tuple of strings containing your new values.
+`from dpymenus.constants import *`
 
 The defaults are:
 ```python
-generic_confirm = ('y', 'yes', 'ok', 'k', 'kk', 'ready', 'rdy', 'r', 'confirm', 'okay')
-generic_deny = ('n', 'no', 'deny', 'negative', 'back', 'return')
-generic_quit = ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c')
+CONFIRM = ('y', 'yes', 'ok', 'k', 'kk', 'ready', 'rdy', 'r', 'confirm', 'okay')
+DENY = ('n', 'no', 'deny', 'negative', 'back', 'return')
+QUIT = ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c')
 ```
 
 ### Reaction Buttons
@@ -156,4 +152,4 @@ Example code has been moved into the *examples* directory above.
 Can't find something you were looking for? Open an issue and I'll
 try to add a relevant example!
 
-<img align="left" width="400" src="demo/poll_example.gif"> <img align="right" width="400" src="demo/text_example.gif">
+<img align="left" width="400" src="demos/poll_example.gif"> <img align="right" width="400" src="demos/text_example.gif">

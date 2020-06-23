@@ -15,13 +15,17 @@ class Page(Embed):
     """
 
     def __init__(self, buttons: Optional[List] = None, on_next: Optional[Callable] = None, on_fail: Optional[Callable] = None,
-                 on_cancel: Optional[Callable] = None, on_timeout: Optional[Callable] = None, **kwargs):
+                 on_cancel: Optional[Callable] = None, on_timeout: Optional[Callable] = None, embed: Optional[Embed] = None, **kwargs):
         self.buttons = buttons
         self.on_next = on_next
         self.on_fail = on_fail
         self.on_cancel = on_cancel
         self.on_timeout = on_timeout
-        super().__init__(**kwargs)
+
+        if embed is None:
+            super().__init__(**kwargs)
+        else:
+            super().__init__(**embed.to_dict())
 
     def __str__(self):
         return f'<Page {self.title}>'

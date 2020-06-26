@@ -12,13 +12,10 @@ from dpymenus.exceptions import ButtonsError, CallbackError, PagesError
 class Poll(ButtonMenu):
     """Represents a Poll menu.
 
-    A Poll is a composable, dynamically generated object that contains state information for a user-interactable polls.
-    It contains Page objects which represent new Menu states that call methods for validation and handling.
-
-    Attributes:
-        ctx: A reference to the command context.
-        timeout: How long (in seconds) before the poll ends.
-        voted: Dictionary that tracks users who have already voted.
+    Attributes
+        :ctx: A reference to the command context.
+        :timeout: How long (in seconds) before the poll ends.
+        :voted: Dictionary that tracks users who have already voted.
     """
 
     def __init__(self, ctx: Context, delay: float = 0.250, timeout: int = 300):
@@ -30,7 +27,7 @@ class Poll(ButtonMenu):
                f'data={self.data}>'
 
     async def open(self):
-        """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.
+        """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         await self._validate_pages()
         await self._set_data()

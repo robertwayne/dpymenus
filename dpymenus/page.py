@@ -4,14 +4,14 @@ from discord import Embed
 
 
 class Page(Embed):
-    """Represents a single page inside a menu. Subclasses the discord.py Embed class.
+    """Represents a single page inside a menu. Subclasses :py:class:`~discord.Embed`.
 
-    Attributes:
-        on_next: Reference to a Callable. Should be called manually.
-        on_fail: Reference to a Callable. Called when user input fails.
-        on_cancel: Reference to a Callable. Called when the cancel method is run.
-        on_timeout: reference to a Callable. Called when a menu instance times out.
-        buttons: A list of reaction Emoji objects or unicode strings.
+    Attributes
+        :on_next: Reference to a Callable. Should be called manually.
+        :on_fail: Reference to a Callable. Called when user input fails.
+        :on_cancel: Reference to a Callable. Called when the cancel method is run.
+        :on_timeout: reference to a Callable. Called when a menu instance times out.
+        :buttons: A list of reaction Emoji objects or unicode strings.
     """
 
     def __init__(self, buttons: Optional[List] = None, on_next: Optional[Callable] = None, on_fail: Optional[Callable] = None,

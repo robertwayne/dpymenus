@@ -17,17 +17,17 @@ class BaseMenu:
     A Menu is a composable, dynamically generated object that contains state information for a user-interactable menu.
     It contains Page objects which represent new Menu states that call methods for validation and handling.
 
-    Attributes:
-        ctx: A reference to the command Context.
-        delay: A float representing the delay between deleting message objects.
-        timeout: How long (in seconds) to wait before timing out.
-        pages: A list containing references to Page objects.
-        page_index: Index value of the current page.
-        page: Current Page object.
-        active: Whether or not the menu is active or not.
-        input: A reference to the captured user input message object.
-        output: A reference to the menus output message.
-        data: A dictionary containing dynamic state information.
+    Attributes
+        :ctx: A reference to the command Context.
+        :delay: A float representing the delay between deleting message objects.
+        :timeout: How long (in seconds) to wait before timing out.
+        :pages: A list containing references to Page objects.
+        :page_index: Index value of the current page.
+        :page: Current Page object.
+        :active: Whether or not the menu is active or not.
+        :input: A reference to the captured user input message object.
+        :output: A reference to the menus output message.
+        :data: A dictionary containing dynamic state information.
     """
 
     def __init__(self, ctx: Context, delay: float = 0.250, timeout: int = 300):
@@ -47,14 +47,14 @@ class BaseMenu:
                f'active={self.active} page={self.page_index}>'
 
     async def open(self):
-        """The entry point to a new Menu instance. This will start a loop until a Page object with None as its function is set.
+        """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         pass
 
     async def next(self, name: str = None):
-        """Sets a specific Page object to go to and calls the ``menu.send_message()`` method to display the embed.
+        """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed.
 
-        :param str name: A specific Page object name. If this is not set, the next Page in the list will be called.
+        :param name: A specific page object name. If this is not set, the next page in the list will be called.
         """
         if name is None:
             self.page_index += 1
@@ -77,9 +77,9 @@ class BaseMenu:
     async def add_page(self, on_next: Optional[Callable] = None, buttons: Optional[List[Union[str, Emoji, PartialEmoji]]] = None, **kwargs) -> Page:
         """Adds a new page object to the Menu.
 
-        :param Optional[Callable] on_next: A reference to a function that is called when ``menu.next()`` is called.
-        :param List buttons: A list of reactions that will be displayed on the Page.
-        :param kwargs: Discord Embed keywords for defining your Page display.
+        :param on_next: A reference to a function that is called when :func:`~next()` is called.
+        :param buttons: A list of reactions that will be displayed on the page.
+        :param kwargs: :py:class:`~discord.Embed` arguments for defining your Page display.
         """
         page = Page(on_next=on_next, buttons=buttons, **kwargs)
         self.pages.append(page)
@@ -97,16 +97,17 @@ class BaseMenu:
         self.page = self.pages[0]
 
     async def send_message(self, embed: Embed) -> Message:
-        """Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
+        """
+        Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
 
-        :param :py:class:`Embed` embed: A Discord :py:class:`Embed` object.
+        :param embed: A Discord :py:class:`~discord.Embed` object.
         """
         if isinstance(self.ctx.channel, GuildChannel):
             return await self.output.edit(embed=embed)
         return await self.ctx.send(embed=embed)
 
     async def cancel(self):
-        """Sends a cancelled message."""
+        """Sends a cancellation message."""
         if self.page.on_cancel:
             return await self.page.on_cancel()
 

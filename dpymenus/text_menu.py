@@ -6,15 +6,13 @@ from dpymenus import BaseMenu
 
 
 class TextMenu(BaseMenu):
-    """Represents a text-based response menu.
+    """
+    Represents a text-based response menu.
 
-    A TextMenu is a composable, dynamically generated object that contains state information for a user-interactable menu.
-    It contains Page objects which represent new Menu states that call methods for validation and handling.
-
-    Attributes:
-        ctx: A reference to the command context.
-        timeout: How long (in seconds) to wait before timing out.
-        data: A dictionary containing variables to pass around menu functions.
+    :param ctx: A reference to the command context.
+    :param delay: How long to wait between deleting user messages (default 0.25).
+    :param timeout: How long (in seconds) to wait before timing out.
+    :param data: A dictionary containing variables to pass around menu functions.
     """
 
     def __init__(self, ctx: Context, delay: float = 0.250, timeout: int = 300, data: Optional[Dict] = None):
@@ -26,7 +24,7 @@ class TextMenu(BaseMenu):
                f'active={self.active} page={self.page_index}, data={self.data}>'
 
     async def open(self):
-        """The entry point to a new TextMenu instance. This will start a loop until a Page object with None as its function is set.
+        """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         await super()._validate_pages()
 

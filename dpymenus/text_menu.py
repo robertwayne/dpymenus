@@ -30,12 +30,12 @@ class TextMenu(BaseMenu):
 
         self.output = await self.ctx.send(embed=self.page)
 
-        _iteration = 0
+        _first_iteration = True
         while self.active:
-            if _iteration > 0 and self.page.on_fail:
+            if not _first_iteration and self.page.on_fail:
                 return await self.page.on_fail()
 
-            _iteration += 1
+            _first_iteration = False
 
             self.input = await self._get_input()
             await self._cleanup_input()

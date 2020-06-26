@@ -26,7 +26,7 @@ class MyButtonMenu(commands.Cog):
         # list of valid Discord emojis -- these can be Emoji objects or Unicode strings. In this case, we defined the
         # emojis ahead of time within the file (so they are loaded only once), and we can reuse them easily.
         #
-        # on_next must be a reference to a function. Remember, when you pass a reference to the function you should NOT
+        # `on_next` must be a reference to a function. Remember, when you pass a reference to the function you should NOT
         # use () parenthesis at the end of the function name. That would call the function immediately, as pages were being
         # created. Instead, the reference will be called by the menu loop at a later time.
         await menu.add_page(title='Button Menu', description='Follow the arrows!', color=Colour.red(),
@@ -35,6 +35,9 @@ class MyButtonMenu(commands.Cog):
         await menu.add_page(title='Button Menu', description='So many buttons! What do they do?', color=Colour.orange(),
                             on_next=self.second, buttons=[reverse, forward, stop])
 
+        # Note that we didn't include an `on_next` or any `buttons` on the last `Page`. This is important as it denotes
+        # this will be our final and closing page on the menu. What this means is that when you arrive at this page,
+        # no matter how it was done, the menu loop will be closed and no longer respond to user input.
         await menu.add_page(title='Button Menu', description='We reached the end!', color=Colour.green())
 
         # Finally, after all our menu pages are constructed, we can use the `open()` method on our menu object to

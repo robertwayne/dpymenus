@@ -44,6 +44,10 @@ class MyButtonMenu(commands.Cog):
         # created. Instead, the reference will be called by the menu loop at a later time.
         #
         # Note: Since we are creating `Page` objects, we need to import Page at the top of our file -- see above!
+        #
+        # Note that we didn't include an `on_next` or any `buttons` on the last `Page`. This is important as it denotes
+        # this will be our final and closing page on the menu. What this means is that when you arrive at this page,
+        # no matter how it was done, the menu loop will be closed and no longer respond to user input.
         await menu.add_pages([Page(embed=e, buttons=[forward, stop], on_next=self.first),
                               Page(embed=e2, buttons=[reverse, forward, stop], on_next=self.second),
                               Page(embed=e3)])

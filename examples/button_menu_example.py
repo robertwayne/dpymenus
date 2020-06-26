@@ -1,10 +1,11 @@
 from discord import Colour
 from discord.ext import commands
 
+# Make sure you import the type of menu you plan on using.
 from dpymenus import ButtonMenu
 
 # First we will define some emoji strings. We will be using these are our menus buttons. Discord will
-# turn these into proper emojis, and the ButtonMenu will automatically turn these into reactions on your
+# turn these into proper emojis, and the `ButtonMenu` will automatically turn these into reactions on your
 # pages (which we will create in a moment).
 forward = '⏩'
 reverse = '⏪'
@@ -62,7 +63,7 @@ class MyButtonMenu(commands.Cog):
         #
         # Your pages are always internally referenced by the name of the function you call in their `on_next` parameters.
         if m.input == reverse:
-            await m.next('first')  # we can pass in the name of a callback function (on_next) to go to that page
+            await m.next('first')
 
         elif m.input == forward:
             await m.next()

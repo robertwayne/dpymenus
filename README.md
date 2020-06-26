@@ -9,6 +9,7 @@ which react to chat input (text, reaction buttons).
 <img align="right" src="demos/buttons_example.gif">
 
 ### Table of Contents
+[Documentation](https://dpymenus.readthedocs.io/en/latest/?badge=latest)
 + [Installation](#installation)
 + [Usage](#usage)
 + [Button Menus](#button-menus)

@@ -4,7 +4,7 @@ from discord.ext import commands
 # Make sure you import the type of menu you plan on using.
 from dpymenus import ButtonMenu
 
-# First we will define some emoji strings. We will be using these are our menus buttons. Discord will
+# First we will define some emoji strings. We will be using these as our menus buttons. Discord will
 # turn these into proper emojis, and the `ButtonMenu` will automatically turn these into reactions on your
 # pages (which we will create in a moment).
 forward = '⏩'

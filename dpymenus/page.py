@@ -25,7 +25,8 @@ class Page(Embed):
         if embed is None:
             super().__init__(**kwargs)
         else:
-            self._fields = [field.__dict__ for field in embed.fields] if embed.fields else []
+            for k, v in embed.to_dict().items():
+                self.__setattr__(f'_{k}', v)
             super().__init__(**embed.to_dict())
 
     def __str__(self):

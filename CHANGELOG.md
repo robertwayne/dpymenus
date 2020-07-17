@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.3.1] - Unreleased
 
 ### Added
-- PaginateMenus now have an optional argument: `page_numbers`. If set to `True,
+- `PaginatedMenu`s now have an optional argument: `page_numbers`. If set to `True`,
 embeds will generate a footer with the current and total page numbers. *This 
 option will override user-defined footers.*
 

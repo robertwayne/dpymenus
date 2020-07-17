@@ -1,5 +1,6 @@
 from typing import Dict, Optional
 
+from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
@@ -45,3 +46,9 @@ class TextMenu(BaseMenu):
                 return
 
             await self.page.on_next(self)
+
+    # Internal Methods
+    async def _cleanup_input(self):
+        """Deletes a Discord client user message."""
+        if isinstance(self.ctx.channel, GuildChannel):
+            await self.input.delete(delay=self.delay)

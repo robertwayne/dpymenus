@@ -124,7 +124,7 @@ class BaseMenu:
         if self.page.on_cancel:
             return await self.page.on_cancel()
 
-        embed = Embed(title=self.page.title, description='Menu selection cancelled -- no progress was saved.', color=Colour.red())
+        embed = Embed(title=self.page.title, description='Menu selection cancelled.', color=Colour.red())
         await self.send_message(embed)
         self.active = False
 
@@ -145,7 +145,7 @@ class BaseMenu:
         if self.page.on_timeout:
             return await self.page.on_timeout()
 
-        embed = Embed(title=self.page.title, description='You timed out at menu selection -- no progress was saved.', color=Colour.red())
+        embed = Embed(title=self.page.title, description='You timed out at menu selection.', color=Colour.red())
         await self.send_message(embed)
 
     async def _is_cancelled(self) -> bool:

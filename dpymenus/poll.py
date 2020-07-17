@@ -7,7 +7,7 @@ from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu
 from dpymenus.exceptions import ButtonsError, CallbackError, PagesError
-from dpymenus import instances
+
 
 class Poll(ButtonMenu):
     """Represents a Poll menu.

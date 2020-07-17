@@ -8,7 +8,7 @@ from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
 from dpymenus.exceptions import ButtonsError, CallbackError
-from dpymenus import instances
+
 
 class ButtonMenu(BaseMenu):
     """

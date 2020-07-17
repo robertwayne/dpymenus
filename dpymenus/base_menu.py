@@ -80,6 +80,13 @@ class BaseMenu:
 
         await self.send_message(self.page)
 
+    async def previous(self):
+        """Helper method for quickly accessing the previous page."""
+        self.page_index -= 1
+        self.page = self.pages[self.page_index]
+
+        await self.send_message(self.page)
+
     async def add_page(self, on_next: Optional[Callable] = None, buttons: Optional[List[Union[str, Emoji, PartialEmoji]]] = None, **kwargs) -> Page:
         """Adds a new page object to the Menu.
 

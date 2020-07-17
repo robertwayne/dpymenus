@@ -42,12 +42,14 @@ Lastly, call the `open()` method on it:
     
 ...and you're *(mostly)* finished! A menu loop will spawn and handle user input when the command is 
 called until it times out or is cancelled by the user. Note that you should have at least one Page
-without a on_next. This denotes to the handler that your menu will be closed when you reach this page.
+without an `on_next` argument. This denotes to the handler that your menu will be closed when you reach this page.
 
 Your on_next method should call the `menu.next()` method whenever it has
 successfully handled input. `next()` also takes 1 optional argument: 
 
 `name`: jumps to a specific page by its function reference name. Useful for non-linear menus.
+
+*New 0.2.8*: You can now also pass in an integer to `on_next` referencing the pages index.
 
 ### Button Menus
 You can also construct a menu which uses reactions as 'buttons' to handle user input.
@@ -57,11 +59,11 @@ You can also construct a menu which uses reactions as 'buttons' to handle user i
     
 Similiar to a `TextMenu`, you need to add some pages. This time, we also need to pass in a list of buttons as such:
 
-        await menu.add_page(title='Test Page', description=f'This is just a test!', color=discord.Color.green()
+    await menu.add_page(title='Test Page', description=f'This is just a test!', color=discord.Color.green(),
                         on_next=some_func_here, buttons=['\U00002600', '\U0001F315'])
                         
-The buttons here are unicode, but you can use any Discord Emoji object. See the [Reaction Buttons](#reaction-buttons) section for
-more details.
+The buttons here are unicode, but you can use any Discord Emoji object. See the [Reaction Buttons](#reaction-buttons) 
+section for more details.
 
 ### Polls
 The final type of menu you can construct is a Poll. Polls are slightly unique because they handle a lot of

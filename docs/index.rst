@@ -21,6 +21,14 @@ ButtonMenu
    :inherited-members:
    :members:
 
+PaginatedMenu
+------------------
+
+.. autoclass:: dpymenus.PaginatedMenu
+   :inherited-members:
+   :members:
+
+
 Poll
 -------------------
 

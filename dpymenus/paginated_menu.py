@@ -41,7 +41,7 @@ class PaginatedMenu(ButtonMenu):
 
     async def _next(self):
         """Paginated version of :class:`~dpymenus.BaseMenu`s `next` method. Checks for end-of-the-list."""
-        if self.page_index + 1 > len(self.pages):
+        if self.page_index + 1 > len(self.pages) - 1:
             return
 
         self.page_index += 1

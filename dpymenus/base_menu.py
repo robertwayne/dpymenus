@@ -32,6 +32,12 @@ class BaseMenu:
     """
 
     def __init__(self, ctx: Context, timeout: int = 300):
+        # don't create a menu if the user is currently using another menu
+        if ctx.author in active_users:
+            return
+
+        active_users.append(ctx.author)
+
         self.ctx = ctx
         self.timeout = timeout
         self.pages: List[Page] = []
@@ -83,6 +89,9 @@ class BaseMenu:
 
     async def previous(self):
         """Helper method for quickly accessing the previous page."""
+        if self.page_index - 1 < 0:
+            return
+
         self.page_index -= 1
         self.page = self.pages[self.page_index]
 
@@ -135,16 +144,11 @@ class BaseMenu:
         """Utility method that returns the next page based on the current pages index."""
         return self.pages[self.page_index + 1]
 
-    # Internal Methods
-    async def validate_user(self) -> bool:
-        return False if self.ctx.author in active_users else True
-
-    async def set_user_active(self):
-        active_users.append(self.ctx.author)
-
     async def set_user_inactive(self):
+        """Remove the user from the active users list."""
         active_users.remove(self.ctx.author)
 
+    # Internal Methods
     async def _cleanup_input(self):
         """Deletes a Discord client user message."""
         if isinstance(self.ctx.channel, GuildChannel):

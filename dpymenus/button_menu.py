@@ -33,11 +33,6 @@ class ButtonMenu(BaseMenu):
         await super()._validate_pages()
         await self._validate_buttons()
 
-        if not await super().validate_user():
-            return
-
-        await super().set_user_active()
-
         self.output = await self.ctx.send(embed=self.page)
 
         while self.active:

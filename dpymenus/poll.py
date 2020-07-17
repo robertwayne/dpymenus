@@ -31,11 +31,6 @@ class Poll(ButtonMenu):
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         await self._validate_pages()
 
-        if not await super().validate_user():
-            return
-
-        await super().set_user_active()
-
         await self._set_data()
 
         self.output = await self.ctx.send(embed=self.page)

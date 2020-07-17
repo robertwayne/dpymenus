@@ -1,6 +1,8 @@
-from typing import List
+import asyncio
+from typing import List, Union
 
-from discord import Embed
+from discord import Embed, Emoji, Message, PartialEmoji
+from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, Page
@@ -32,12 +34,31 @@ class PaginatedMenu(ButtonMenu):
         await self._add_buttons()
 
         while self.active:
-            self.input = await self._get_reaction()
-            await self.output.remove_reaction(self.input, self.ctx.author)
+            pending, done = set(), set()
 
-            await self.handle_transition()
+            try:
+                done, pending = await asyncio.wait([asyncio.create_task(self._get_reaction()), asyncio.create_task(self._get_reaction_remove())], return_when=asyncio.FIRST_COMPLETED)
+            finally:
+                for task in pending:
+                    task.cancel()
+
+                for future in done:
+                    self.input = future.result()
+
+                if isinstance(self.output.channel, GuildChannel):
+                    await self.output.remove_reaction(self.input, self.ctx.author)
+
+                await self.handle_transition()
 
         await self._cleanup_reactions()
+
+    async def send_message(self, embed: Embed) -> Message:
+        """
+        Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
+
+        :param embed: A Discord :py:class:`~discord.Embed` object.
+        """
+        return await self.ctx.send(embed=embed)
 
     async def _next(self):
         """Paginated version of :class:`~dpymenus.BaseMenu`s `next` method. Checks for end-of-the-list."""
@@ -60,6 +81,19 @@ class PaginatedMenu(ButtonMenu):
         await self.send_message(self.page)
 
     # Internal Methods
+    async def _get_reaction_remove(self) -> Union[Emoji, str]:
+        """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
+        try:
+            reaction, user = await self.ctx.bot.wait_for('reaction_remove', timeout=self.timeout, check=lambda _, u: u == self.ctx.author)
+
+        except asyncio.TimeoutError:
+            await self._timeout()
+
+        else:
+            if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
+                return reaction.emoji.name
+            return reaction.emoji
+
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
         for button in GENERIC_BUTTONS:

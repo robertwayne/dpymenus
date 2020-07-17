@@ -10,6 +10,8 @@ from dpymenus.constants import QUIT
 from dpymenus.exceptions import PagesError
 from dpymenus.page import Page
 
+active_users = list()
+
 
 class BaseMenu:
     """Represents the base menu from which TextMenu, ButtonMenu, and Poll inherit from.
@@ -74,6 +76,7 @@ class BaseMenu:
 
         #  if the next page has no on_next callback, we end the menu loop
         if self.page.on_next is None:
+            await self.set_user_inactive()
             self.active = False
 
         await self.send_message(self.page)
@@ -125,6 +128,7 @@ class BaseMenu:
 
         embed = Embed(title=self.page.title, description='Menu selection cancelled.', color=Colour.red())
         await self.send_message(embed)
+        await self.set_user_inactive()
         self.active = False
 
     async def get_next_page(self) -> Page:
@@ -132,6 +136,15 @@ class BaseMenu:
         return self.pages[self.page_index + 1]
 
     # Internal Methods
+    async def validate_user(self) -> bool:
+        return False if self.ctx.author in active_users else True
+
+    async def set_user_active(self):
+        active_users.append(self.ctx.author)
+
+    async def set_user_inactive(self):
+        active_users.remove(self.ctx.author)
+
     async def _cleanup_input(self):
         """Deletes a Discord client user message."""
         if isinstance(self.ctx.channel, GuildChannel):
@@ -139,6 +152,7 @@ class BaseMenu:
 
     async def _timeout(self):
         """Sends a timeout message."""
+        await self.set_user_inactive()
         self.active = False
 
         if self.page.on_timeout:

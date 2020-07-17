@@ -8,7 +8,7 @@ from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
 from dpymenus.exceptions import ButtonsError, CallbackError
-
+from dpymenus import instances
 
 class ButtonMenu(BaseMenu):
     """
@@ -32,6 +32,11 @@ class ButtonMenu(BaseMenu):
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         await super()._validate_pages()
         await self._validate_buttons()
+
+        if not await super().validate_user():
+            return
+
+        await super().set_user_active()
 
         self.output = await self.ctx.send(embed=self.page)
 

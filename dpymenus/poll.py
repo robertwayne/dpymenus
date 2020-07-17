@@ -7,7 +7,7 @@ from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu
 from dpymenus.exceptions import ButtonsError, CallbackError, PagesError
-
+from dpymenus import instances
 
 class Poll(ButtonMenu):
     """Represents a Poll menu.
@@ -30,6 +30,12 @@ class Poll(ButtonMenu):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         await self._validate_pages()
+
+        if not await super().validate_user():
+            return
+
+        await super().set_user_active()
+
         await self._set_data()
 
         self.output = await self.ctx.send(embed=self.page)

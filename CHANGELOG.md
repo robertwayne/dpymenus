@@ -11,13 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  
 ### Added
 - Users can now only create a single menu instance at a time in order to 
-prevent abuse or confusion. 
-
-      Note that if you are overriding `on_cancel` or
-      `on_timeout`, you need to call `set_user_inactive()` alongside 
-      `self.active = False` now.
+prevent abuse or confusion. *Note that if you are overriding `on_cancel` or 
+`on_timeout`, you need to call `set_user_inactive()` alongside 
+`self.active = False` now.*
  
 ### Fixed
  
-- ButtonMenus no longer send new messages inside DM channel types instead
+- `ButtonMenu`s no longer send new messages inside DM channel types instead
 of the expected default behaviour.

@@ -54,7 +54,7 @@ class BaseMenu:
     async def next(self, name: Optional[Union[str, int]] = None):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed.
 
-        :param name: A specific page object name. If this is not set, the next page in the list will be called.
+        :param name: A specific page object name or its index. If this is not set, the next page in the list will be called.
         """
         if name is None:
             self.page_index += 1

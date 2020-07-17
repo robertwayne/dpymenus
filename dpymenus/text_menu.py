@@ -16,7 +16,8 @@ class TextMenu(BaseMenu):
     """
 
     def __init__(self, ctx: Context, delay: float = 0.250, timeout: int = 300, data: Optional[Dict] = None):
-        super().__init__(ctx, delay, timeout)
+        self.delay = delay
+        super().__init__(ctx, timeout)
         self.data = data if data else {}
 
     def __repr__(self):

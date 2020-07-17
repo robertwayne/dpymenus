@@ -19,7 +19,6 @@ class BaseMenu:
 
     Attributes
         :ctx: A reference to the command Context.
-        :delay: A float representing the delay between deleting message objects.
         :timeout: How long (in seconds) to wait before timing out.
         :pages: A list containing references to Page objects.
         :page_index: Index value of the current page.
@@ -30,9 +29,8 @@ class BaseMenu:
         :data: A dictionary containing dynamic state information.
     """
 
-    def __init__(self, ctx: Context, delay: float = 0.250, timeout: int = 300):
+    def __init__(self, ctx: Context, timeout: int = 300):
         self.ctx = ctx
-        self.delay = delay
         self.timeout = timeout
         self.pages: List[Page] = []
         self.page_index: int = 0

@@ -15,13 +15,12 @@ class ButtonMenu(BaseMenu):
     Represents a button-based response menu.
 
     :param ctx: A reference to the command context.
-    :param delay: How long to wait between deleting user messages (default 0.250).
     :param timeout: How long (in seconds) to wait before timing out.
     :param data: A dictionary containing variables to pass around menu functions.
     """
 
-    def __init__(self, ctx: Context, delay: float = 0.250, timeout: int = 300, data: Optional[Dict] = None):
-        super().__init__(ctx, delay, timeout)
+    def __init__(self, ctx: Context, timeout: int = 300, data: Optional[Dict] = None):
+        super().__init__(ctx, timeout)
         self.data = data if data else {}
 
     def __repr__(self):

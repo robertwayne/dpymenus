@@ -18,8 +18,8 @@ class Poll(ButtonMenu):
         :voted: Dictionary that tracks users who have already voted.
     """
 
-    def __init__(self, ctx: Context, delay: float = 0.250, timeout: int = 300):
-        super().__init__(ctx, delay, timeout)
+    def __init__(self, ctx: Context, timeout: int = 300):
+        super().__init__(ctx, timeout)
         self.voted: Set[User] = set()
 
     def __repr__(self):

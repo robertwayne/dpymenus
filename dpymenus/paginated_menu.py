@@ -58,7 +58,7 @@ class PaginatedMenu(ButtonMenu):
 
         :param embed: A Discord :py:class:`~discord.Embed` object.
         """
-        return await self.ctx.send(embed=embed)
+        return await self.output.edit(embed=embed)
 
     async def _next(self):
         """Paginated version of :class:`~dpymenus.BaseMenu`s `next` method. Checks for end-of-the-list."""

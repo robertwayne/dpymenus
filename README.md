@@ -50,7 +50,7 @@ successfully handled input. `next()` also takes 1 optional argument:
 
 `name`: jumps to a specific page by its function reference name. Useful for non-linear menus.
 
-*New 0.2.8*: You can now also pass in an integer to `on_next` referencing the pages index.
+*New 0.2.8*: You can now also pass in an integer to `next` referencing the pages index.
 
 ### Button Menus
 You can also construct a menu which uses reactions as 'buttons' to handle user input.

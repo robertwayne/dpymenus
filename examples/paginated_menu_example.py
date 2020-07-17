@@ -12,7 +12,7 @@ class MyButtonMenu(commands.Cog):
     @commands.command()
     async def buttons(self, ctx: commands.Context):
         # We start my instantiating a menu object. In this case, we're using `PaginatedMenu`. We have to pass our command context.
-        menu = PaginatedMenu(ctx)
+        menu = PaginatedMenu(ctx, page_numbers=True)
 
         # In this example, we're going to start by defining a few embeds. If you have used `discord.py` before, this should be
         # familiar syntax and is the idiomatic way to construct new embeds in the library. We will create three of them, one

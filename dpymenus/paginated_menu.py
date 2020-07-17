@@ -14,11 +14,13 @@ class PaginatedMenu(ButtonMenu):
     Represents an paginated, button-based response menu.
 
     :param ctx: A reference to the command context.
+    :param page_numbers: Whether embeds should display the current/max page numbers in the footer.
     :param timeout: How long (in seconds) to wait before timing out.
     """
 
-    def __init__(self, ctx: Context, timeout: int = 300):
+    def __init__(self, ctx: Context, page_numbers: bool = False, timeout: int = 300):
         super().__init__(ctx, timeout)
+        self.page_numbers = page_numbers
 
     def __repr__(self):
         return f'<Menu pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \
@@ -63,7 +65,10 @@ class PaginatedMenu(ButtonMenu):
 
     async def add_pages(self, embeds: List[Embed]):
         """Helper method to add a list of pre-instantiated pages to a menu."""
-        for embed in embeds:
+        for i, embed in enumerate(embeds):
+            if self.page_numbers:
+                embed.set_footer(text=f'{i + 1}/{len(embeds)}')
+
             self.pages.append(Page(embed=embed))
 
         self.page = self.pages[0]

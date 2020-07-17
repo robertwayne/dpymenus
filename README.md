@@ -86,6 +86,10 @@ like such:
 Paginated menus use a set a generic emoji as buttons which cannot be overridden easily at the moment. This will be fixed
 in a future version.
 
+`PaginatedMenu`s also take an optional argument:
+
+*New 0.3.1a:* `page_numbers`: whether or not to display page numbers in the footer *(overrides embed footer data)*
+
 ### Polls
 The final type of menu you can construct is a Poll. Polls are slightly unique because they handle a lot of
 functions internally. You can start the same as other menus:

@@ -48,18 +48,27 @@ class PaginatedMenu(ButtonMenu):
                 if isinstance(self.output.channel, GuildChannel):
                     await self.output.remove_reaction(self.input, self.ctx.author)
 
-                await self.handle_transition()
+                await self._handle_transition()
 
         await self._cleanup_reactions()
 
     async def send_message(self, embed: Embed) -> Message:
         """
-        Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
+        Edits the menu output message. We override the :class:`~dpymenus.BaseMenu` implementation because
+        we always want to edit, even in a DM channel type.
 
         :param embed: A Discord :py:class:`~discord.Embed` object.
         """
         return await self.output.edit(embed=embed)
 
+    async def add_pages(self, embeds: List[Embed]):
+        """Helper method to add a list of pre-instantiated pages to a menu."""
+        for embed in embeds:
+            self.pages.append(Page(embed=embed))
+
+        self.page = self.pages[0]
+
+    # Internal Methods
     async def _next(self):
         """Paginated version of :class:`~dpymenus.BaseMenu`s `next` method. Checks for end-of-the-list."""
         if self.page_index + 1 > len(self.pages) - 1:
@@ -80,7 +89,6 @@ class PaginatedMenu(ButtonMenu):
 
         await self.send_message(self.page)
 
-    # Internal Methods
     async def _get_reaction_remove(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
         try:
@@ -99,13 +107,6 @@ class PaginatedMenu(ButtonMenu):
         for button in GENERIC_BUTTONS:
             await self.output.add_reaction(button)
 
-    async def add_pages(self, embeds: List[Embed]):
-        """Helper method to add a list of pre-instantiated pages to a menu."""
-        for embed in embeds:
-            self.pages.append(Page(embed=embed))
-
-        self.page = self.pages[0]
-
-    async def handle_transition(self):
+    async def _handle_transition(self):
         transition_map = {GENERIC_BUTTONS[0]: self._previous, GENERIC_BUTTONS[1]: self.cancel, GENERIC_BUTTONS[2]: self._next}
         await transition_map[self.input]()

@@ -13,6 +13,7 @@ which react to chat input (text, reaction buttons).
 + [Installation](#installation)
 + [Usage](#usage)
 + [Button Menus](#button-menus)
++ [PaginatedMenus](#paginated-menus)
 + [Polls](#polls)
 + [Data Field](#data-field)
 + [Generic Input Matching](#generic-input-matching)
@@ -65,6 +66,25 @@ Similiar to a `TextMenu`, you need to add some pages. This time, we also need to
                         
 The buttons here are unicode, but you can use any Discord Emoji object. See the [Reaction Buttons](#reaction-buttons) 
 section for more details.
+
+### Paginated Menus
+In addition to standard button menus, if you instead prefer a simpler interface where pages do not need to
+store custom user state data and buttons only point to linear pages, the `PaginatedMenu` is a great option.
+
+    from dpymenus import PaginatedMenu
+    menu3 = PaginatedMenu(ctx)
+    
+Unlike a `ButtonMenu`, we should not add any callbacks to our pages. We can utilize some pre-built embed objects
+like such:
+
+    e1 = discord.Embed(title='Page 1, description='Follow the arrows!')
+    e2 = discord.Embed(title='Page 2', description='Follow the arrows!')
+    e3 = discord.Embed(title='Page 3', description='Follow the arrows!')
+    
+    menu3.add_pages([e1, e2, e3])
+    
+Paginated menus use a set a generic emoji as buttons which cannot be overridden easily at the moment. This will be fixed
+in a future version.
 
 ### Polls
 The final type of menu you can construct is a Poll. Polls are slightly unique because they handle a lot of

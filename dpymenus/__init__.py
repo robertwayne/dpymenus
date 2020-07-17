@@ -3,3 +3,4 @@ from dpymenus.button_menu import ButtonMenu
 from dpymenus.page import Page
 from dpymenus.poll import Poll
 from dpymenus.text_menu import TextMenu
+from dpymenus.paginated_menu import PaginatedMenu

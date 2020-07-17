@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List
 
 from discord import Embed
 from discord.ext.commands import Context

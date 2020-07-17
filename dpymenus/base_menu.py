@@ -115,7 +115,8 @@ class BaseMenu:
         """
         if isinstance(self.ctx.channel, GuildChannel):
             return await self.output.edit(embed=embed)
-        return await self.ctx.send(embed=embed)
+        self.output = await self.ctx.send(embed=embed)
+        return self.output
 
     async def cancel(self):
         """Sends a cancellation message."""

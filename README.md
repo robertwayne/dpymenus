@@ -18,6 +18,7 @@ which react to chat input (text, reaction buttons).
 + [Generic Input Matching](#generic-input-matching)
 + [Reaction Buttons](#reaction-buttons)
 + [Event Callbacks](#event-callbacks)
++ [Helper Methods](#helper-methods)
 + [Poll Utilities](#poll-utilities)
 + [Examples](#examples)
 
@@ -136,6 +137,16 @@ when you instantiate your menu.
  Only usable in TextMenus or ButtonMenus.
 
 `on_cancel` -- Called when a menu is cancelled from user input. Only usable in TextMenus or ButtonMenus.
+
+
+### Helper Methods 
+*New: 0.2.8*
+
+`.previous()` -- goes back one page index on the current menu.
+
+`.add_pages()` -- takes a list of Page objects and adds them to the menu. Useful for adding pre-built embeds to pages
+without rewriting them all as Page objects directly. See *premade_embed_button_menu_example.py* in the *examples/*
+directory for full use of this helper.
 
 
 ### Poll Utilities

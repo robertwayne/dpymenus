@@ -109,7 +109,9 @@ class PaginatedMenu(ButtonMenu):
         """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
         reaction, user = await self.ctx.bot.wait_for('reaction_add',
                                                      check=lambda r, u: u == self.ctx.author
-                                                     and self.ctx.channel == r.message.channel)
+                                                     and self.ctx.channel == r.message.channel
+                                                     and r.message.id == self.output.id)
+
         if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
             return reaction.emoji.name
         return reaction.emoji
@@ -118,7 +120,8 @@ class PaginatedMenu(ButtonMenu):
         """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
         reaction, user = await self.ctx.bot.wait_for('reaction_remove',
                                                      check=lambda r, u: u == self.ctx.author
-                                                     and self.ctx.channel == r.message.channel)
+                                                     and self.ctx.channel == r.message.channel
+                                                     and r.message.id == self.output.id)
 
         if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
             return reaction.emoji.name

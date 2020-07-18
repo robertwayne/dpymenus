@@ -10,7 +10,7 @@ from dpymenus.constants import QUIT
 from dpymenus.exceptions import PagesError
 from dpymenus.page import Page
 
-active_users = list()
+sessions = list()
 
 
 class BaseMenu:
@@ -32,12 +32,6 @@ class BaseMenu:
     """
 
     def __init__(self, ctx: Context, timeout: int = 300):
-        # don't create a menu if the user is currently using another menu
-        if ctx.author in active_users:
-            return
-
-        active_users.append(ctx.author)
-
         self.ctx = ctx
         self.timeout = timeout
         self.pages: List[Page] = []
@@ -82,7 +76,7 @@ class BaseMenu:
 
         #  if the next page has no on_next callback, we end the menu loop
         if self.page.on_next is None:
-            await self.set_user_inactive()
+            await self.close_session()
             self.active = False
 
         await self.send_message(self.page)
@@ -137,16 +131,16 @@ class BaseMenu:
 
         embed = Embed(title=self.page.title, description='Menu selection cancelled.', color=Colour.red())
         await self.send_message(embed)
-        await self.set_user_inactive()
+        await self.close_session()
         self.active = False
 
     async def get_next_page(self) -> Page:
         """Utility method that returns the next page based on the current pages index."""
         return self.pages[self.page_index + 1]
 
-    async def set_user_inactive(self):
+    async def close_session(self):
         """Remove the user from the active users list."""
-        active_users.remove(self.ctx.author)
+        sessions.remove((self.ctx.author.id, self.ctx.channel.id))
 
     # Internal Methods
     async def _cleanup_input(self):
@@ -156,7 +150,7 @@ class BaseMenu:
 
     async def _timeout(self):
         """Sends a timeout message."""
-        await self.set_user_inactive()
+        await self.close_session()
         self.active = False
 
         if self.page.on_timeout:
@@ -175,7 +169,9 @@ class BaseMenu:
     async def _get_input(self) -> Message:
         """Collects user input and places it into the input attribute."""
         try:
-            message = await self.ctx.bot.wait_for('message', timeout=self.timeout, check=lambda m: m.author == self.ctx.author)
+            message = await self.ctx.bot.wait_for('message', timeout=self.timeout,
+                                                  check=lambda m: m.author == self.ctx.author
+                                                  and self.ctx.channel == m.channel)
 
         except asyncio.TimeoutError:
             if self.page.on_timeout:
@@ -191,3 +187,10 @@ class BaseMenu:
         """Checks that the Menu contains at least one Page."""
         if len(self.pages) <= 1:
             raise PagesError(f'There must be more than one page in a menu. Expected at least 2, found {len(self.pages)}.')
+
+    async def start_session(self) -> bool:
+        if (self.ctx.author.id, self.ctx.channel.id) in sessions:
+            return False
+
+        sessions.append((self.ctx.author.id, self.ctx.channel.id))
+        return True

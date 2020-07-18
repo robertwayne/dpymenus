@@ -81,7 +81,7 @@ like such:
     e2 = discord.Embed(title='Page 2', description='Follow the arrows!')
     e3 = discord.Embed(title='Page 3', description='Follow the arrows!')
     
-    menu3.add_pages([e1, e2, e3])
+    await menu3.add_pages([e1, e2, e3])
     
 Paginated menus use a set a generic emoji as buttons which cannot be overridden easily at the moment. This will be fixed
 in a future version.

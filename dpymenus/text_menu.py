@@ -30,6 +30,9 @@ class TextMenu(BaseMenu):
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         await super()._validate_pages()
 
+        if await self.start_session() is False:
+            return
+
         self.output = await self.ctx.send(embed=self.page)
 
         _first_iteration = True

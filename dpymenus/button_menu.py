@@ -33,6 +33,9 @@ class ButtonMenu(BaseMenu):
         await super()._validate_pages()
         await self._validate_buttons()
 
+        if await self.start_session() is False:
+            return
+
         self.output = await self.ctx.send(embed=self.page)
 
         while self.active:

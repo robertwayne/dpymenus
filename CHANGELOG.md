@@ -12,6 +12,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 embeds will generate a footer with the current and total page numbers. *This 
 option will override user-defined footers.*
 
+### Changed
+- The default timeout page now has the title 'Timed Out' instead of the
+last pages' name.
+- **Breaking:** `set_user_inactive()` is now `close_session()`
+
+### Fixed
+- Users can now have multiple menu sessions cross-channel and guild.
+- Fixed a timeout error in a `TextMenu` where it did not break after the
+exception occured..
+- Fixed a timeout error in all menus where it attempted to remove null data
+from the session list.
+- Fixed an issue where other menu buttons would call your own menu
+actions. 
+- Added a missing `await` in the README example for `PaginatedMenu`.
+
 ## [0.3.0] - 2020-07-17
  
 ### Added

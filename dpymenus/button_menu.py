@@ -59,7 +59,7 @@ class ButtonMenu(BaseMenu):
                                                          check=lambda r, u: u == self.ctx.author
                                                          and self.ctx.channel == r.message.channel
                                                          and r.message.id == self.output.id)
-            
+
         except asyncio.TimeoutError:
             await self._timeout()
 

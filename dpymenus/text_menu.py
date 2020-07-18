@@ -43,12 +43,14 @@ class TextMenu(BaseMenu):
             _first_iteration = False
 
             self.input = await self._get_input()
-            await self._cleanup_input()
 
-            if await self._is_cancelled():
-                return
+            if self.input:
+                await self._cleanup_input()
 
-            await self.page.on_next(self)
+                if await self._is_cancelled():
+                    return
+
+                await self.page.on_next(self)
 
     # Internal Methods
     async def _cleanup_input(self):

@@ -39,11 +39,19 @@ class PaginatedMenu(ButtonMenu):
         await self._add_buttons()
 
         while self.active:
-            pending, done = set(), set()
+            done, pending = await asyncio.wait([asyncio.create_task(self._get_reaction()),
+                                                asyncio.create_task(self._get_reaction_remove())],
+                                               return_when=asyncio.FIRST_COMPLETED,
+                                               timeout=self.timeout)
 
-            try:
-                done, pending = await asyncio.wait([asyncio.create_task(self._get_reaction()), asyncio.create_task(self._get_reaction_remove())], return_when=asyncio.FIRST_COMPLETED)
-            finally:
+            # if we both tasks are still pending, we force a timeout by manually calling cleanup methods
+            if len(pending) == 2:
+                for task in pending:
+                    task.cancel()
+
+                await self._timeout()
+
+            else:
                 for task in pending:
                     task.cancel()
 
@@ -97,19 +105,24 @@ class PaginatedMenu(ButtonMenu):
 
         await self.send_message(self.page)
 
+    async def _get_reaction(self) -> Union[Emoji, str]:
+        """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
+        reaction, user = await self.ctx.bot.wait_for('reaction_add',
+                                                     check=lambda r, u: u == self.ctx.author
+                                                     and self.ctx.channel == r.message.channel)
+        if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
+            return reaction.emoji.name
+        return reaction.emoji
+
     async def _get_reaction_remove(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
-        try:
-            reaction, user = await self.ctx.bot.wait_for('reaction_remove', timeout=self.timeout,
-                                                         check=lambda r, u: u == self.ctx.author
-                                                         and self.ctx.channel == r.message.channel)
-        except asyncio.TimeoutError:
-            await self._timeout()
+        reaction, user = await self.ctx.bot.wait_for('reaction_remove',
+                                                     check=lambda r, u: u == self.ctx.author
+                                                     and self.ctx.channel == r.message.channel)
 
-        else:
-            if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
-                return reaction.emoji.name
-            return reaction.emoji
+        if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
+            return reaction.emoji.name
+        return reaction.emoji
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""

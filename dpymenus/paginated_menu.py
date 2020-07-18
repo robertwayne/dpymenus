@@ -100,8 +100,9 @@ class PaginatedMenu(ButtonMenu):
     async def _get_reaction_remove(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
         try:
-            reaction, user = await self.ctx.bot.wait_for('reaction_remove', timeout=self.timeout, check=lambda _, u: u == self.ctx.author)
-
+            reaction, user = await self.ctx.bot.wait_for('reaction_remove', timeout=self.timeout,
+                                                         check=lambda r, u: u == self.ctx.author
+                                                         and self.ctx.channel == r.message.channel)
         except asyncio.TimeoutError:
             await self._timeout()
 

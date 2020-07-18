@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
  
-## [0.3.1] - Unreleased
+## [0.3.1] - 2020-07-18
 
 ### Added
 - `PaginatedMenu`s now have an optional argument: `page_numbers`. If set to `True`,
@@ -13,6 +13,8 @@ embeds will generate a footer with the current and total page numbers. *This
 option will override user-defined footers.*
 
 ### Changed
+- The session handler now stores sessions as a tuple `(user_id, channel_id)`
+instead of just `user_id`.
 - The default timeout page now has the title 'Timed Out' instead of the
 last pages' name.
 - **Breaking:** `set_user_inactive()` is now `close_session()`

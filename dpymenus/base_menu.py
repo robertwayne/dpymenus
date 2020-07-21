@@ -43,8 +43,8 @@ class BaseMenu:
         self.data = None
 
     def __repr__(self):
-        return f'<Menu pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \
-               f'active={self.active} page={self.page_index}>'
+        return f'BaseMenu(pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \
+               f'active={self.active} page={self.page_index})'
 
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
@@ -195,7 +195,7 @@ class BaseMenu:
         if len(self.pages) <= 1:
             raise PagesError(f'There must be more than one page in a menu. Expected at least 2, found {len(self.pages)}.')
 
-    async def start_session(self) -> bool:
+    async def _start_session(self) -> bool:
         if (self.ctx.author.id, self.ctx.channel.id) in sessions:
             return False
 

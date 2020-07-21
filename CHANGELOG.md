@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
  
+## [0.3.2] - Unreleased
+
+### Added
+- `PaginatedMenu`s can now pass in an `Embed` to `on_cancel` and `on_timeout`
+to override the default embeds.
+ 
 ## [0.3.1] - 2020-07-18
 
 ### Added

@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Union
+from typing import Callable, List, Optional, Union
 
 from discord import Embed, Emoji, Message, PartialEmoji
 from discord.abc import GuildChannel
@@ -18,9 +18,12 @@ class PaginatedMenu(ButtonMenu):
     :param timeout: How long (in seconds) to wait before timing out.
     """
 
-    def __init__(self, ctx: Context, page_numbers: bool = False, timeout: int = 300):
+    def __init__(self, ctx: Context, page_numbers: bool = False, timeout: int = 300,
+                 on_cancel: Optional[Embed] = None, on_timeout: Optional[Embed] = None):
         super().__init__(ctx, timeout)
         self.page_numbers = page_numbers
+        self.on_cancel = on_cancel
+        self.on_timeout = on_timeout
 
     def __repr__(self):
         return f'<Menu pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \

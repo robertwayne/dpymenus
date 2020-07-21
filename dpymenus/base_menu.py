@@ -126,10 +126,14 @@ class BaseMenu:
 
     async def cancel(self):
         """Sends a cancellation message."""
+        embed = Embed(title=self.page.title, description='Menu selection cancelled.', color=Colour.red())
+
         if self.page.on_cancel:
             return await self.page.on_cancel()
 
-        embed = Embed(title=self.page.title, description='Menu selection cancelled.', color=Colour.red())
+        if hasattr(self, 'on_cancel'):
+            embed = self.on_cancel
+
         await self.send_message(embed)
         await self.close_session()
         self.active = False
@@ -153,10 +157,14 @@ class BaseMenu:
         await self.close_session()
         self.active = False
 
+        embed = Embed(title='Timed Out', description='You timed out at menu selection.', color=Colour.red())
+
         if self.page.on_timeout:
             return await self.page.on_timeout()
 
-        embed = Embed(title='Timed Out', description='You timed out at menu selection.', color=Colour.red())
+        if hasattr(self, 'on_timeout'):
+            embed = self.on_timeout
+
         await self.send_message(embed)
 
     async def _is_cancelled(self) -> bool:

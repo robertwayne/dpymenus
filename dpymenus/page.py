@@ -11,11 +11,13 @@ class Page(Embed):
         :on_fail: Reference to a Callable. Called when user input fails.
         :on_cancel: Reference to a Callable. Called when the cancel method is run.
         :on_timeout: reference to a Callable. Called when a menu instance times out.
+        :embed: A discord Embed object. Used in place of utilizing the Page as an Embed object itself.
         :buttons: A list of reaction Emoji objects or unicode strings.
     """
 
     def __init__(self, buttons: Optional[List] = None, on_next: Optional[Callable] = None, on_fail: Optional[Callable] = None,
                  on_cancel: Optional[Callable] = None, on_timeout: Optional[Callable] = None, embed: Optional[Embed] = None, **kwargs):
+        self.embed = embed
         self.buttons = buttons
         self.on_next = on_next
         self.on_fail = on_fail
@@ -33,5 +35,5 @@ class Page(Embed):
         return f'<Page {self.title}>'
 
     def __repr__(self):
-        return f'Page(title={self.title} on_next={self.on_next}, on_fail={self.on_fail}, on_cancel={self.on_cancel}, on_timeout={self.on_timeout}, ' \
-               f'buttons={self.buttons}, {super().__repr__()})'
+        return f'Page(title={self.title} on_next={self.on_next}, on_fail={self.on_fail}, on_cancel={self.on_cancel}, ' \
+               f'on_timeout={self.on_timeout}, buttons={self.buttons}, embed={self.embed} {super().__repr__()})'

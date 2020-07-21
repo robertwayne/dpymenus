@@ -11,9 +11,6 @@ class MyButtonMenu(commands.Cog):
 
     @commands.command()
     async def buttons(self, ctx: commands.Context):
-        # We start my instantiating a menu object. In this case, we're using `PaginatedMenu`. We have to pass our command context.
-        menu = PaginatedMenu(ctx, page_numbers=True)
-
         # In this example, we're going to start by defining a few embeds. If you have used `discord.py` before, this should be
         # familiar syntax and is the idiomatic way to construct new embeds in the library. We will create three of them, one
         # for each page of the menu.
@@ -25,6 +22,17 @@ class MyButtonMenu(commands.Cog):
 
         e3 = Embed(title='Page 3', description='Third page test!')
         e1.add_field(name='Example E', value='Example F')
+
+        cancel = Embed(title='Cancel Page', description='Cancel page test.')
+        cancel.add_field(name='Example E', value='Example F')
+
+        timeout = Embed(title='Page 3', description='Timeout page test.')
+        timeout.add_field(name='Example E', value='Example F')
+
+        # Then we will instantiate a menu object. In this case, we're using `PaginatedMenu`. We have to pass our command context.
+        # We will also override the cancel and timeout defaults with our own we defined above. In addition, we will turn on page
+        # numbers which will be displayed in the footer.
+        menu = PaginatedMenu(ctx, page_numbers=True, on_cancel=cancel, on_timeout=timeout)
 
         # Next we will add these pages using the `add_pages` method. This method will take a list of `Embed` objects,
         # where each `Embed` should include an `embed` pointing to one of the previously created embeds.

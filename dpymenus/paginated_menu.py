@@ -1,5 +1,5 @@
 import asyncio
-from typing import Callable, List, Optional, Union
+from typing import List, Optional, Union
 
 from discord import Embed, Emoji, Message, PartialEmoji
 from discord.abc import GuildChannel

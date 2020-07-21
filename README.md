@@ -88,8 +88,10 @@ in a future version.
 
 `PaginatedMenu`s also take an optional argument:
 
-*New 0.3.1a:* `page_numbers`: whether or not to display page numbers in the footer *(overrides embed footer data)*
+*New 0.3.1:* `page_numbers`: whether or not to display page numbers in the footer *(overrides embed footer data)*
 
+*New 0.3.2:* `on_cancel` and `on_timeout` can be passed in as arguments to your `PaginatedMenu` in order to override
+the default embeds. They take a discord `Embed` object, unlike other menus which take a callback.
 ### Polls
 The final type of menu you can construct is a Poll. Polls are slightly unique because they handle a lot of
 functions internally. You can start the same as other menus:
@@ -191,4 +193,3 @@ Example code has been moved into the *examples* directory above.
 Can't find something you were looking for? Open an issue and I'll
 try to add a relevant example!
 
-<img align="left" width="400" src="demos/poll_example.gif"> <img align="right" width="400" src="demos/text_example.gif">

@@ -154,9 +154,6 @@ class BaseMenu:
 
     async def _timeout(self):
         """Sends a timeout message."""
-        await self.close_session()
-        self.active = False
-
         embed = Embed(title='Timed Out', description='You timed out at menu selection.', color=Colour.red())
 
         if self.page.on_timeout:
@@ -166,6 +163,8 @@ class BaseMenu:
             embed = self.on_timeout
 
         await self.send_message(embed)
+        await self.close_session()
+        self.active = False
 
     async def _is_cancelled(self) -> bool:
         """Checks input for a cancellation string. If there is a match, it calls the ``menu.cancel()`` method and returns True."""

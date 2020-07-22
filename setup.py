@@ -5,7 +5,7 @@ with open('README.md', 'r') as file:
 
 setuptools.setup(
         name='dpymenus',
-        version='0.3.2a',
+        version='0.3.2',
         author='Rob Wagner',
         author_email='rob.wagner@outlook.com',
         license='License :: OSI Approved :: MIT License',
@@ -15,7 +15,7 @@ setuptools.setup(
         url='https://github.com/robertwayne/dpymenus',
         packages=setuptools.find_packages(),
         classifiers=[
-            'Programming Language :: Python :: 3.8',
+            'Programming Language :: Python :: 3.9',
             'Operating System :: OS Independent',
             'Typing :: Typed',
             'Topic :: Communications :: Chat',

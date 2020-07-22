@@ -5,11 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
  
-## [0.3.2] - Unreleased
+## [0.3.2] - 2020-07-22
 
 ### Added
 - `PaginatedMenu`s can now pass in an `Embed` to `on_cancel` and `on_timeout`
 to override the default embeds.
+- Created a little logo.
+
+### Changed
+- Replaced old demos with a new demo .gif for the README showing off a `PaginatedMenu`.
+- Modified build script to avoid the possibility of uploading old source code to PyPi.
+- Updated all __repr__ strings to more accurately capture the object representation.
+- `start_session` is now marked private with `_`.
+- Moved license in setup to display properly with `pip show dpymenus`.
+- Updated `discord.py` requirement to `1.3.4`. 
  
 ## [0.3.1] - 2020-07-18
 

@@ -2,7 +2,7 @@
 [![Documentation Status](https://readthedocs.org/projects/dpymenus/badge/?version=latest)](https://dpymenus.readthedocs.io/en/latest/?badge=latest)
 
 
-<img align="left" src="assets/logo.png">
+<img align="left" src="assets/logo.png" alt="dpymenus">
 
 # Discord Menus
 
@@ -11,7 +11,8 @@ which react to chat input (text, reaction buttons).
 
 <br>
 
-<img align="right" src="assets/demo.gif">
+<img align="right" src="assets/demo.gif" alt="user creates an embed, reaction buttons are added, and user navigates the menu
+by clicking the buttons">
 
 <br>
 

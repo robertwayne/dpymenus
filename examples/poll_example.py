@@ -11,7 +11,7 @@ class MyPoll(commands.Cog):
 
     @commands.command()
     async def poll(self, ctx: commands.Context):
-        # We start my instantiating a menu object. In this case, we're using `ButtonMenu`. We have to pass our command context.
+        # We start my instantiating a menu object. In this case we're using `ButtonMenu`. We have to pass our command context.
         menu = Poll(ctx, timeout=60)  # we set the duration of the poll to 1 minute
 
         # Next we will create some pages using the `add_page` method. This is done the same way you would create an Embed

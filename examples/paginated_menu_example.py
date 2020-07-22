@@ -12,8 +12,8 @@ class MyButtonMenu(commands.Cog):
     @commands.command()
     async def buttons(self, ctx: commands.Context):
         # In this example, we're going to start by defining a few embeds. If you have used `discord.py` before, this should be
-        # familiar syntax and is the idiomatic way to construct new embeds in the library. We will create three of them, one
-        # for each page of the menu.
+        # familiar syntax and is the idiomatic way to construct new embeds in the library. We will create five of them, three
+        # for the pages in the menu, then a page for cancelling and timing out.
         e1 = Embed(title='Page 1', description='First page test!')
         e1.add_field(name='Example A', value='Example B')
 
@@ -29,7 +29,7 @@ class MyButtonMenu(commands.Cog):
         timeout = Embed(title='Page 3', description='Timeout page test.')
         timeout.add_field(name='Example E', value='Example F')
 
-        # Then we will instantiate a menu object. In this case, we're using `PaginatedMenu`. We have to pass our command context.
+        # Then we will instantiate a menu object. In this case we're using `PaginatedMenu`. We have to pass our command context.
         # We will also override the cancel and timeout defaults with our own we defined above. In addition, we will turn on page
         # numbers which will be displayed in the footer.
         menu = PaginatedMenu(ctx, page_numbers=True, on_cancel=cancel, on_timeout=timeout)

@@ -18,10 +18,10 @@ which react to chat input (text, reaction buttons).
 ### Table of Contents
 [Documentation](https://dpymenus.readthedocs.io/en/latest/?badge=latest)
 + [Installation](#installation)
-+ [Usage](#usage)
-+ [Button Menus](#button-menus)
-+ [PaginatedMenus](#paginated-menus)
-+ [Polls](#polls)
++ [Usage (Text Menu)](#usage)
++ [Usage (Button Menu)](#button-menus)
++ [Usage (Paginated Menu)](#paginated-menus)
++ [Usage (Poll)](#polls)
 + [Data Field](#data-field)
 + [Generic Input Matching](#generic-input-matching)
 + [Reaction Buttons](#reaction-buttons)
@@ -33,7 +33,7 @@ which react to chat input (text, reaction buttons).
 ### Installation
 `pip install dpymenus`
 
-### Usage
+### Usage (Text Menu)
 Create a menu object *(it must take the Command Context as its first param)*:
 
     from dpymenus import TextMenu
@@ -60,7 +60,7 @@ successfully handled input. `next()` also takes 1 optional argument:
 
 *New 0.2.8*: You can now also pass in an integer to `next` referencing the pages index.
 
-### Button Menus
+### Usage (Button Menu)
 You can also construct a menu which uses reactions as 'buttons' to handle user input.
 
     from dpymenus import ButtonMenu
@@ -74,9 +74,10 @@ Similiar to a `TextMenu`, you need to add some pages. This time, we also need to
 The buttons here are unicode, but you can use any Discord Emoji object. See the [Reaction Buttons](#reaction-buttons) 
 section for more details.
 
-### Paginated Menus
-In addition to standard button menus, if you instead prefer a simpler interface where pages do not need to
-store custom user state data and buttons only point to linear pages, the `PaginatedMenu` is a great option.
+### Usage (Paginated Menu)
+In addition to standard button menus, if you instead prefer a simpler interface where pages are static,
+you do not need to store custom user state data, and buttons only work linearly, the `PaginatedMenu` is a great 
+option.
 
     from dpymenus import PaginatedMenu
     menu3 = PaginatedMenu(ctx)
@@ -99,7 +100,8 @@ in a future version.
 
 *New 0.3.2:* `on_cancel` and `on_timeout` can be passed in as arguments to your `PaginatedMenu` in order to override
 the default embeds. They take a discord `Embed` object, unlike other menus which take a callback.
-### Polls
+
+### Usage (Polls)
 The final type of menu you can construct is a Poll. Polls are slightly unique because they handle a lot of
 functions internally. You can start the same as other menus:
 

@@ -4,8 +4,8 @@ from discord.ext import commands
 # Make sure you import the type of menu you plan on using.
 from dpymenus import ButtonMenu
 
-# First we will define some emoji strings. We will be using these as our menus buttons. Discord will
-# turn these into proper emojis, and the `ButtonMenu` will automatically turn these into reactions on your
+# First we will define some emoji strings. We will be using these as our menu buttons. Discord will
+# display these as proper emojis, and the `ButtonMenu` will automatically turn these into reactions on your
 # pages (which we will create in a moment).
 forward = '⏩'
 reverse = '⏪'
@@ -18,7 +18,7 @@ class MyButtonMenu(commands.Cog):
 
     @commands.command()
     async def buttons(self, ctx: commands.Context):
-        # We start my instantiating a menu object. In this case, we're using `ButtonMenu`. We have to pass our command context.
+        # We start my instantiating a menu object. In this case we're using `ButtonMenu`. We have to pass our command context.
         menu = ButtonMenu(ctx)
 
         # Next we will create some pages using the `add_page` method. This is done the same way you would create an Embed

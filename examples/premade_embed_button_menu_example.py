@@ -18,7 +18,7 @@ class MyButtonMenu(commands.Cog):
 
     @commands.command()
     async def buttons(self, ctx: commands.Context):
-        # We start my instantiating a menu object. In this case, we're using `ButtonMenu`. We have to pass our command context.
+        # We start my instantiating a menu object. In this case we're using `ButtonMenu`. We have to pass our command context.
         menu = ButtonMenu(ctx)
 
         # In this example, we're going to start by defining a few embeds. If you have used `discord.py` before, this should be

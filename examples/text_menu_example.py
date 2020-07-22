@@ -14,7 +14,7 @@ class Ping(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx: commands.Context) -> None:
-        # We start my instantiating a menu object. In this case, we're using `TextMenu`. We have to pass our command context.
+        # We start my instantiating a menu object. In this case we're using `TextMenu`. We have to pass our command context.
         menu = TextMenu(ctx)
 
         # Next we will create some pages using the `add_page` method. This is done the same way you would create an Embed

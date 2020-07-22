@@ -16,6 +16,8 @@ class PaginatedMenu(ButtonMenu):
     :param ctx: A reference to the command context.
     :param page_numbers: Whether embeds should display the current/max page numbers in the footer.
     :param timeout: How long (in seconds) to wait before timing out.
+    :param on_cancel: An Embed that displays when the cancel button is pressed.
+    :param on_timeout: An Embed that displays when the menu raises an asyncio.TimeoutError.
     """
 
     def __init__(self, ctx: Context, page_numbers: bool = False, timeout: int = 300,

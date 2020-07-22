@@ -13,6 +13,8 @@ which react to chat input (text, reaction buttons).
 
 <img align="right" src="assets/demo.gif">
 
+<br>
+
 ### Table of Contents
 [Documentation](https://dpymenus.readthedocs.io/en/latest/?badge=latest)
 + [Installation](#installation)

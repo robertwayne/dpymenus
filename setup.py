@@ -8,6 +8,7 @@ setuptools.setup(
         version='0.3.2a',
         author='Rob Wagner',
         author_email='rob.wagner@outlook.com',
+        license='License :: OSI Approved :: MIT License',
         description='Dynamic, composable menus and polls for use with the discord.py library.',
         long_description=long_description,
         long_description_content_type='text/markdown',
@@ -15,7 +16,6 @@ setuptools.setup(
         packages=setuptools.find_packages(),
         classifiers=[
             'Programming Language :: Python :: 3.8',
-            'License :: OSI Approved :: MIT License',
             'Operating System :: OS Independent',
             'Typing :: Typed',
             'Topic :: Communications :: Chat',

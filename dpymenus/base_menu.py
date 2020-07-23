@@ -177,8 +177,7 @@ class BaseMenu:
         """Collects user input and places it into the input attribute."""
         try:
             message = await self.ctx.bot.wait_for('message', timeout=self.timeout,
-                                                  check=lambda m: m.author == self.ctx.author
-                                                  and self.ctx.channel == m.channel)
+                                                  check=self._check_message)
 
         except asyncio.TimeoutError:
             if self.page.on_timeout:
@@ -189,6 +188,9 @@ class BaseMenu:
 
         else:
             return message
+
+    def _check_message(self, m: Message) -> bool:
+        return m.author == self.ctx.author and self.ctx.channel == m.channel
 
     async def _validate_pages(self):
         """Checks that the Menu contains at least one Page."""

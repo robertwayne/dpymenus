@@ -81,7 +81,7 @@ class Poll(ButtonMenu):
         while True:
             try:
                 reaction, user = await self.ctx.bot.wait_for('reaction_add', timeout=self.timeout,
-                                                             check=lambda _, u: u != self.ctx.bot.user)
+                                                             check=self._check_not_bot)
 
             except asyncio.TimeoutError:
                 return
@@ -95,7 +95,7 @@ class Poll(ButtonMenu):
         while True:
             try:
                 reaction, user = await self.ctx.bot.wait_for('reaction_remove', timeout=self.timeout,
-                                                             check=lambda _, u: u != self.ctx.bot.user)
+                                                             check=self._check_not_bot)
 
             except asyncio.TimeoutError:
                 return
@@ -107,6 +107,9 @@ class Poll(ButtonMenu):
     async def _poll_timer(self):
         """Handles poll duration."""
         await asyncio.sleep(self.timeout)
+
+    def _check_not_bot(self, _, u: User) -> bool:
+        return u != self.ctx.bot.user
 
     async def _finish_poll(self):
         """Removes multi-votes and calls the Page on_next function when finished."""

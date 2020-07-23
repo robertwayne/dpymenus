@@ -126,6 +126,12 @@ class PaginatedMenu(ButtonMenu):
             return reaction.emoji.name
         return reaction.emoji
 
+    def _check_reaction(self, r: Reaction, u: User) -> bool:
+        """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
+        if r.emoji in GENERIC_BUTTONS:
+            return u == self.ctx.author and r.message.id == self.output.id
+        return False
+
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
         for button in GENERIC_BUTTONS:

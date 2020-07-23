@@ -109,6 +109,7 @@ class Poll(ButtonMenu):
         await asyncio.sleep(self.timeout)
 
     def _check_not_bot(self, _, u: User) -> bool:
+        """Returns true if the user who reacted is not a bot."""
         return u != self.ctx.bot.user
 
     async def _finish_poll(self):

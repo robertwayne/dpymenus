@@ -73,8 +73,9 @@ class ButtonMenu(BaseMenu):
             await self.output.clear_reactions()
 
     def _check_reaction(self, r: Reaction, u: User) -> bool:
-        if r.emoji in GENERIC_BUTTONS:
-            return u == self.ctx.author and self.ctx.channel == r.message.channel and r.message.id == self.output.id
+        """Returns true if the author is the person who reacted and the message ID's match. Checks the pages buttons."""
+        if r.emoji in self.page.buttons:
+            return u == self.ctx.author and r.message.id == self.output.id
         return False
 
     async def _validate_buttons(self):

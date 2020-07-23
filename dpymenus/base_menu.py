@@ -190,6 +190,7 @@ class BaseMenu:
             return message
 
     def _check_message(self, m: Message) -> bool:
+        """Returns true if the author is the person who responded and the channel is the same."""
         return m.author == self.ctx.author and self.ctx.channel == m.channel
 
     async def _validate_pages(self):

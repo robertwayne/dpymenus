@@ -1,8 +1,8 @@
 import asyncio
 from typing import List, Optional, Union
 
-from discord import Embed, Emoji, Message, PartialEmoji
-from discord.abc import GuildChannel
+from discord import Embed, Emoji, Message, PartialEmoji, Reaction
+from discord.abc import GuildChannel, User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, Page

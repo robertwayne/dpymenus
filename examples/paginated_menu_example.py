@@ -18,10 +18,10 @@ class MyButtonMenu(commands.Cog):
         e1.add_field(name='Example A', value='Example B')
 
         e2 = Embed(title='Page 2', description='Second page test!')
-        e1.add_field(name='Example C', value='Example D')
+        e2.add_field(name='Example C', value='Example D')
 
         e3 = Embed(title='Page 3', description='Third page test!')
-        e1.add_field(name='Example E', value='Example F')
+        e3.add_field(name='Example E', value='Example F')
 
         cancel = Embed(title='Cancel Page', description='Cancel page test.')
         cancel.add_field(name='Example E', value='Example F')

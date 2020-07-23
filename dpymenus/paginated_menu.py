@@ -1,8 +1,8 @@
 import asyncio
 from typing import List, Optional, Union
 
-from discord import Embed, Emoji, Message, PartialEmoji
-from discord.abc import GuildChannel
+from discord import Embed, Emoji, Message, PartialEmoji, Reaction
+from discord.abc import GuildChannel, User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, Page
@@ -51,15 +51,9 @@ class PaginatedMenu(ButtonMenu):
 
             # if we both tasks are still pending, we force a timeout by manually calling cleanup methods
             if len(pending) == 2:
-                for task in pending:
-                    task.cancel()
-
                 await self._timeout()
 
             else:
-                for task in pending:
-                    task.cancel()
-
                 for future in done:
                     self.input = future.result()
 
@@ -67,6 +61,9 @@ class PaginatedMenu(ButtonMenu):
                     await self.output.remove_reaction(self.input, self.ctx.author)
 
                 await self._handle_transition()
+
+            for task in pending:
+                task.cancel()
 
         await self._cleanup_reactions()
 
@@ -113,9 +110,7 @@ class PaginatedMenu(ButtonMenu):
     async def _get_reaction(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
         reaction, user = await self.ctx.bot.wait_for('reaction_add',
-                                                     check=lambda r, u: u == self.ctx.author
-                                                     and self.ctx.channel == r.message.channel
-                                                     and r.message.id == self.output.id)
+                                                     check=self._check_reaction)
 
         if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
             return reaction.emoji.name
@@ -123,14 +118,19 @@ class PaginatedMenu(ButtonMenu):
 
     async def _get_reaction_remove(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
+
         reaction, user = await self.ctx.bot.wait_for('reaction_remove',
-                                                     check=lambda r, u: u == self.ctx.author
-                                                     and self.ctx.channel == r.message.channel
-                                                     and r.message.id == self.output.id)
+                                                     check=self._check_reaction)
 
         if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
             return reaction.emoji.name
         return reaction.emoji
+
+    def _check_reaction(self, r: Reaction, u: User) -> bool:
+        """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
+        if r.emoji in GENERIC_BUTTONS:
+            return u == self.ctx.author and r.message.id == self.output.id
+        return False
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
@@ -138,5 +138,6 @@ class PaginatedMenu(ButtonMenu):
             await self.output.add_reaction(button)
 
     async def _handle_transition(self):
+        """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
         transition_map = {GENERIC_BUTTONS[0]: self._previous, GENERIC_BUTTONS[1]: self.cancel, GENERIC_BUTTONS[2]: self._next}
         await transition_map[self.input]()

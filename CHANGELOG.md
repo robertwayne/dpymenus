@@ -4,7 +4,21 @@ All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
- 
+
+## [0.3.3] - 2020-07-23
+
+*dpymenus works with Python 3.9 beta.*
+
+### Changed
+- Moved various checks into standing methods instead of lambdas for
+caching opportunities.
+- Refactored some repeated code paths.
+
+### Fixed
+- Fixed an issue where adding a custom reaction to a `ButtonMenu` or
+`PaginatedMenu` would raise an HTTP 400 and lock the menu.
+- Fixed various typos and grammatical errors within the documentation.
+
 ## [0.3.2] - 2020-07-22
 
 ### Added
@@ -15,7 +29,7 @@ to override the default embeds.
 ### Changed
 - Replaced old demos with a new demo .gif for the README showing off a `PaginatedMenu`.
 - Modified build script to avoid the possibility of uploading old source code to PyPi.
-- Updated all __repr__ strings to more accurately capture the object representation.
+- Updated all `__repr__` strings to more accurately capture the object representation.
 - `start_session` is now marked private with `_`.
 - Moved license in setup to display properly with `pip show dpymenus`.
 - Updated `discord.py` requirement to `1.3.4`. 

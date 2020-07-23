@@ -2,11 +2,12 @@ import asyncio
 from typing import Dict, Optional, Union
 from warnings import warn
 
-from discord import Emoji, PartialEmoji
-from discord.abc import GuildChannel
+from discord import Emoji, PartialEmoji, Reaction
+from discord.abc import GuildChannel, User
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
+from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, CallbackError
 
 
@@ -56,9 +57,7 @@ class ButtonMenu(BaseMenu):
         """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
         try:
             reaction, user = await self.ctx.bot.wait_for('reaction_add', timeout=self.timeout,
-                                                         check=lambda r, u: u == self.ctx.author
-                                                         and self.ctx.channel == r.message.channel
-                                                         and r.message.id == self.output.id)
+                                                         check=self._check_reaction)
 
         except asyncio.TimeoutError:
             await self._timeout()
@@ -72,6 +71,12 @@ class ButtonMenu(BaseMenu):
         """Removes all reactions from the output message object."""
         if isinstance(self.ctx.channel, GuildChannel):
             await self.output.clear_reactions()
+
+    def _check_reaction(self, r: Reaction, u: User) -> bool:
+        """Returns true if the author is the person who reacted and the message ID's match. Checks the pages buttons."""
+        if r.emoji in self.page.buttons:
+            return u == self.ctx.author and r.message.id == self.output.id
+        return False
 
     async def _validate_buttons(self):
         """Ensures that a button menu was passed the appropriate amount of buttons."""

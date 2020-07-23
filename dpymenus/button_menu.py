@@ -72,7 +72,8 @@ class ButtonMenu(BaseMenu):
             await self.output.clear_reactions()
 
     def _check_reaction(self, r: Reaction, u: User) -> bool:
-        return u == self.ctx.author and self.ctx.channel == r.message.channel and r.message.id == self.output.id
+        if r in self.output.reactions:
+            return u == self.ctx.author and self.ctx.channel == r.message.channel and r.message.id == self.output.id
 
     async def _validate_buttons(self):
         """Ensures that a button menu was passed the appropriate amount of buttons."""

@@ -51,15 +51,9 @@ class PaginatedMenu(ButtonMenu):
 
             # if we both tasks are still pending, we force a timeout by manually calling cleanup methods
             if len(pending) == 2:
-                for task in pending:
-                    task.cancel()
-
                 await self._timeout()
 
             else:
-                for task in pending:
-                    task.cancel()
-
                 for future in done:
                     self.input = future.result()
 
@@ -67,6 +61,9 @@ class PaginatedMenu(ButtonMenu):
                     await self.output.remove_reaction(self.input, self.ctx.author)
 
                 await self._handle_transition()
+
+            for task in pending:
+                task.cancel()
 
         await self._cleanup_reactions()
 
@@ -138,5 +135,6 @@ class PaginatedMenu(ButtonMenu):
             await self.output.add_reaction(button)
 
     async def _handle_transition(self):
+        """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
         transition_map = {GENERIC_BUTTONS[0]: self._previous, GENERIC_BUTTONS[1]: self.cancel, GENERIC_BUTTONS[2]: self._next}
         await transition_map[self.input]()

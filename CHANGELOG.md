@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3.4] - 2020-07-25
+
+### Fixed
+- Fixed an issue where string-type emoji would not pass a `ButtonMenu`
+check.
+
 ## [0.3.3] - 2020-07-23
 
 *dpymenus works with Python 3.9 beta.*

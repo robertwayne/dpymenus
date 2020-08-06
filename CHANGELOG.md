@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3.5] - UNRELEASED
+
+### Added
+- Menus now accept a `destination` paramater, which takes a User or Channel object.
+This will open the menu in that channel as opposed to in the current channel.
+
 ## [0.3.4] - 2020-07-25
 
 ### Fixed

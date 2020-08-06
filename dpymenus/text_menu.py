@@ -35,7 +35,7 @@ class TextMenu(BaseMenu):
         if await self._start_session() is False:
             return
 
-        self.output = await self.ctx.send(embed=self.page)
+        self.output = await self.destination.send(embed=self.page)
 
         _first_iteration = True
         while self.active:

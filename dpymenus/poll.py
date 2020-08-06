@@ -35,7 +35,7 @@ class Poll(ButtonMenu):
 
         await self._set_data()
 
-        self.output = await self.ctx.send(embed=self.page)
+        self.output = await self.destination.send(embed=self.page)
         await self._add_buttons()
 
         pending = set()

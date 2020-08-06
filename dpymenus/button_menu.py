@@ -2,12 +2,11 @@ import asyncio
 from typing import Dict, Optional, Union
 from warnings import warn
 
-from discord import Emoji, PartialEmoji, Reaction
+from discord import Emoji, PartialEmoji, Reaction, TextChannel
 from discord.abc import GuildChannel, User
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
-from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, CallbackError
 
 
@@ -17,11 +16,12 @@ class ButtonMenu(BaseMenu):
 
     :param ctx: A reference to the command context.
     :param timeout: How long (in seconds) to wait before timing out.
+    :param destination: Whether the menu will open in the current channel, sent to a seperate guild channel, or sent to a DM channel.
     :param data: A dictionary containing variables to pass around menu functions.
     """
 
-    def __init__(self, ctx: Context, timeout: int = 300, data: Optional[Dict] = None):
-        super().__init__(ctx, timeout)
+    def __init__(self, ctx: Context, timeout: int = 300, data: Optional[Dict] = None, destination: Optional[Union[TextChannel, User]] = None):
+        super().__init__(ctx, timeout=timeout, destination=destination)
         self.data = data if data else {}
 
     def __repr__(self):

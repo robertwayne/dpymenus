@@ -1,7 +1,7 @@
 import asyncio
 from typing import List, Optional, Union
 
-from discord import Embed, Emoji, Message, PartialEmoji, Reaction
+from discord import Embed, Emoji, Message, PartialEmoji, Reaction, TextChannel
 from discord.abc import GuildChannel, User
 from discord.ext.commands import Context
 
@@ -16,13 +16,14 @@ class PaginatedMenu(ButtonMenu):
     :param ctx: A reference to the command context.
     :param page_numbers: Whether embeds should display the current/max page numbers in the footer.
     :param timeout: How long (in seconds) to wait before timing out.
+    :param destination: Whether the menu will open in the current channel, sent to a seperate guild channel, or sent to a DM channel.
     :param on_cancel: An Embed that displays when the cancel button is pressed.
     :param on_timeout: An Embed that displays when the menu raises an asyncio.TimeoutError.
     """
 
     def __init__(self, ctx: Context, page_numbers: bool = False, timeout: int = 300,
-                 on_cancel: Optional[Embed] = None, on_timeout: Optional[Embed] = None):
-        super().__init__(ctx, timeout)
+                 on_cancel: Optional[Embed] = None, on_timeout: Optional[Embed] = None, destination: Optional[Union[TextChannel, User]] = None):
+        super().__init__(ctx, timeout=timeout, destination=destination)
         self.page_numbers = page_numbers
         self.on_cancel = on_cancel
         self.on_timeout = on_timeout
@@ -39,7 +40,7 @@ class PaginatedMenu(ButtonMenu):
         if await self._start_session() is False:
             return
 
-        self.output = await self.ctx.send(embed=self.page)
+        self.output = await self.destination.send(embed=self.page)
 
         await self._add_buttons()
 

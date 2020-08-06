@@ -1,7 +1,7 @@
 import asyncio
 from typing import Callable, List, Optional, Union
 
-from discord import Embed, Emoji, Message, PartialEmoji
+from discord import Embed, Emoji, Message, PartialEmoji, TextChannel, User
 from discord.abc import GuildChannel
 from discord.colour import Colour
 from discord.ext.commands import Context
@@ -22,6 +22,7 @@ class BaseMenu:
     Attributes
         :ctx: A reference to the command Context.
         :timeout: How long (in seconds) to wait before timing out.
+        :destination: Whether the menu will open in the current channel, sent to a seperate guild channel, or sent to a DM channel.
         :pages: A list containing references to Page objects.
         :page_index: Index value of the current page.
         :page: Current Page object.
@@ -31,9 +32,10 @@ class BaseMenu:
         :data: A dictionary containing dynamic state information.
     """
 
-    def __init__(self, ctx: Context, timeout: int = 300):
+    def __init__(self, ctx: Context, timeout: int = 300, destination: Optional[Union[TextChannel, User]] = None):
         self.ctx = ctx
         self.timeout = timeout
+        self.destination = ctx if destination is None else destination
         self.pages: List[Page] = []
         self.page_index: int = 0
         self.page: Optional[Page] = None

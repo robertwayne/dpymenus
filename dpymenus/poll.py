@@ -1,8 +1,8 @@
 import asyncio
-from typing import Dict, Set
+from typing import Dict, Optional, Set, Union
 from warnings import warn
 
-from discord import User
+from discord import TextChannel, User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu
@@ -12,13 +12,13 @@ from dpymenus.exceptions import ButtonsError, CallbackError, PagesError
 class Poll(ButtonMenu):
     """Represents a Poll menu.
 
-    Attributes
-        :ctx: A reference to the command context.
-        :timeout: How long (in seconds) before the poll ends.
+    :param ctx: A reference to the command context.
+    :param timeout: How long (in seconds) before the poll ends.
+    :param destination: Whether the menu will open in the current channel, sent to a seperate guild channel, or sent to a DM channel.
     """
 
-    def __init__(self, ctx: Context, timeout: int = 300):
-        super().__init__(ctx, timeout)
+    def __init__(self, ctx: Context, timeout: int = 300, destination: Optional[Union[TextChannel, User]] = None):
+        super().__init__(ctx, timeout=timeout, destination=destination)
         self.voted: Set[User] = set()
 
     def __repr__(self):

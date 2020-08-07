@@ -152,7 +152,7 @@ class BaseMenu:
     # Internal Methods
     async def _cleanup_input(self):
         """Deletes a Discord client user message."""
-        if isinstance(self.ctx.channel, GuildChannel):
+        if isinstance(self.output.channel, GuildChannel):
             await self.input.delete()
 
     async def _timeout(self):

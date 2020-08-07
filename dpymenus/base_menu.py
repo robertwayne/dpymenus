@@ -121,9 +121,10 @@ class BaseMenu:
 
         :param embed: A Discord :py:class:`~discord.Embed` object.
         """
-        if isinstance(self.ctx.channel, GuildChannel):
+        if isinstance(self.destination, GuildChannel):
             return await self.output.edit(embed=embed)
-        self.output = await self.ctx.send(embed=embed)
+
+        self.output = await self.destination.send(embed=embed)
         return self.output
 
     async def cancel(self):
@@ -151,7 +152,7 @@ class BaseMenu:
     # Internal Methods
     async def _cleanup_input(self):
         """Deletes a Discord client user message."""
-        if isinstance(self.ctx.channel, GuildChannel):
+        if isinstance(self.destination, GuildChannel):
             await self.input.delete()
 
     async def _timeout(self):

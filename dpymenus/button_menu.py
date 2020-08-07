@@ -3,7 +3,7 @@ from typing import Dict, Optional, Union
 from warnings import warn
 
 from discord import Emoji, PartialEmoji, Reaction, TextChannel
-from discord.abc import GuildChannel, User
+from discord.abc import GuildChannel, PrivateChannel, User
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
@@ -69,7 +69,7 @@ class ButtonMenu(BaseMenu):
 
     async def _cleanup_reactions(self):
         """Removes all reactions from the output message object."""
-        if isinstance(self.destination, GuildChannel) or isinstance(self.destination, Context):
+        if not isinstance(self.destination, User):
             await self.output.clear_reactions()
 
     def _check_reaction(self, r: Reaction, u: User) -> bool:

@@ -2,7 +2,7 @@ import asyncio
 from typing import Callable, List, Optional, Union
 
 from discord import Embed, Emoji, Message, PartialEmoji, TextChannel, User
-from discord.abc import GuildChannel
+from discord.abc import GuildChannel, PrivateChannel
 from discord.colour import Colour
 from discord.ext.commands import Context
 
@@ -121,7 +121,7 @@ class BaseMenu:
 
         :param embed: A Discord :py:class:`~discord.Embed` object.
         """
-        if isinstance(self.destination, GuildChannel) or isinstance(self.destination, Context):
+        if not isinstance(self.destination, User):
             return await self.output.edit(embed=embed)
 
         self.output = await self.destination.send(embed=embed)

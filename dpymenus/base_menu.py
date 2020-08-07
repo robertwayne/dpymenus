@@ -121,7 +121,7 @@ class BaseMenu:
 
         :param embed: A Discord :py:class:`~discord.Embed` object.
         """
-        if isinstance(self.destination, GuildChannel):
+        if isinstance(self.destination, GuildChannel) or isinstance(self.destination, Context):
             return await self.output.edit(embed=embed)
 
         self.output = await self.destination.send(embed=embed)

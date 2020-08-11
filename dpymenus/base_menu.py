@@ -131,13 +131,22 @@ class BaseMenu:
         """Sends a cancellation message."""
         embed = Embed(title=self.page.title, description='Menu selection cancelled.', color=Colour.red())
 
+        # we check if the page has a callback
         if self.page.on_cancel:
             return await self.page.on_cancel()
 
-        if hasattr(self, 'on_cancel'):
+        # we check if there's an on_cancel attr defined and if it has a value
+        # if so, we override the base embed with the attr value
+        if hasattr(self, 'on_cancel') and self.on_cancel:
             embed = self.on_cancel
 
-        await self.send_message(embed)
+        # we check if the menu is a PaginatedMenu and perform edits instead of sends
+        if self.__class__.__name__ == 'PaginatedMenu':
+            await self.output.edit(embed=embed)
+
+        else:
+            await self.send_message(embed)
+
         await self.close_session()
         self.active = False
 
@@ -159,13 +168,22 @@ class BaseMenu:
         """Sends a timeout message."""
         embed = Embed(title='Timed Out', description='You timed out at menu selection.', color=Colour.red())
 
+        # we check if the page has a callback
         if self.page.on_timeout:
             return await self.page.on_timeout()
 
-        if hasattr(self, 'on_timeout'):
+        # we check if there's an on_timeout attr defined and if it has a value
+        # if so, we override the base embed with the attr value
+        if hasattr(self, 'on_timeout') and self.on_timeout:
             embed = self.on_timeout
 
-        await self.send_message(embed)
+        # we check if the menu is a PaginatedMenu and perform edits instead of sends
+        if self.__class__.__name__ == 'PaginatedMenu':
+            await self.output.edit(embed=embed)
+            
+        else:
+            await self.send_message(embed)
+
         await self.close_session()
         self.active = False
 

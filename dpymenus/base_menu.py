@@ -129,7 +129,7 @@ class BaseMenu:
 
     async def cancel(self):
         """Sends a cancellation message."""
-        embed = Embed(title=self.page.title, description='Menu selection cancelled.', color=Colour.red())
+        embed = Embed(title='Cancelled', description='Menu selection cancelled.', color=Colour.red())
 
         # we check if the page has a callback
         if self.page.on_cancel:

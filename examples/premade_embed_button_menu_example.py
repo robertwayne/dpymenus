@@ -1,4 +1,4 @@
-from discord import Colour, Embed
+from discord import Embed
 from discord.ext import commands
 
 # Make sure you import the type of menu you plan on using.
@@ -24,14 +24,14 @@ class MyButtonMenu(commands.Cog):
         # In this example, we're going to start by defining a few embeds. If you have used `discord.py` before, this should be
         # familiar syntax and is the idiomatic way to construct new embeds in the library. We will create three of them, one
         # for each page of the menu.
-        e = Embed(title='Button Menu', description='Follow the arrows!', color=Colour.red())
-        e.add_field(name='test1', value='test2')
+        e = Embed(title='Button Menu', description='Follow the arrows!')
+        e.add_field(name='Example A', value='Example B')
 
-        e2 = Embed(title='Button Menu', description='So many buttons! What do they do?', color=Colour.orange())
-        e2.add_field(name='Random Test', value='Stuff')
+        e2 = Embed(title='Button Menu', description='So many buttons! What do they do?')
+        e2.add_field(name='Example C', value='Example D')
 
-        e3 = Embed(title='Button Menu', description='We reached the end!', color=Colour.green())
-        e3.add_field(name='test1', value='test2')
+        e3 = Embed(title='Button Menu', description='We reached the end!')
+        e3.add_field(name='Example E', value='Example F')
 
         # Next we will add these pages using the `add_pages` method. This method will take a list of `Page` objects,
         # where each `Page` should include an `embed` pointing to one of the previously created embeds, as well as an
@@ -73,12 +73,12 @@ class MyButtonMenu(commands.Cog):
 
     @staticmethod
     async def second(m: ButtonMenu):
-        # Here we are using the `next()` method a little differently than before. By passing in a string called 'first',
-        # we are telling the menu that the next page we will go to should have an `on_next` reference called 'first'.
+        # Here we are using the `go_to()` method. By passing in a string called 'first', we are telling the menu that the next
+        # page we will go to should have an `on_next` reference called 'first'.
         #
         # Your pages are always internally referenced by the name of the function you call in their `on_next` parameters.
         if m.input == reverse:
-            await m.next('first')
+            await m.go_to('first')
 
         elif m.input == forward:
             await m.next()

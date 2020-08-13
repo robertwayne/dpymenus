@@ -1,4 +1,3 @@
-from discord import Colour
 from discord.ext import commands
 
 # Make sure you import the type of menu you plan on using.
@@ -24,13 +23,13 @@ class MyPoll(commands.Cog):
         # use () parenthesis at the end of the function name. That would call the function immediately, as pages were being
         # created. Instead, the reference will be called by the menu loop at a later time.
         first = await menu.add_page(title='Sun vs Moon Poll', description='Do you prefer the sun or the moon?',
-                                    color=Colour.red(), on_next=self.finish, buttons=['\U00002600', '\U0001F315'])
+                                    on_next=self.finish, buttons=['\U00002600', '\U0001F315'])
         first.set_footer(text="Only vote once! Your vote won't count if you cheat!")
 
         # Note that we didn't include an `on_next` or any `buttons` on the last `Page`. This is important as it denotes
         # this will be our final and closing page on the menu. What this means is that when you arrive at this page,
         # no matter how it was done, the menu loop will be closed and no longer respond to user input.
-        await menu.add_page(title='Sun vs Moon Poll', description=f'Results are in!', color=Colour.green())
+        await menu.add_page(title='Sun vs Moon Poll', description=f'Results are in!')
 
         # Finally, after all our menu pages are constructed, we can use the `open()` method on our menu object to
         # start the menu loop.

@@ -1,4 +1,3 @@
-from discord import Colour
 from discord.ext import commands
 
 # Make sure you import the type of menu you plan on using.
@@ -29,16 +28,16 @@ class MyButtonMenu(commands.Cog):
         # `on_next` must be a reference to a function. Remember, when you pass a reference to the function you should NOT
         # use () parenthesis at the end of the function name. That would call the function immediately, as pages were being
         # created. Instead, the reference will be called by the menu loop at a later time.
-        await menu.add_page(title='Button Menu', description='Follow the arrows!', color=Colour.red(),
+        await menu.add_page(title='Button Menu', description='Follow the arrows!',
                             on_next=self.first, buttons=[forward, stop])
 
-        await menu.add_page(title='Button Menu', description='So many buttons! What do they do?', color=Colour.orange(),
+        await menu.add_page(title='Button Menu', description='So many buttons! What do they do?',
                             on_next=self.second, buttons=[reverse, forward, stop])
 
         # Note that we didn't include an `on_next` or any `buttons` on the last `Page`. This is important as it denotes
         # this will be our final and closing page on the menu. What this means is that when you arrive at this page,
         # no matter how it was done, the menu loop will be closed and no longer respond to user input.
-        await menu.add_page(title='Button Menu', description='We reached the end!', color=Colour.green())
+        await menu.add_page(title='Button Menu', description='We reached the end!')
 
         # Finally, after all our menu pages are constructed, we can use the `open()` method on our menu object to
         # start the menu loop.
@@ -61,12 +60,12 @@ class MyButtonMenu(commands.Cog):
 
     @staticmethod
     async def second(m: ButtonMenu):
-        # Here we are using the `next()` method a little differently than before. By passing in a string called 'first',
-        # we are telling the menu that the next page we will go to should have an `on_next` reference called 'first'.
+        # Here we are using the `go_to()` method. By passing in a string called 'first', we are telling the menu that the next
+        # page we will go to should have an `on_next` reference called 'first'.
         #
         # Your pages are always internally referenced by the name of the function you call in their `on_next` parameters.
         if m.input == reverse:
-            await m.next('first')
+            await m.go_to('first')
 
         elif m.input == forward:
             await m.next()

@@ -12,11 +12,11 @@ stop = '⏹️'
 
 
 class MyButtonMenu(commands.Cog):
-    def __init__(self, client: commands.Bot):
+    def __init__(self, client):
         self.client = client
 
     @commands.command()
-    async def buttons(self, ctx: commands.Context):
+    async def buttons(self, ctx):
         # We start my instantiating a menu object. In this case we're using `ButtonMenu`. We have to pass our command context.
         menu = ButtonMenu(ctx)
 
@@ -46,33 +46,33 @@ class MyButtonMenu(commands.Cog):
     # Here we are defining the functions our pages reference (this is your `on_next` parameter). These should always take
     # a menu object (in this case ButtonMenu) so we can test against the input!
     @staticmethod
-    async def first(m: ButtonMenu):
+    async def first(menu):
         # Here we will test the received input against our emojis defined above. This code is literally just checking:
         # "if the person clicked the forward emoji, we will go to the next page", and "if they clicked the stop emoji,
         # we will cancel the menu".
         #
         # `next()` and `cancel()` are both built-in methods on the menu object that do what they sound like.
-        if m.input == forward:
-            await m.next()
+        if menu.input == forward:
+            await menu.next()
 
-        elif m.input == stop:
-            await m.cancel()
+        elif menu.input == stop:
+            await menu.cancel()
 
     @staticmethod
-    async def second(m: ButtonMenu):
+    async def second(menu):
         # Here we are using the `go_to()` method. By passing in a string called 'first', we are telling the menu that the next
         # page we will go to should have an `on_next` reference called 'first'.
         #
         # Your pages are always internally referenced by the name of the function you call in their `on_next` parameters.
-        if m.input == reverse:
-            await m.go_to('first')
+        if menu.input == reverse:
+            await menu.go_to('first')
 
-        elif m.input == forward:
-            await m.next()
+        elif menu.input == forward:
+            await menu.next()
 
-        elif m.input == stop:
-            await m.cancel()
+        elif menu.input == stop:
+            await menu.cancel()
 
 
-def setup(client: commands.Bot):
+def setup(client):
     client.add_cog(MyButtonMenu(client))

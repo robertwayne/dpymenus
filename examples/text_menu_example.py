@@ -7,11 +7,11 @@ from dpymenus.constants import CONFIRM
 
 
 class Ping(commands.Cog):
-    def __init__(self, client: commands.Bot):
+    def __init__(self, client):
         self.client = client
 
     @commands.command()
-    async def ping(self, ctx: commands.Context) -> None:
+    async def ping(self, ctx) -> None:
         # We start my instantiating a menu object. In this case we're using `TextMenu`. We have to pass our command context.
         menu = TextMenu(ctx)
 
@@ -37,7 +37,7 @@ class Ping(commands.Cog):
     # Here we are defining the functions our pages reference (this is your `on_next` parameter). These should always take
     # a menu object (in this case ButtonMenu) so we can test against the input!
     @staticmethod
-    async def confirm(m: TextMenu) -> None:
+    async def confirm(menu) -> None:
         # CONFIRM = ('y', 'yes', 'ok', 'k', 'kk', 'ready', 'rdy', 'r', 'confirm', 'okay')
         #
         # Here we will test the received input against the predfined constants. This code is literally just checking:
@@ -45,9 +45,9 @@ class Ping(commands.Cog):
         # cancellation checking. If a user were to type 'quit' or 'c', the menu would close out.
         #
         # `next()` is a built-in method on the menu object that does what it sounds like -- moves to the next page.
-        if m.input.content in CONFIRM:
-            await m.next()
+        if menu.input.content in CONFIRM:
+            await menu.next()
 
 
-def setup(client: commands.Bot):
+def setup(client):
     client.add_cog(Ping(client))

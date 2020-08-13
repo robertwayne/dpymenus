@@ -5,11 +5,11 @@ from dpymenus import Poll
 
 
 class MyPoll(commands.Cog):
-    def __init__(self, client: commands.Bot):
+    def __init__(self, client):
         self.client = client
 
     @commands.command()
-    async def poll(self, ctx: commands.Context):
+    async def poll(self, ctx):
         # We start my instantiating a menu object. In this case we're using `ButtonMenu`. We have to pass our command context.
         menu = Poll(ctx, timeout=60)  # we set the duration of the poll to 1 minute
 
@@ -38,15 +38,15 @@ class MyPoll(commands.Cog):
     # Here we are defining the functions our pages reference (this is your `on_next` parameter). These should always take
     # a menu object (in this case ButtonMenu) so we can test against the input!
     @staticmethod
-    async def finish(m: Poll):
+    async def finish(menu):
         # `generate_results_page` is a special utility method on a `Poll` that will construct embed fields, perform math to
         # calculate the winner, and append it to your 'final' page. If you want custom fields or to build your embed
         # uniquely, you would want to skip using this method and build your embed object here on your own.
-        await m.generate_results_page()
+        await menu.generate_results_page()
 
         # `next()` is a built-in method on the menu object that does what it sounds like -- moves to the next page.
-        await m.next()
+        await menu.next()
 
 
-def setup(client: commands.Bot):
+def setup(client):
     client.add_cog(MyPoll(client))

@@ -44,7 +44,7 @@ class Demo(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def demo(self, ctx: commands.Context):
+    async def demo(self, ctx):
         e1 = discord.Embed(title='Page 1', description='First page test!')
         e1.add_field(name='Example A', value='Example B')
 

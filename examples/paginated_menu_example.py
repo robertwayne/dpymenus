@@ -6,11 +6,11 @@ from dpymenus import PaginatedMenu
 
 
 class MyButtonMenu(commands.Cog):
-    def __init__(self, client: commands.Bot):
+    def __init__(self, client):
         self.client = client
 
     @commands.command()
-    async def buttons(self, ctx: commands.Context):
+    async def buttons(self, ctx):
         # In this example, we're going to start by defining a few embeds. If you have used `discord.py` before, this should be
         # familiar syntax and is the idiomatic way to construct new embeds in the library. We will create five of them, three
         # for the pages in the menu, then a page for cancelling and timing out.
@@ -42,5 +42,5 @@ class MyButtonMenu(commands.Cog):
         await menu.open()
 
 
-def setup(client: commands.Bot):
+def setup(client):
     client.add_cog(MyButtonMenu(client))

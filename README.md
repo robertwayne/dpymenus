@@ -17,12 +17,8 @@ by clicking the buttons">
 <br>
 
 ### Table of Contents
-[Documentation](https://dpymenus.readthedocs.io/en/latest/?badge=latest)
-+ [Installation](#installation)
-+ [Usage (Text Menu)](#usage-text-menu)
-+ [Usage (Button Menu)](#usage-button-menu)
-+ [Usage (Paginated Menu)](#usage-paginated-menu)
-+ [Usage (Poll)](#usage-polls)
+**[Documentation](https://dpymenus.readthedocs.io/en/latest/?badge=latest)**
++ [Getting Started](#getting-started)
 + [Destinations](#destinations)
 + [Data Field](#data-field)
 + [Generic Input Matching](#generic-input-matching)
@@ -30,102 +26,47 @@ by clicking the buttons">
 + [Event Callbacks](#event-callbacks)
 + [Helper Methods](#helper-methods)
 + [Poll Utilities](#poll-utilities)
-+ [Examples](#examples)
 
-### Installation
-`pip install dpymenus`
+### Getting Started
+You can install the library with `pip install dpymenus`.
 
-### Usage (Text Menu)
-Create a menu object *(it must take the Command Context as its first param)*:
+This very basic example will get the same menu running as the demo .gif!
 
 ```python
-from dpymenus import TextMenu
-menu = TextMenu(ctx)
-```
-   
-Add some pages to it *(a Page subclasses an Embed, so you construct it the same way with some additional parameters:
-the `on_next` )*:
+import discord
+from discord.ext import commands
 
-```python
-await menu.add_page(title='Test Page', description=f'This is just a test!', on_next=some_func_here)
-```
- 
-Lastly, call the `open()` method on it:
-
-```python
-await menu.open()
-```
-
-...and you're *(mostly)* finished! A menu loop will spawn and handle user input when the command is 
-called until it times out or is cancelled by the user. Note that you should have at least one Page
-without an `on_next` argument. This denotes to the handler that your menu will be closed when you reach this page.
-
-Your on_next method should call the `menu.next()` or `menu.go_to()` method whenever it has
-successfully handled input. `go_to` takes a single parameter:
-
-`name_or_index`: jumps to a specific page by its function reference name or index. Useful for non-linear menus.
-
-### Usage (Button Menu)
-You can also construct a menu which uses reactions as 'buttons' to handle user input.
-
-```python
-from dpymenus import ButtonMenu
-menu = ButtonMenu(ctx)
-```
-
-Similiar to a `TextMenu`, you need to add some pages. This time, we also need to pass in a list of buttons as such:
-
-```python
-await menu.add_page(title='Test Page', description=f'This is just a test!',  
-                    on_next=some_func_here, buttons=['\U00002600', '\U0001F315'])
-```
-               
-The buttons here are unicode, but you can use any Discord Emoji object. See the [Reaction Buttons](#reaction-buttons) 
-section for more details.
-
-### Usage (Paginated Menu)
-In addition to standard button menus, if you instead prefer a simpler interface where pages are static,
-you do not need to store custom user state data, and buttons only work linearly, the `PaginatedMenu` is a great 
-option.
-
-```python
 from dpymenus import PaginatedMenu
-menu = PaginatedMenu(ctx)
+
+
+class Demo(commands.Cog):
+    def __init__(self, client):
+        self.client = client
+
+    @commands.command()
+    async def demo(self, ctx: commands.Context):
+        e1 = discord.Embed(title='Page 1', description='First page test!')
+        e1.add_field(name='Example A', value='Example B')
+
+        e2 = discord.Embed(title='Page 2', description='Second page test!')
+        e2.add_field(name='Example C', value='Example D')
+
+        e3 = discord.Embed(title='Page 3', description='Third page test!')
+        e3.add_field(name='Example E', value='Example F')
+
+        menu = PaginatedMenu(ctx)
+        await menu.add_pages([e1, e2, e3])
+        await menu.open()
+
+
+def setup(client):
+    client.add_cog(Demo(client))
 ```
 
-Unlike a `ButtonMenu`, we should not add any callbacks to our pages. We can utilize some pre-built embed objects
-like such:
+There are more examples in the *examples* directory above, including detailed inline comments
+on how to use each menu style (Text, Button, Paginated, and Polls).
 
-```python
-e1 = discord.Embed(title='Page 1', description='Follow the arrows!')
-e2 = discord.Embed(title='Page 2', description='Follow the arrows!')
-e3 = discord.Embed(title='Page 3', description='Follow the arrows!')
-
-await menu.add_pages([e1, e2, e3])
-```
-
-Paginated menus use a set a generic emoji as buttons which cannot be overridden easily at the moment. This will be fixed
-in a future version.
-
-`PaginatedMenu`s also take an optional argument:
-
-*New 0.3.1:* `page_numbers`: whether or not to display page numbers in the footer *(overrides embed footer data)*
-
-*New 0.3.2:* `on_cancel` and `on_timeout` can be passed in as arguments to your `PaginatedMenu` in order to override
-the default embeds. They take a discord `Embed` object, unlike other menus which take a callback.
-
-### Usage (Polls)
-The final type of menu you can construct is a Poll. Polls are slightly unique because they handle a lot of
-functions internally. You can start the same as other menus:
-
-```python
-from dpymenus import Poll
-menu = Poll(ctx, timeout=60)
-```
-    
-Note the timeout argument. This is the time, in seconds, before the poll ends. It defaults to 5 minutes.
-    
-It is important that you only add two pages here.
+Can't find something you were looking for? Open an issue and I'll add a relevant example!
 
 ### Destinations
 *New 0.3.5*
@@ -141,11 +82,9 @@ menu = TextMenu(ctx, destination=ctx.author)
 ```
     
 ### Data Field
-In addition to standard menu setup, an optional parameter called `data` can be defined for variables or objects you
-want to pass around in menu functions. Note that `data` is managed internally by Polls, so you
-should only be passing this in for a `TextMenu` or `ButtonMenu`.
-
-State fields should be defined as a dictionary and then passed into your menu on initialization::
+Text and Button menus take an optional parameter called `data` that can be defined for variables or objects you
+want to pass around in menu functions. Data should be defined as a dictionary and then passed into your menu on 
+initialization::
 
 ```python
 from dpymenus import TextMenu
@@ -158,7 +97,7 @@ You can then access these like any objects attributes *(ie. `x = menu.data['valu
 
 *As it is a dictionary, you can set more than strings. For instance,
 transferring objects across functions by setting the value to an object. Ideally, the menu 
-object should contain all your state until it is ready to be processed. This also simplifies
+object should contain all your data until it is ready to be processed. This also simplifies
 your code by limiting the amount of parameters functions need to accept when handling
 multiple objects related to a single menu.*
 
@@ -189,7 +128,8 @@ btn5 = '\U00002714'  # unicode emoji codepoint :heavy_check_mark:
 ### Event Callbacks
 By default, the base Menu object implements methods for all events except `on_next`, which should
 be handled by the user. However, all of these events can be overridden by passing in a method reference
-when you instantiate your menu.
+when you instantiate your menu. Note that Polls and Paginated menus implement their own `on_next` methods
+and should not be overwritten.
 
 **Events**
 
@@ -228,10 +168,3 @@ use case scenarios.
 
 `.generate_results_page()` -- Adds all the result fields to your closing page as well as calculates the winner or 
 a draw.
-
-
-### Examples
-Example code has been moved into the *examples* directory above.
-Can't find something you were looking for? Open an issue and I'll
-try to add a relevant example!
-

@@ -6,8 +6,8 @@
 
 # Discord Menus
 
-`dpymenus` is an add-on for the `discord.py` library that lets you quickly compose stateful menus and polls 
-which react to chat input (text, reaction buttons).
+`dpymenus` is an add-on for the `discord.py` library that lets you quickly compose various styles of 
+menus (text, reaction buttons) and polls which react to chat input.
 
 <br>
 

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.3.5] - UNRELEASED
+## [0.3.5] - 2020-08-12
 
 ### Added
 - Menus now accept a `destination` paramater, which takes a User or Channel object.
@@ -17,7 +17,12 @@ takes any parameters (previously took `name`) to jump to a different page. `go_t
 the same as the old `next` code, but takes a `name_or_index` parameter to accureately 
 reflect the change in *0.2.8* where you could jump to indexes as well. The reason behind this
 was to simplify the branching code and user readability.
-- Refactored a bunch of old code.
+- The default cancelled embed now has the title *'Cancelled'* instead of the last pages title.
+- Refactored a lot of older code, particularly the subclasses of BaseMenu.
+- Rewrote the README; removed the old usage sections for a simplified *'Getting Started'* section. Added in information
+about new features, such as `destinations`.
+- Updated to the latest discord.py version: 1.4.1
+- Simplified some of the examples by removing 'fluff' code.
 
 ## [0.3.4] - 2020-07-25
 

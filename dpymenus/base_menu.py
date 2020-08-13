@@ -53,35 +53,12 @@ class BaseMenu:
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         pass
 
-    async def next(self, name: Optional[Union[str, int]] = None):
-        """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed.
+    async def next(self):
+        """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed."""
+        self.page_index += 1
+        self.page = self.pages[self.page_index]
 
-        :param name: A specific page object name or its index. If this is not set, the next page in the list will be called.
-        """
-        if name is None:
-            self.page_index += 1
-            self.page = self.pages[self.page_index]
-
-        else:
-            if isinstance(name, str):
-                # get a page index from its on_next callback function name and assign it
-                for page in self.pages:
-                    if page.on_next.__name__ == name:
-                        self.page_index = self.pages.index(page)
-                        self.page = self.pages[self.page_index]
-                        break
-
-            elif isinstance(name, int):
-                # get a page index from its index and assign it
-                self.page_index = name
-                self.page = self.pages[name]
-
-        #  if the next page has no on_next callback, we end the menu loop
-        if self.page.on_next is None:
-            await self.close_session()
-            self.active = False
-
-        await self.send_message(self.page)
+        await self._post_next()
 
     async def previous(self):
         """Helper method for quickly accessing the previous page."""
@@ -92,6 +69,26 @@ class BaseMenu:
         self.page = self.pages[self.page_index]
 
         await self.send_message(self.page)
+
+    async def go_to(self, name_or_index: Optional[Union[str, int]] = None):
+        """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed.
+
+        :param name_or_index: A specific page object name or its index. If this is not set, the next page in the list will be called.
+        """
+        if isinstance(name_or_index, str):
+            # get a page index from its on_next callback function name and assign it
+            for page in self.pages:
+                if page.on_next.__name__ == name_or_index:
+                    self.page_index = self.pages.index(page)
+                    self.page = self.pages[self.page_index]
+                    break
+
+        elif isinstance(name_or_index, int):
+            # get a page index from its index and assign it
+            self.page_index = name_or_index
+            self.page = self.pages[name_or_index]
+
+        await self._post_next()
 
     async def add_page(self, on_next: Optional[Callable] = None, buttons: Optional[List[Union[str, Emoji, PartialEmoji]]] = None, **kwargs) -> Page:
         """Adds a new page object to the Menu.
@@ -159,6 +156,14 @@ class BaseMenu:
         sessions.remove((self.ctx.author.id, self.ctx.channel.id))
 
     # Internal Methods
+    async def _post_next(self):
+        """Sends a message after the `next` method is called. Closes the session if there is no callback on the next page."""
+        if self.page.on_next is None:
+            await self.close_session()
+            self.active = False
+
+        await self.send_message(self.page)
+
     async def _cleanup_input(self):
         """Deletes a Discord client user message."""
         if isinstance(self.output.channel, GuildChannel):

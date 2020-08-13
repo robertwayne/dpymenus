@@ -1,11 +1,18 @@
 Welcome to dpymenus's documentation!
 ====================================
 
-Composable, stateful text-based and button-based menus for the discord.py library.
+Simplified menus for discord.py developers.
 
 .. toctree::
    :maxdepth: 4
    :caption: Contents:
+
+BaseMenu
+-----------------
+
+.. autoclass:: dpymenus.BaseMenu
+    :inherited-members:
+    :members:
 
 TextMenu
 -----------------

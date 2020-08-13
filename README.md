@@ -23,6 +23,7 @@ by clicking the buttons">
 + [Usage (Button Menu)](#usage-button-menu)
 + [Usage (Paginated Menu)](#usage-paginated-menu)
 + [Usage (Poll)](#usage-polls)
++ [Destinations](#destinations)
 + [Data Field](#data-field)
 + [Generic Input Matching](#generic-input-matching)
 + [Reaction Buttons](#reaction-buttons)
@@ -37,41 +38,48 @@ by clicking the buttons">
 ### Usage (Text Menu)
 Create a menu object *(it must take the Command Context as its first param)*:
 
-    from dpymenus import TextMenu
-    menu1 = TextMenu(ctx)
+```python
+from dpymenus import TextMenu
+menu = TextMenu(ctx)
+```
    
 Add some pages to it *(a Page subclasses an Embed, so you construct it the same way with some additional parameters:
 the `on_next` )*:
-    
-    await menu.add_page(title='Test Page', description=f'This is just a test!', color=discord.Color.green()
-                        on_next=some_func_here)
-    
+
+```python
+await menu.add_page(title='Test Page', description=f'This is just a test!', on_next=some_func_here)
+```
+ 
 Lastly, call the `open()` method on it:
 
-    await menu.open()
-    
+```python
+await menu.open()
+```
+
 ...and you're *(mostly)* finished! A menu loop will spawn and handle user input when the command is 
 called until it times out or is cancelled by the user. Note that you should have at least one Page
 without an `on_next` argument. This denotes to the handler that your menu will be closed when you reach this page.
 
-Your on_next method should call the `menu.next()` method whenever it has
-successfully handled input. `next()` also takes 1 optional argument: 
+Your on_next method should call the `menu.next()` or `menu.go_to()` method whenever it has
+successfully handled input. `go_to` takes a single parameter:
 
-`name`: jumps to a specific page by its function reference name. Useful for non-linear menus.
-
-*New 0.2.8*: You can now also pass in an integer to `next` referencing the pages index.
+`name_or_index`: jumps to a specific page by its function reference name or index. Useful for non-linear menus.
 
 ### Usage (Button Menu)
 You can also construct a menu which uses reactions as 'buttons' to handle user input.
 
-    from dpymenus import ButtonMenu
-    menu2 = ButtonMenu(ctx)
-    
+```python
+from dpymenus import ButtonMenu
+menu = ButtonMenu(ctx)
+```
+
 Similiar to a `TextMenu`, you need to add some pages. This time, we also need to pass in a list of buttons as such:
 
-    await menu.add_page(title='Test Page', description=f'This is just a test!', color=discord.Color.green(),
-                        on_next=some_func_here, buttons=['\U00002600', '\U0001F315'])
-                        
+```python
+await menu.add_page(title='Test Page', description=f'This is just a test!',  
+                    on_next=some_func_here, buttons=['\U00002600', '\U0001F315'])
+```
+               
 The buttons here are unicode, but you can use any Discord Emoji object. See the [Reaction Buttons](#reaction-buttons) 
 section for more details.
 
@@ -80,18 +88,22 @@ In addition to standard button menus, if you instead prefer a simpler interface 
 you do not need to store custom user state data, and buttons only work linearly, the `PaginatedMenu` is a great 
 option.
 
-    from dpymenus import PaginatedMenu
-    menu3 = PaginatedMenu(ctx)
-    
+```python
+from dpymenus import PaginatedMenu
+menu = PaginatedMenu(ctx)
+```
+
 Unlike a `ButtonMenu`, we should not add any callbacks to our pages. We can utilize some pre-built embed objects
 like such:
 
-    e1 = discord.Embed(title='Page 1, description='Follow the arrows!')
-    e2 = discord.Embed(title='Page 2', description='Follow the arrows!')
-    e3 = discord.Embed(title='Page 3', description='Follow the arrows!')
-    
-    await menu3.add_pages([e1, e2, e3])
-    
+```python
+e1 = discord.Embed(title='Page 1', description='Follow the arrows!')
+e2 = discord.Embed(title='Page 2', description='Follow the arrows!')
+e3 = discord.Embed(title='Page 3', description='Follow the arrows!')
+
+await menu.add_pages([e1, e2, e3])
+```
+
 Paginated menus use a set a generic emoji as buttons which cannot be overridden easily at the moment. This will be fixed
 in a future version.
 
@@ -106,26 +118,41 @@ the default embeds. They take a discord `Embed` object, unlike other menus which
 The final type of menu you can construct is a Poll. Polls are slightly unique because they handle a lot of
 functions internally. You can start the same as other menus:
 
-    from dpymenus import Poll
-    menu3 = Poll(ctx, timeout=60)
+```python
+from dpymenus import Poll
+menu = Poll(ctx, timeout=60)
+```
     
 Note the timeout argument. This is the time, in seconds, before the poll ends. It defaults to 5 minutes.
     
-    
 It is important that you only add two pages here.
+
+### Destinations
+*New 0.3.5*
+
+All Menu types take an optional `destinations` parameter, which can be either a discord.py User
+or TextChannel object. This will open the menu at that location instead of the current channel, 
+which is the default behaviour.
+
+For example, if we want to open the menu in the authors DM's:
+
+```python
+menu = TextMenu(ctx, destination=ctx.author)
+```
     
 ### Data Field
 In addition to standard menu setup, an optional parameter called `data` can be defined for variables or objects you
 want to pass around in menu functions. Note that `data` is managed internally by Polls, so you
 should only be passing this in for a `TextMenu` or `ButtonMenu`.
 
-State fields should be defined as a dictionary:
+State fields should be defined as a dictionary and then passed into your menu on initialization::
 
-    my_data = {'username': None, 'favorite_color': None}
+```python
+from dpymenus import TextMenu
 
-...and then passed into your menu on initialization:
-
-    menu = Menu(ctx, data=my_data)
+my_data = {'username': None, 'favorite_color': None}
+menu = TextMenu(ctx, data=my_data)
+```
 
 You can then access these like any objects attributes *(ie. `x = menu.data['value']`)*.
 
@@ -146,6 +173,7 @@ The defaults are:
 CONFIRM = ('y', 'yes', 'ok', 'k', 'kk', 'ready', 'rdy', 'r', 'confirm', 'okay')
 DENY = ('n', 'no', 'deny', 'negative', 'back', 'return')
 QUIT = ('e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c')
+GENERIC_BUTTONS = ('◀️', '⏹️', '▶️')
 ```
 
 ### Reaction Buttons
@@ -167,20 +195,24 @@ when you instantiate your menu.
 
 `on_next` -- Called when the menu instance calls `.next()`. 
 
-`on_fail` -- Called when user input on a page is invalid. Only usable in TextMenus.
+`on_fail` -- Called when user input on a page is invalid. Usable on Text menus.
 
 `on_timeout` -- Called when a menu times out. You can set the `timeout` on menu instantiation.
- Only usable in TextMenus or ButtonMenus.
+ Usable on Text, Button, and Paginated menus.
 
-`on_cancel` -- Called when a menu is cancelled from user input. Only usable in TextMenus or ButtonMenus.
+`on_cancel` -- Called when a menu is cancelled from user input.
+ Usable on Text, Button, and Paginated menus.
 
 
-### Helper Methods 
-*New: 0.2.8*
+### Helper Methods
+`.next()` -- goes forward one page index on the current menu.
+
+`.go_to(x)` -- takes a string or integer *(page callback reference or index)* and jumps to that specific page. 
+Useful for non-linear menus.
 
 `.previous()` -- goes back one page index on the current menu.
 
-`.add_pages()` -- takes a list of Page objects and adds them to the menu. Useful for adding pre-built embeds to pages
+`.add_pages(x)` -- takes a list of Page objects and adds them to the menu. Useful for adding pre-built embeds to pages
 without rewriting them all as Page objects directly. See *premade_embed_button_menu_example.py* in the *examples/*
 directory for full use of this helper.
 

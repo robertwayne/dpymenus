@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Menus now accept a `destination` paramater, which takes a User or Channel object.
 This will open the menu in that channel as opposed to in the current channel.
 
+### Changed
+- **Breaking:** Broke the `next` method out into two methods: `next` and `go_to`. `next` no longer
+takes any parameters (previously took `name`) to jump to a different page. `go_to` acts
+the same as the old `next` code, but takes a `name_or_index` parameter to accureately 
+reflect the change in *0.2.8* where you could jump to indexes as well. The reason behind this
+was to simplify the branching code and user readability.
+- Refactored a bunch of old code.
+
 ## [0.3.4] - 2020-07-25
 
 ### Fixed

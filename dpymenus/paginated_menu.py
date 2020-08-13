@@ -1,7 +1,7 @@
 import asyncio
 from typing import List, Optional, Union
 
-from discord import Embed, Emoji, Message, PartialEmoji, Reaction, TextChannel
+from discord import Embed, Emoji, Message, PartialEmoji, Reaction
 from discord.abc import GuildChannel, User
 from discord.ext.commands import Context
 
@@ -15,15 +15,13 @@ class PaginatedMenu(ButtonMenu):
 
     :param ctx: A reference to the command context.
     :param page_numbers: Whether embeds should display the current/max page numbers in the footer.
-    :param timeout: How long (in seconds) to wait before timing out.
-    :param destination: Whether the menu will open in the current channel, sent to a seperate guild channel, or sent to a DM channel.
     :param on_cancel: An Embed that displays when the cancel button is pressed.
     :param on_timeout: An Embed that displays when the menu raises an asyncio.TimeoutError.
     """
 
-    def __init__(self, ctx: Context, page_numbers: bool = False, timeout: int = 300,
-                 on_cancel: Optional[Embed] = None, on_timeout: Optional[Embed] = None, destination: Optional[Union[TextChannel, User]] = None):
-        super().__init__(ctx, timeout=timeout, destination=destination)
+    def __init__(self, ctx: Context, page_numbers: bool = False, on_cancel: Optional[Embed] = None,
+                 on_timeout: Optional[Embed] = None, **kwargs):
+        super().__init__(ctx, **kwargs)
         self.page_numbers = page_numbers
         self.on_cancel = on_cancel
         self.on_timeout = on_timeout
@@ -78,7 +76,10 @@ class PaginatedMenu(ButtonMenu):
         return await self.output.edit(embed=embed)
 
     async def add_pages(self, embeds: List[Embed]):
-        """Helper method to add a list of pre-instantiated pages to a menu."""
+        """Helper method to add a list of pre-instantiated pages to a menu.
+
+        :param embeds: A list of Discord :py:class:`~discord.Embed` object.
+        """
         for i, embed in enumerate(embeds):
             if self.page_numbers:
                 embed.set_footer(text=f'{i + 1}/{len(embeds)}')
@@ -109,7 +110,7 @@ class PaginatedMenu(ButtonMenu):
         await self.send_message(self.page)
 
     async def _get_reaction(self) -> Union[Emoji, str]:
-        """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
+        """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction, user = await self.ctx.bot.wait_for('reaction_add',
                                                      check=self._check_reaction)
 
@@ -118,8 +119,7 @@ class PaginatedMenu(ButtonMenu):
         return reaction.emoji
 
     async def _get_reaction_remove(self) -> Union[Emoji, str]:
-        """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
-
+        """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction, user = await self.ctx.bot.wait_for('reaction_remove',
                                                      check=self._check_reaction)
 

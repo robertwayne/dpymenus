@@ -2,7 +2,7 @@ import asyncio
 from typing import Dict, Optional, Union
 from warnings import warn
 
-from discord import Emoji, PartialEmoji, Reaction, TextChannel
+from discord import Emoji, PartialEmoji, Reaction
 from discord.abc import GuildChannel, User
 from discord.ext.commands import Context
 
@@ -15,13 +15,11 @@ class ButtonMenu(BaseMenu):
     Represents a button-based response menu.
 
     :param ctx: A reference to the command context.
-    :param timeout: How long (in seconds) to wait before timing out.
-    :param destination: Whether the menu will open in the current channel, sent to a seperate guild channel, or sent to a DM channel.
-    :param data: A dictionary containing variables to pass around menu functions.
+    :param data: A dictionary containing dynamic state information.
     """
 
-    def __init__(self, ctx: Context, timeout: int = 300, data: Optional[Dict] = None, destination: Optional[Union[TextChannel, User]] = None):
-        super().__init__(ctx, timeout=timeout, destination=destination)
+    def __init__(self, ctx: Context, data: Optional[Dict] = None, **kwargs):
+        super().__init__(ctx, **kwargs)
         self.data = data if data else {}
 
     def __repr__(self):
@@ -54,7 +52,7 @@ class ButtonMenu(BaseMenu):
             await self.output.add_reaction(button)
 
     async def _get_reaction(self) -> Union[Emoji, str]:
-        """Collects a user reaction and places it into the input attribute. Returns an Emoji or Emoji name."""
+        """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         try:
             reaction, user = await self.ctx.bot.wait_for('reaction_add', timeout=self.timeout,
                                                          check=self._check_reaction)
@@ -99,4 +97,3 @@ class ButtonMenu(BaseMenu):
 
         if _cb_count < len(self.pages) - 1:
             raise CallbackError(f'ButtonMenu missing `on_next` callbacks. Expected {len(self.pages) - 1}, found {_cb_count}.')
-

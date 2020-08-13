@@ -29,7 +29,6 @@ class BaseMenu:
         :active: Whether or not the menu is active or not.
         :input: A reference to the captured user input message object.
         :output: A reference to the menus output message.
-        :data: A dictionary containing dynamic state information.
     """
 
     def __init__(self, ctx: Context, timeout: int = 300, destination: Optional[Union[TextChannel, User]] = None):
@@ -42,7 +41,6 @@ class BaseMenu:
         self.active: bool = True
         self.input: Optional[Message] = None
         self.output: Optional[Message] = None
-        self.data = None
 
     def __repr__(self):
         return f'BaseMenu(pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \
@@ -185,7 +183,7 @@ class BaseMenu:
         # we check if the menu is a PaginatedMenu and perform edits instead of sends
         if self.__class__.__name__ == 'PaginatedMenu':
             await self.output.edit(embed=embed)
-            
+
         else:
             await self.send_message(embed)
 
@@ -202,8 +200,7 @@ class BaseMenu:
     async def _get_input(self) -> Message:
         """Collects user input and places it into the input attribute."""
         try:
-            message = await self.ctx.bot.wait_for('message', timeout=self.timeout,
-                                                  check=self._check_message)
+            message = await self.ctx.bot.wait_for('message', timeout=self.timeout, check=self._check_message)
 
         except asyncio.TimeoutError:
             if self.page.on_timeout:

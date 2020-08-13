@@ -1,8 +1,8 @@
 import asyncio
-from typing import Dict, Optional, Set, Union
+from typing import Dict, Set
 from warnings import warn
 
-from discord import TextChannel, User
+from discord import User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu
@@ -17,8 +17,8 @@ class Poll(ButtonMenu):
     :param destination: Whether the menu will open in the current channel, sent to a seperate guild channel, or sent to a DM channel.
     """
 
-    def __init__(self, ctx: Context, timeout: int = 300, destination: Optional[Union[TextChannel, User]] = None):
-        super().__init__(ctx, timeout=timeout, destination=destination)
+    def __init__(self, ctx: Context, **kwargs):
+        super().__init__(ctx, **kwargs)
         self.voted: Set[User] = set()
 
     def __repr__(self):

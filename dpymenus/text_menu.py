@@ -1,7 +1,6 @@
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
 
-from discord import TextChannel
-from discord.abc import GuildChannel, User
+from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
@@ -13,14 +12,12 @@ class TextMenu(BaseMenu):
 
     :param ctx: A reference to the command context.
     :param delay: How long to wait between deleting user messages (default 0.25).
-    :param timeout: How long (in seconds) to wait before timing out.
-    :param destination: Whether the menu will open in the current channel, sent to a seperate guild channel, or sent to a DM channel.
-    :param data: A dictionary containing variables to pass around menu functions.
+    :param data: A dictionary containing dynamic state information.
     """
 
-    def __init__(self, ctx: Context, delay: float = 0.250, timeout: int = 300, data: Optional[Dict] = None, destination: Optional[Union[TextChannel, User]] = None):
+    def __init__(self, ctx: Context, delay: float = 0.250, data: Optional[Dict] = None, **kwargs):
+        super().__init__(ctx, **kwargs)
         self.delay = delay
-        super().__init__(ctx, timeout=timeout, destination=destination)
         self.data = data if data else {}
 
     def __repr__(self):

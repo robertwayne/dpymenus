@@ -4,10 +4,12 @@
 
 <img align="left" src="assets/logo.png" alt="dpymenus">
 
-# Discord Menus
+# DPYMENUS
+
+*Simplified menus for discord.py developers.*
 
 `dpymenus` is an add-on for the `discord.py` library that lets you quickly compose various styles of 
-menus *(text, reaction buttons)* and polls which react to chat input.
+menus *(text, buttons, polls)* which react to user input.
 
 <br>
 

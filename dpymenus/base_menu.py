@@ -93,7 +93,7 @@ class BaseMenu:
 
         await self._post_next()
 
-    async def add_pages(self, pages: List[Page]):
+    def add_pages(self, pages: List[Page]):
         """Adds a list of pages to a menu, setting their index based on the position in the list.."""
         for i, page in enumerate(pages):
             page.index = i

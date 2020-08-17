@@ -1,7 +1,7 @@
 import asyncio
-from typing import Callable, List, Optional, Union
+from typing import List, Optional, Union
 
-from discord import Embed, Emoji, Message, PartialEmoji, TextChannel, User
+from discord import Embed, Message, TextChannel, User
 from discord.abc import GuildChannel
 from discord.colour import Colour
 from discord.ext.commands import Context
@@ -16,35 +16,38 @@ sessions = list()
 class BaseMenu:
     """Represents the base menu from which TextMenu, ButtonMenu, and Poll inherit from.
 
-    A Menu is a composable, dynamically generated object that contains state information for a user-interactable menu.
-    It contains Page objects which represent new Menu states that call methods for validation and handling.
-
     Attributes
         :ctx: A reference to the command Context.
-        :timeout: How long (in seconds) to wait before timing out.
         :destination: Whether the menu will open in the current channel, sent to a seperate guild channel, or sent to a DM channel.
+        :timeout: How long (in seconds) to wait before timing out.
         :pages: A list containing references to Page objects.
-        :page_index: Index value of the current page.
         :page: Current Page object.
         :active: Whether or not the menu is active or not.
         :input: A reference to the captured user input message object.
         :output: A reference to the menus output message.
     """
+    ctx: Context
+    destination: Union[Context, User, TextChannel]
+    timeout: int
+    pages: List[Page]
+    page: Optional[Page]
+    active: bool
+    input: Optional[Message]
+    output: Optional[Message]
 
-    def __init__(self, ctx: Context, timeout: int = 300, destination: Optional[Union[TextChannel, User]] = None):
+    def __init__(self, ctx: Context):
         self.ctx = ctx
-        self.timeout = timeout
-        self.destination = ctx if destination is None else destination
-        self.pages: List[Page] = []
-        self.page_index: int = 0
-        self.page: Optional[Page] = None
-        self.active: bool = True
-        self.input: Optional[Message] = None
-        self.output: Optional[Message] = None
+        self.destination = ctx
+        self.timeout = 300
+        self.pages = []
+        self.page = None
+        self.active = True
+        self.input = None
+        self.output = None
 
     def __repr__(self):
         return f'BaseMenu(pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \
-               f'active={self.active} page={self.page_index})'
+               f'active={self.active} page={self.page})'
 
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
@@ -53,59 +56,45 @@ class BaseMenu:
 
     async def next(self):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed."""
-        self.page_index += 1
-        self.page = self.pages[self.page_index]
+        # we add 2 because the index is 0-based and we are checking if the next page exists
+        if self.page.index + 2 > len(self.pages):
+            return
+
+        self.page = await self.get_next_page()
 
         await self._post_next()
 
     async def previous(self):
         """Helper method for quickly accessing the previous page."""
-        if self.page_index - 1 < 0:
+        if self.page.index - 1 < 0:
             return
 
-        self.page_index -= 1
-        self.page = self.pages[self.page_index]
+        self.page = await self.get_previous_page()
 
-        await self.send_message(self.page)
+        await self.send_message(self.page.embed)
 
-    async def go_to(self, name_or_index: Optional[Union[str, int]] = None):
+    async def go_to(self, page: Optional[Union[str, int]] = None):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed.
 
-        :param name_or_index: A specific page object name or its index. If this is not set, the next page in the list will be called.
+        :param page: The name of the `on_next` function for a particular page or its page number. If this is not set, the next
+        page in the list will be called.
         """
-        if isinstance(name_or_index, str):
-            # get a page index from its on_next callback function name and assign it
-            for page in self.pages:
-                if page.on_next.__name__ == name_or_index:
-                    self.page_index = self.pages.index(page)
-                    self.page = self.pages[self.page_index]
-                    break
+        if isinstance(page, int):
+            self.page = self.pages[page]
 
-        elif isinstance(name_or_index, int):
-            # get a page index from its index and assign it
-            self.page_index = name_or_index
-            self.page = self.pages[name_or_index]
+        elif isinstance(page, str):
+            # get a page index from its on_next callback function name and assign it
+            for p in self.pages:
+                if p.on_next.__name__ == page:
+                    self.page = p
+                    break
 
         await self._post_next()
 
-    async def add_page(self, on_next: Optional[Callable] = None, buttons: Optional[List[Union[str, Emoji, PartialEmoji]]] = None, **kwargs) -> Page:
-        """Adds a new page object to the Menu.
-
-        :param on_next: A reference to a function that is called when :func:`~next()` is called.
-        :param buttons: A list of reactions that will be displayed on the page.
-        :param kwargs: :py:class:`~discord.Embed` arguments for defining your Page display.
-        """
-        page = Page(on_next=on_next, buttons=buttons, **kwargs)
-        self.pages.append(page)
-
-        if self.pages:
-            self.page = self.pages[0]
-
-        return page
-
     async def add_pages(self, pages: List[Page]):
-        """Helper method to add a list of pre-instantiated pages to a menu."""
-        for page in pages:
+        """Adds a list of pages to a menu, setting their index based on the position in the list.."""
+        for i, page in enumerate(pages):
+            page.index = i
             self.pages.append(page)
 
         self.page = self.pages[0]
@@ -124,7 +113,7 @@ class BaseMenu:
 
     async def cancel(self):
         """Sends a cancellation message."""
-        embed = Embed(title='Cancelled', description='Menu selection cancelled.', color=Colour.red())
+        embed = Embed(title='Cancelled', description='Menu selection cancelled.')
 
         # we check if the page has a callback
         if self.page.on_cancel:
@@ -147,11 +136,21 @@ class BaseMenu:
 
     async def get_next_page(self) -> Page:
         """Utility method that returns the next page based on the current pages index."""
-        return self.pages[self.page_index + 1]
+        return self.pages[self.page.index + 1]
+
+    async def get_previous_page(self) -> Page:
+        """Utility method that returns the previous page based on the current pages index."""
+        return self.pages[self.page.index - 1]
 
     async def close_session(self):
         """Remove the user from the active users list."""
         sessions.remove((self.ctx.author.id, self.ctx.channel.id))
+
+    def set_timeout(self, timeout: int):
+        self.timeout = timeout
+
+    def set_destination(self, dest: Union[User, TextChannel]):
+        self.destination = dest
 
     # Internal Methods
     async def _post_next(self):
@@ -160,7 +159,7 @@ class BaseMenu:
             await self.close_session()
             self.active = False
 
-        await self.send_message(self.page)
+        await self.send_message(self.page.embed)
 
     async def _cleanup_input(self):
         """Deletes a Discord client user message."""

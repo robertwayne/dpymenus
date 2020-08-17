@@ -67,10 +67,10 @@ class Poll(ButtonMenu):
         winning_key = {choice for choice, voters in self.data.items() if voters == highest_value}
 
         if len(highest_value) == 0:
-            next_page.description = ' '.join([next_page.description, f"It's a draw!"])
+            next_page.embed.description = ' '.join([next_page.embed.description, f"It's a draw!"])
 
         else:
-            next_page.description = ' '.join([next_page.description, f'{str(next(iter(winning_key)))} wins!'])
+            next_page.embed.description = ' '.join([next_page.embed.description, f'{str(next(iter(winning_key)))} wins!'])
 
     # Internal Methods
     async def _get_vote_add(self):

@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Optional, Union
+from typing import List, Union
 
 from discord import Embed, Emoji, Message, PartialEmoji, Reaction
 from discord.abc import GuildChannel, User
@@ -15,17 +15,14 @@ class PaginatedMenu(ButtonMenu):
 
     :param ctx: A reference to the command context.
     """
-
     def __init__(self, ctx: Context):
         super().__init__(ctx)
         self.page_numbers: bool = False
         self.skip_buttons: bool = False
-        self.on_cancel: Optional[Embed] = None
-        self.on_timeout: Optional[Embed] = None
 
     def __repr__(self):
-        return f'PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, skip_buttons={self.skip_buttons} ' \
-               f'page_numbers={self.page_numbers}, timeout={self.timeout}, on_timeout={self.on_timeout}, on_cancel={self.on_cancel})'
+        return f'PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, ' \
+               f'skip_buttons={self.skip_buttons} page_numbers={self.page_numbers}, timeout={self.timeout})'
 
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
@@ -83,15 +80,23 @@ class PaginatedMenu(ButtonMenu):
 
         return self
 
-    def on_cancel(self, embed: Embed) -> 'PaginatedMenu':
-        """Sets the embed which will be displayed when the 'cancel' event runs. Returns itself for fluent-style chaining."""
-        self.on_cancel = embed
+    @property
+    def cancel_page(self):
+        return getattr(self, '_cancel_page', None)
+
+    def set_cancel_page(self, func: Embed) -> 'PaginatedMenu':
+        """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
+        self._cancel_page = func
 
         return self
 
-    def on_timeout(self, embed: Embed) -> 'PaginatedMenu':
-        """Sets the embed which will be displayed when the 'timeout' event runs. Returns itself for fluent-style chaining."""
-        self.on_timeout = embed
+    @property
+    def timeout_page(self):
+        return getattr(self, '_timeout_page', None)
+
+    def set_timeout_page(self, func: Embed) -> 'PaginatedMenu':
+        """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
+        self._timeout_page = func
 
         return self
 

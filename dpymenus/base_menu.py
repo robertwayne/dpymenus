@@ -120,23 +120,20 @@ class BaseMenu:
 
     async def cancel(self):
         """Sends a cancellation message."""
-        embed = Embed(title='Cancelled', description='Menu selection cancelled.')
+        e = Embed(title='Cancelled', description='Menu selection cancelled.')
 
         # we check if the page has a callback
         if self.page.on_cancel:
             return await self.page.on_cancel()
 
-        # we check if there's an on_cancel attr defined and if it has a value
-        # if so, we override the base embed with the attr value
-        if hasattr(self, 'on_cancel') and self.on_cancel:
-            embed = self.on_cancel
-
         # we check if the menu is a PaginatedMenu and perform edits instead of sends
         if self.__class__.__name__ == 'PaginatedMenu':
+            embed = getattr(self, 'on_cancel', e)
+            print(embed, type(embed))
             await self.output.edit(embed=embed)
 
         else:
-            await self.send_message(embed)
+            await self.send_message(e)
 
         await self.close_session()
         self.active = False
@@ -213,7 +210,7 @@ class BaseMenu:
 
         except asyncio.TimeoutError:
             if self.page.on_timeout:
-                await self.page.on_timeout()
+                await self.page._on_timeout()
 
             else:
                 await self._timeout()

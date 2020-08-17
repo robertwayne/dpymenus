@@ -145,7 +145,7 @@ class PaginatedMenu(ButtonMenu):
                 await self.output.add_reaction(button)
 
         else:
-            for button in GENERIC_BUTTONS[1:3]:
+            for button in GENERIC_BUTTONS[1:4]:
                 await self.output.add_reaction(button)
 
     async def _handle_transition(self):

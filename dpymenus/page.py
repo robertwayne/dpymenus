@@ -2,6 +2,9 @@ from typing import Callable, List, Optional, Union
 
 from discord import Embed, Emoji, PartialEmoji
 
+Callback = Optional[Callable]
+ButtonList = List[Union[str, Emoji, PartialEmoji]]
+
 
 class Page:
     """Represents a single page inside a menu.
@@ -11,22 +14,14 @@ class Page:
     """
     __slots__ = ('index', 'embed', 'buttons', 'on_next', 'on_fail', 'on_cancel', 'on_timeout')
 
-    embed: Embed
-    index: int
-    buttons: List[Union[str, Emoji, PartialEmoji]]
-    on_next: Optional[Callable]
-    on_fail: Optional[Callable]
-    on_cancel: Optional[Callable]
-    on_timeout: Optional[Callable]
-
     def __init__(self, embed: Embed):
-        self.index = 0
-        self.embed = embed
-        self.buttons = []
-        self.on_next = None
-        self.on_fail = None
-        self.on_cancel = None
-        self.on_timeout = None
+        self.index: int = 0
+        self.embed: Embed = embed
+        self.buttons: ButtonList = []
+        self.on_next: Callback = None
+        self.on_fail: Callback = None
+        self.on_cancel: Callback = None
+        self.on_timeout: Callback = None
 
     def __repr__(self):
         return f"Page(title={self.embed.title} {''.join([f'{k}={v}' for k, v in self.__dict__.items()])})"

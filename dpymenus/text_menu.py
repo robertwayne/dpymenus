@@ -12,13 +12,10 @@ class TextMenu(BaseMenu):
 
     :param ctx: A reference to the command context.
     """
-    delay: float
-    data: Dict
-
     def __init__(self, ctx: Context):
         super().__init__(ctx)
-        self.delay = 0.250
-        self.data = {}
+        self.delay: float = 0.250
+        self.data: Dict = {}
 
     def __repr__(self):
         return f'TextMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, data={self.data})'

@@ -1,6 +1,6 @@
 import asyncio
+from typing import List, Optional, Tuple, Union
 from warnings import warn
-from typing import List, Optional, Union, TYPE_CHECKING
 
 from discord import Embed, Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
@@ -10,7 +10,7 @@ from dpymenus.constants import QUIT
 from dpymenus.exceptions import ButtonsError, EventError, PagesError
 from dpymenus.page import Page
 
-sessions = list()
+sessions: List[Tuple[int, int]] = list()
 
 
 class BaseMenu:
@@ -26,24 +26,15 @@ class BaseMenu:
         :input: A reference to the captured user input message object.
         :output: A reference to the menus output message.
     """
-    ctx: Context
-    destination: Union[Context, User, TextChannel]
-    timeout: int
-    pages: List[Page]
-    page: Optional[Page]
-    active: bool
-    input: Optional[Union[Message, Reaction]]
-    output: Optional[Message]
-
     def __init__(self, ctx: Context):
-        self.ctx = ctx
-        self.destination = ctx
-        self.timeout = 300
-        self.pages = []
-        self.page = None
-        self.active = True
-        self.input = None
-        self.output = None
+        self.ctx: Context = ctx
+        self.destination: Union[Context, User, TextChannel] = ctx
+        self.timeout: int = 300
+        self.pages: List[Page] = []
+        self.page: Optional[Page] = None
+        self.active: bool = True
+        self.input: Optional[Union[Message, Reaction]] = None
+        self.output: Optional[Message] = None
 
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.

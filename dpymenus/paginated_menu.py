@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Union
+from typing import List, Optional, Union
 
 from discord import Embed, Emoji, Message, PartialEmoji, Reaction
 from discord.abc import GuildChannel, User
@@ -18,10 +18,10 @@ class PaginatedMenu(ButtonMenu):
 
     def __init__(self, ctx: Context):
         super().__init__(ctx)
-        self.page_numbers = False
-        self.skip_buttons = False
-        self.on_cancel = None
-        self.on_timeout = None
+        self.page_numbers: bool = False
+        self.skip_buttons: bool = False
+        self.on_cancel: Optional[Embed] = None
+        self.on_timeout: Optional[Embed] = None
 
     def __repr__(self):
         return f'PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, skip_buttons={self.skip_buttons} ' \

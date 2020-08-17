@@ -183,7 +183,6 @@ class BaseMenu:
     def _is_cancelled(self) -> bool:
         """Checks input for a cancellation string. If there is a match, it calls the ``menu.cancel()`` method and returns True."""
         if self.input.content in QUIT:
-            await self.cancel()
             return True
         return False
 

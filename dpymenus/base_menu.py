@@ -129,7 +129,6 @@ class BaseMenu:
         # we check if the menu is a PaginatedMenu and perform edits instead of sends
         if self.__class__.__name__ == 'PaginatedMenu':
             embed = getattr(self, 'on_cancel', e)
-            print(embed, type(embed))
             await self.output.edit(embed=embed)
 
         else:

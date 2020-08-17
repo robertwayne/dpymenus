@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Optional, Union
+from typing import Callable, List, Union
 
 from discord import Embed, Emoji, Message, PartialEmoji, Reaction
 from discord.abc import GuildChannel, User
@@ -14,21 +14,17 @@ class PaginatedMenu(ButtonMenu):
     Represents an paginated, button-based response menu.
 
     :param ctx: A reference to the command context.
-    :param page_numbers: Whether embeds should display the current/max page numbers in the footer.
-    :param on_cancel: An Embed that displays when the cancel button is pressed.
-    :param on_timeout: An Embed that displays when the menu raises an asyncio.TimeoutError.
     """
 
-    def __init__(self, ctx: Context, page_numbers: bool = False, on_cancel: Optional[Embed] = None,
-                 on_timeout: Optional[Embed] = None, **kwargs):
-        super().__init__(ctx, **kwargs)
-        self.page_numbers = page_numbers
-        self.on_cancel = on_cancel
-        self.on_timeout = on_timeout
+    def __init__(self, ctx: Context):
+        super().__init__(ctx)
+        self.page_numbers = False
+        self.on_cancel = None
+        self.on_timeout = None
 
     def __repr__(self):
         return f'PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page_numbers={self.page_numbers}, timeout={self.timeout}, ' \
-               f'active={self.active} page={self.page_index}, on_timeout={self.on_timeout}, on_cancel={self.on_cancel})'
+               f'active={self.active} page={self.page.index}, on_timeout={self.on_timeout}, on_cancel={self.on_cancel})'
 
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
@@ -38,7 +34,7 @@ class PaginatedMenu(ButtonMenu):
         if await self._start_session() is False:
             return
 
-        self.output = await self.destination.send(embed=self.page)
+        self.output = await self.destination.send(embed=self.page.embed)
 
         await self._add_buttons()
 
@@ -84,31 +80,23 @@ class PaginatedMenu(ButtonMenu):
             if self.page_numbers:
                 embed.set_footer(text=f'{i + 1}/{len(embeds)}')
 
-            self.pages.append(Page(embed=embed))
+            self.pages.append(Page(embed))
 
         self.page = self.pages[0]
 
+    def set_event_cancel(self, func: Callable):
+        self.on_cancel = func
+
+    def set_event_timeout(self, func: Callable):
+        self.on_timeout = func
+
+    def show_page_numbers(self):
+        self.page_numbers = True
+
+    def hide_page_numbers(self):
+        self.page_numbers = False
+
     # Internal Methods
-    async def _next(self):
-        """Paginated version of :class:`~dpymenus.BaseMenu`s `next` method. Checks for end-of-the-list."""
-        if self.page_index + 1 > len(self.pages) - 1:
-            return
-
-        self.page_index += 1
-        self.page = self.pages[self.page_index]
-
-        await self.send_message(self.page)
-
-    async def _previous(self):
-        """Paginated version of :class:`~dpymenus.BaseMenu`s `previous` method. Checks for start-of-the-list."""
-        if self.page_index - 1 < 0:
-            return
-
-        self.page_index -= 1
-        self.page = self.pages[self.page_index]
-
-        await self.send_message(self.page)
-
     async def _get_reaction(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction, user = await self.ctx.bot.wait_for('reaction_add',
@@ -140,5 +128,5 @@ class PaginatedMenu(ButtonMenu):
 
     async def _handle_transition(self):
         """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
-        transition_map = {GENERIC_BUTTONS[0]: self._previous, GENERIC_BUTTONS[1]: self.cancel, GENERIC_BUTTONS[2]: self._next}
+        transition_map = {GENERIC_BUTTONS[0]: self.previous, GENERIC_BUTTONS[1]: self.cancel, GENERIC_BUTTONS[2]: self.next}
         await transition_map[self.input]()

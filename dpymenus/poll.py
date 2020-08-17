@@ -13,12 +13,10 @@ class Poll(ButtonMenu):
     """Represents a Poll menu.
 
     :param ctx: A reference to the command context.
-    :param timeout: How long (in seconds) before the poll ends.
-    :param destination: Whether the menu will open in the current channel, sent to a seperate guild channel, or sent to a DM channel.
     """
 
-    def __init__(self, ctx: Context, **kwargs):
-        super().__init__(ctx, **kwargs)
+    def __init__(self, ctx: Context):
+        super().__init__(ctx)
         self.voted: Set[User] = set()
 
     def __repr__(self):
@@ -35,7 +33,7 @@ class Poll(ButtonMenu):
 
         await self._set_data()
 
-        self.output = await self.destination.send(embed=self.page)
+        self.output = await self.destination.send(embed=self.page.embed)
         await self._add_buttons()
 
         pending = set()
@@ -58,7 +56,7 @@ class Poll(ButtonMenu):
         """Utility method to add new fields to your next page automatically."""
         for choice, voters in self.data.items():
             next_page = await self.get_next_page()
-            next_page.add_field(name=choice, value=str(len(voters)))
+            next_page.embed.add_field(name=choice, value=str(len(voters)))
 
     async def generate_results_page(self):
         """Utility method to build your entire results page automatically."""

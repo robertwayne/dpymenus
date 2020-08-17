@@ -1,9 +1,8 @@
 import asyncio
 from typing import List, Optional, Union
 
-from discord import Embed, Message, TextChannel, User
+from discord import Embed, Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
-from discord.colour import Colour
 from discord.ext.commands import Context
 
 from dpymenus.constants import QUIT
@@ -32,7 +31,7 @@ class BaseMenu:
     pages: List[Page]
     page: Optional[Page]
     active: bool
-    input: Optional[Message]
+    input: Optional[Message, Reaction]
     output: Optional[Message]
 
     def __init__(self, ctx: Context):
@@ -168,7 +167,7 @@ class BaseMenu:
 
     async def _timeout(self):
         """Sends a timeout message."""
-        embed = Embed(title='Timed Out', description='You timed out at menu selection.', color=Colour.red())
+        embed = Embed(title='Timed Out', description='You timed out at menu selection.')
 
         # we check if the page has a callback
         if self.page.on_timeout:

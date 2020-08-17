@@ -1,5 +1,5 @@
 import asyncio
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 from warnings import warn
 
 from discord import Emoji, PartialEmoji, Reaction
@@ -53,7 +53,7 @@ class ButtonMenu(BaseMenu):
         for button in self.page.buttons:
             await self.output.add_reaction(button)
 
-    async def _get_reaction(self) -> Union[Emoji, str]:
+    async def _get_reaction(self) -> Optional[Union[Emoji, str]]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         try:
             reaction, user = await self.ctx.bot.wait_for('reaction_add', timeout=self.timeout,

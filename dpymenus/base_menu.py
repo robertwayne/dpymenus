@@ -31,7 +31,7 @@ class BaseMenu:
     pages: List[Page]
     page: Optional[Page]
     active: bool
-    input: Optional[Message, Reaction]
+    input: Optional[Union[Message, Reaction]]
     output: Optional[Message]
 
     def __init__(self, ctx: Context):

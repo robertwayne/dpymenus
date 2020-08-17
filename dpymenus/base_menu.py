@@ -55,11 +55,10 @@ class BaseMenu:
 
     async def next(self):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed."""
-        # we add 2 because the index is 0-based and we are checking if the next page exists
-        if self.page.index + 2 > len(self.pages):
+        if self.page.index + 1 > len(self.pages) - 1:
             return
 
-        self.page = await self.get_next_page()
+        self.page = self.pages[self.page.index + 1]
 
         await self._post_next()
 
@@ -68,7 +67,7 @@ class BaseMenu:
         if self.page.index - 1 < 0:
             return
 
-        self.page = await self.get_previous_page()
+        self.page = self.pages[self.page.index - 1]
 
         await self.send_message(self.page.embed)
 
@@ -133,14 +132,6 @@ class BaseMenu:
         await self.close_session()
         self.active = False
 
-    async def get_next_page(self) -> Page:
-        """Utility method that returns the next page based on the current pages index."""
-        return self.pages[self.page.index + 1]
-
-    async def get_previous_page(self) -> Page:
-        """Utility method that returns the previous page based on the current pages index."""
-        return self.pages[self.page.index - 1]
-
     async def close_session(self):
         """Remove the user from the active users list."""
         sessions.remove((self.ctx.author.id, self.ctx.channel.id))
@@ -154,9 +145,10 @@ class BaseMenu:
     # Internal Methods
     async def _post_next(self):
         """Sends a message after the `next` method is called. Closes the session if there is no callback on the next page."""
-        if self.page.on_next is None:
-            await self.close_session()
-            self.active = False
+        if self.__class__.__name__ != 'PaginatedMenu':
+            if self.page.on_next is None:
+                await self.close_session()
+                self.active = False
 
         await self.send_message(self.page.embed)
 

@@ -55,12 +55,12 @@ class Poll(ButtonMenu):
     async def add_results_fields(self):
         """Utility method to add new fields to your next page automatically."""
         for choice, voters in self.data.items():
-            next_page = await self.get_next_page()
+            next_page = self.pages[self.page.index + 1]
             next_page.embed.add_field(name=choice, value=str(len(voters)))
 
     async def generate_results_page(self):
         """Utility method to build your entire results page automatically."""
-        next_page = await self.get_next_page()
+        next_page = self.pages[self.page.index + 1]
 
         await self.add_results_fields()
 

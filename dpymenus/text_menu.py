@@ -26,19 +26,14 @@ class TextMenu(BaseMenu):
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        super()._validate_pages()
+        await super()._open()
 
-        if self._start_session() is False:
-            return
-
-        self.output = await self.destination.send(embed=self.page.embed)
-
-        _first_iteration = True
+        first_iter = True
         while self.active:
-            if not _first_iteration and self.page.on_fail:
+            if not first_iter and self.page.on_fail:
                 return await self.page.on_fail()
 
-            _first_iteration = False
+            first_iter = False
 
             self.input = await self._get_input()
 

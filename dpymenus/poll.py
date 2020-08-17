@@ -25,14 +25,8 @@ class Poll(ButtonMenu):
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        self._validate_pages()
-
-        if self._start_session() is False:
-            return
-
+        await super()._open()
         await self._set_data()
-
-        self.output = await self.destination.send(embed=self.page.embed)
         await self._add_buttons()
 
         pending = set()

@@ -50,6 +50,14 @@ class BaseMenu:
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         pass
 
+    async def _open(self):
+        self._validate_pages()
+
+        if self._start_session() is False:
+            return
+
+        self.output = await self.destination.send(embed=self.page.embed)
+
     async def next(self):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed."""
         if self.page.index + 1 > len(self.pages) - 1:

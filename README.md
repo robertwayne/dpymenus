@@ -57,8 +57,7 @@ class Demo(commands.Cog):
         e3 = discord.Embed(title='Page 3', description='Third page test!')
         e3.add_field(name='Example E', value='Example F')
 
-        menu = PaginatedMenu(ctx)
-        await menu.add_pages([e1, e2, e3])
+        menu = PaginatedMenu(ctx).add_pages([e1, e2, e3])
         await menu.open()
 
 
@@ -81,7 +80,7 @@ which is the default behaviour.
 For example, if we want to open the menu in the authors DM's:
 
 ```python
-menu = TextMenu(ctx, destination=ctx.author)
+menu = TextMenu(ctx).set_destination(ctx.author)
 ```
     
 ### Data Field
@@ -93,7 +92,7 @@ initialization::
 from dpymenus import TextMenu
 
 my_data = {'username': None, 'favorite_color': None}
-menu = TextMenu(ctx, data=my_data)
+menu = TextMenu(ctx).set_data(my_data)
 ```
 
 You can then access these like any objects attributes *(ie. `x = menu.data['value']`)*.
@@ -135,28 +134,27 @@ and should not be overwritten.
 
 **Events**
 
-`on_next` -- Called when the menu instance calls `.next()`. 
+**next** -- Emit when the menu instance calls `.next()`. 
 
-`on_fail` -- Called when user input on a page is invalid. Usable on Text menus.
+**fail** -- Emit when user input on a page is invalid. Usable on Text menus.
 
-`on_timeout` -- Called when a menu times out. You can set the `timeout` on menu instantiation.
+**timeout** -- Emit when a menu times out. You can set the `timeout` on menu instantiation.
  Usable on Text, Button, and Paginated menus.
 
-`on_cancel` -- Called when a menu is cancelled from user input.
+**cancel** -- Emit when a menu is cancelled from user input.
  Usable on Text, Button, and Paginated menus.
 
 
 ### Helper Methods
-`.next()` -- goes forward one page index on the current menu.
+`.next()`, `.previous()` -- goes forward or backward one page index on the current menu.
 
-`.go_to(x)` -- takes a string or integer *(page callback reference or index)* and jumps to that specific page. 
+`to_first(), to_last()` -- jumps to the first or last page in the current menu.
+
+`.go_to(x)` -- takes a string or integer *(on_next function name or page index)* and jumps to that specific page. 
 Useful for non-linear menus.
 
-`.previous()` -- goes back one page index on the current menu.
-
-`.add_pages(x)` -- takes a list of Page objects and adds them to the menu. Useful for adding pre-built embeds to pages
-without rewriting them all as Page objects directly. See *premade_embed_button_menu_example.py* in the *examples/*
-directory for full use of this helper.
+`.add_pages(x)` -- takes a list of Page objects and adds them to the menu. Note that `PaginatedMenu` takes a list
+of Embed objects instead, as it uses static, linear pages.
 
 
 ### Poll Utilities

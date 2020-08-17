@@ -9,6 +9,8 @@ class Page:
     Attributes
         :embed: A discord Embed object. Used in place of utilizing the Page as an Embed object itself.
     """
+    __slots__ = ('index', 'embed', 'buttons', 'on_next', 'on_fail', 'on_cancel', 'on_timeout')
+
     embed: Embed
     index: int
     buttons: List[Union[str, Emoji, PartialEmoji]]

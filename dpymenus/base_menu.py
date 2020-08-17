@@ -140,14 +140,14 @@ class BaseMenu:
         """Remove the user from the active users list."""
         sessions.remove((self.ctx.author.id, self.ctx.channel.id))
 
-    def set_timeout(self, timeout: int):
-        """Sets the timeout duration for the menu. Returns the menu instance to allow for fluent-style chaining."""
+    def set_timeout(self, timeout: int) -> 'BaseMenu':
+        """Sets the timeout duration for the menu. Returns itself for fluent-style chaining."""
         self.timeout = timeout
 
         return self
 
-    def set_destination(self, dest: Union[User, TextChannel]):
-        """Sets the message destination for the menu. Returns the menu instance to allow for fluent-style chaining."""
+    def set_destination(self, dest: Union[User, TextChannel]) -> 'BaseMenu':
+        """Sets the message destination for the menu. Returns itself for fluent-style chaining."""
         self.destination = dest
 
         return self

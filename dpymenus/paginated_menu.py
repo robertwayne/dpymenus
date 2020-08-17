@@ -87,26 +87,26 @@ class PaginatedMenu(ButtonMenu):
 
         self.page = self.pages[0]
 
-    def set_event_cancel(self, embed: Embed):
-        """Sets the embed which will be displayed when the menu is cancelled by the user. Returns the menu instance to allow for fluent-style chaining."""
+    def set_event_cancel(self, embed: Embed) -> 'PaginatedMenu':
+        """Sets the embed which will be displayed when the 'cancel' event runs. Returns itself for fluent-style chaining."""
         self.on_cancel = embed
 
         return self
 
-    def set_event_timeout(self, embed: Embed):
-        """Sets the embed which will be displayed when the menu times out. Returns the menu instance to allow for fluent-style chaining."""
+    def set_event_timeout(self, embed: Embed) -> 'PaginatedMenu':
+        """Sets the embed which will be displayed when the 'timeout' event runs. Returns itself for fluent-style chaining."""
         self.on_timeout = embed
 
         return self
 
-    def show_page_numbers(self):
-        """Adds page numbers to each embeds by overwriting the footer. Returns the menu instance to allow for fluent-style chaining."""
+    def show_page_numbers(self) -> 'PaginatedMenu':
+        """Adds page numbers to each embeds by overwriting the footer. Returns itself for fluent-style chaining."""
         self.page_numbers = True
 
         return self
 
-    def enable_skip_buttons(self):
-        """Adds two extra buttons for jumping to the first and last page. Returns the menu instance to allow for fluent-style chaining."""
+    def enable_skip_buttons(self) -> 'PaginatedMenu':
+        """Adds two extra buttons for jumping to the first and last page. Returns itself for fluent-style chaining."""
         self.skip_buttons = True
 
     # Internal Methods

@@ -50,14 +50,14 @@ class TextMenu(BaseMenu):
 
                 await self.page.on_next(self)
 
-    def set_delay(self, delay: float):
-        """Sets the delay on when a users message will be deleted in guild channeels. Returns the menu instance to allow for fluent-style chaining."""
+    def set_delay(self, delay: float) -> 'TextMenu':
+        """Sets the delay on when a users message will be deleted in guild channeels. Returns itself for fluent-style chaining."""
         self.delay = delay
 
         return self
 
-    def set_data(self, data: Dict):
-        """Sets a dictionary up for persistant state data. Returns the menu instance to allow for fluent-style chaining."""
+    def set_data(self, data: Dict) -> 'TextMenu':
+        """Sets a dictionary up for persistant state data. Returns itself for fluent-style chaining."""
         self.data = data
 
         return self

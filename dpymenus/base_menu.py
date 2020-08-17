@@ -166,6 +166,11 @@ class BaseMenu:
 
         return self
 
+    @staticmethod
+    async def flush():
+        """Helper method that will clear the user sessions list. Only call this if you know what you are doing."""
+        sessions.clear()
+
     # Internal Methods
     async def _post_next(self):
         """Sends a message after the `next` method is called. Closes the session if there is no callback on the next page."""

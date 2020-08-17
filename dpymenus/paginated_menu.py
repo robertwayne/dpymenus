@@ -83,13 +83,13 @@ class PaginatedMenu(ButtonMenu):
 
         return self
 
-    def set_event_cancel(self, embed: Embed) -> 'PaginatedMenu':
+    def on_cancel(self, embed: Embed) -> 'PaginatedMenu':
         """Sets the embed which will be displayed when the 'cancel' event runs. Returns itself for fluent-style chaining."""
         self.on_cancel = embed
 
         return self
 
-    def set_event_timeout(self, embed: Embed) -> 'PaginatedMenu':
+    def on_timeout(self, embed: Embed) -> 'PaginatedMenu':
         """Sets the embed which will be displayed when the 'timeout' event runs. Returns itself for fluent-style chaining."""
         self.on_timeout = embed
 

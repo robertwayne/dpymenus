@@ -38,25 +38,25 @@ class Page:
 
         return self
 
-    def set_event_next(self, func: Callable) -> 'Page':
+    def on_next(self, func: Callable) -> 'Page':
         """Sets the function that will be called when the `next` event runs. Returns itself for fluent-style chaining."""
         self.on_next = func
 
         return self
 
-    def set_event_fail(self, func: Callable) -> 'Page':
+    def on_fail(self, func: Callable) -> 'Page':
         """Sets the function that will be called when the `fail` event runs. Returns itself for fluent-style chaining."""
         self.on_fail = func
 
         return self
 
-    def set_event_cancel(self, func: Callable) -> 'Page':
+    def on_cancel(self, func: Callable) -> 'Page':
         """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
         self.on_cancel = func
 
         return self
 
-    def set_event_timeout(self, func: Callable) -> 'Page':
+    def on_timeout(self, func: Callable) -> 'Page':
         """Sets the function that will be called when the `timeout` event runs. Returns itself for fluent-style chaining."""
         self.on_timeout = func
 

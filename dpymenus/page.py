@@ -26,11 +26,11 @@ class Page:
         self.on_cancel = None
         self.on_timeout = None
 
-    def __str__(self):
-        return f'<Page {self.embed.title}>'
-
     def __repr__(self):
         return f"Page(title={self.embed.title} {''.join([f'{k}={v}' for k, v in self.__dict__.items()])})"
+
+    def __str__(self):
+        return f'Page {self.index} {self.embed.title}'
 
     def set_buttons(self, buttons: List):
         self.buttons = buttons

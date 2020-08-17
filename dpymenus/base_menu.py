@@ -44,10 +44,6 @@ class BaseMenu:
         self.input = None
         self.output = None
 
-    def __repr__(self):
-        return f'BaseMenu(pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \
-               f'active={self.active} page={self.page})'
-
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""

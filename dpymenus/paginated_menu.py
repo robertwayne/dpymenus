@@ -23,8 +23,8 @@ class PaginatedMenu(ButtonMenu):
         self.on_timeout = None
 
     def __repr__(self):
-        return f'PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page_numbers={self.page_numbers}, timeout={self.timeout}, ' \
-               f'active={self.active} page={self.page.index}, on_timeout={self.on_timeout}, on_cancel={self.on_cancel})'
+        return f'PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, ' \
+               f'page_numbers={self.page_numbers}, timeout={self.timeout}, on_timeout={self.on_timeout}, on_cancel={self.on_cancel})'
 
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.

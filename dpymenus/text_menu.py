@@ -21,8 +21,7 @@ class TextMenu(BaseMenu):
         self.data = {}
 
     def __repr__(self):
-        return f'TextMenu(pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, ' \
-               f'active={self.active} page={self.page.index}, data={self.data})'
+        return f'TextMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, data={self.data})'
 
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.

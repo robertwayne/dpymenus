@@ -35,14 +35,24 @@ class Page:
     def set_buttons(self, buttons: List):
         self.buttons = buttons
 
+        return self
+
     def set_event_next(self, func: Callable):
         self.on_next = func
+
+        return self
 
     def set_event_fail(self, func: Callable):
         self.on_fail = func
 
+        return self
+
     def set_event_cancel(self, func: Callable):
         self.on_cancel = func
 
+        return self
+
     def set_event_timeout(self, func: Callable):
         self.on_timeout = func
+
+        return self

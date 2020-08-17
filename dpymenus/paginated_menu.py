@@ -89,14 +89,22 @@ class PaginatedMenu(ButtonMenu):
     def set_event_cancel(self, func: Callable):
         self.on_cancel = func
 
+        return self
+
     def set_event_timeout(self, func: Callable):
         self.on_timeout = func
+
+        return self
 
     def show_page_numbers(self):
         self.page_numbers = True
 
+        return self
+
     def hide_page_numbers(self):
         self.page_numbers = False
+
+        return self
 
     # Internal Methods
     async def _get_reaction(self) -> Union[Emoji, str]:

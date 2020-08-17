@@ -47,6 +47,8 @@ class ButtonMenu(BaseMenu):
     def set_data(self, data: Dict):
         self.data = data
 
+        return self
+
     # Internal Methods
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""

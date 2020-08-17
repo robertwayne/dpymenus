@@ -139,8 +139,12 @@ class BaseMenu:
     def set_timeout(self, timeout: int):
         self.timeout = timeout
 
+        return self
+
     def set_destination(self, dest: Union[User, TextChannel]):
         self.destination = dest
+
+        return self
 
     # Internal Methods
     async def _post_next(self):

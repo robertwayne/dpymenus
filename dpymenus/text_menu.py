@@ -54,8 +54,12 @@ class TextMenu(BaseMenu):
     def set_delay(self, delay: float):
         self.delay = delay
 
+        return self
+
     def set_data(self, data: Dict):
         self.data = data
+
+        return self
 
     # Internal Methods
     async def _cleanup_input(self):

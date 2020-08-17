@@ -1,4 +1,4 @@
-#### Please note that you are viewing the active development branch. The README, examples, and CHANGELOG may not be completely accurate.
+## Please note that you are viewing the active development branch. The README, examples, and CHANGELOG may not be completely accurate.
 
 [![PyPI version](https://badge.fury.io/py/dpymenus.svg)](https://badge.fury.io/py/dpymenus)
 [![Documentation Status](https://readthedocs.org/projects/dpymenus/badge/?version=latest)](https://dpymenus.readthedocs.io/en/latest/?badge=latest)

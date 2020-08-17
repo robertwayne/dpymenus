@@ -1,4 +1,5 @@
 import asyncio
+from warnings import warn
 from typing import List, Optional, Union, TYPE_CHECKING
 
 from discord import Embed, Message, Reaction, TextChannel, User
@@ -6,7 +7,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus.constants import QUIT
-from dpymenus.exceptions import PagesError
+from dpymenus.exceptions import ButtonsError, EventError, PagesError
 from dpymenus.page import Page
 
 sessions = list()
@@ -100,6 +101,8 @@ class BaseMenu:
             self.pages.append(page)
 
         self.page = self.pages[0]
+
+        self._validate_buttons()
 
         return self
 
@@ -228,3 +231,25 @@ class BaseMenu:
 
         sessions.append((self.ctx.author.id, self.ctx.channel.id))
         return True
+
+    def _validate_buttons(self):
+        """Ensures that a button menu was passed the appropriate amount of buttons."""
+        _cb_count = 0
+        for page in self.pages:
+            if page.buttons is None:
+                break
+
+            if page.on_next:
+                _cb_count += 1
+
+            if len(page.buttons) <= 1:
+                raise ButtonsError('Any page with an `on_next` callback must have at least one button.')
+
+            if len(page.buttons) > 5:
+                warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
+
+        if self.page.on_fail:
+            raise EventError('A ButtonMenu can not have an `on_fail` callback.')
+
+        if _cb_count < len(self.pages) - 1:
+            raise EventError(f'ButtonMenu missing `on_next` callbacks. Expected {len(self.pages) - 1}, found {_cb_count}.')

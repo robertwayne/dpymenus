@@ -54,8 +54,6 @@ class ButtonMenu(BaseMenu):
         for button in self.page.buttons:
             await self.output.add_reaction(button)
 
-        self._validate_buttons()
-
     async def _get_reaction(self) -> Optional[Union[Emoji, str]]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         try:
@@ -80,25 +78,3 @@ class ButtonMenu(BaseMenu):
         if r.emoji in self.page.buttons or str(r.emoji) in self.page.buttons:
             return u == self.ctx.author and r.message.id == self.output.id
         return False
-
-    def _validate_buttons(self):
-        """Ensures that a button menu was passed the appropriate amount of buttons."""
-        _cb_count = 0
-        for page in self.pages:
-            if page.buttons is None:
-                break
-
-            if page.on_next:
-                _cb_count += 1
-
-            if len(page.buttons) <= 1:
-                raise ButtonsError('Any page with an `on_next` callback must have at least one button.')
-
-            if len(page.buttons) > 5:
-                warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
-
-        if self.page.on_fail:
-            raise EventError('A ButtonMenu can not have an `on_fail` callback.')
-
-        if _cb_count < len(self.pages) - 1:
-            raise EventError(f'ButtonMenu missing `on_next` callbacks. Expected {len(self.pages) - 1}, found {_cb_count}.')

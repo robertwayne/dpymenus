@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Optional, Union
+from typing import List, Optional, Union, TYPE_CHECKING
 
 from discord import Embed, Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
@@ -93,13 +93,15 @@ class BaseMenu:
 
         await self._post_next()
 
-    def add_pages(self, pages: List[Page]):
+    def add_pages(self, pages: List[Page]) -> 'BaseMenu':
         """Adds a list of pages to a menu, setting their index based on the position in the list.."""
         for i, page in enumerate(pages):
             page.index = i
             self.pages.append(page)
 
         self.page = self.pages[0]
+
+        return self
 
     async def send_message(self, embed: Embed) -> Message:
         """

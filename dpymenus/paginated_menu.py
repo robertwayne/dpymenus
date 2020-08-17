@@ -72,7 +72,7 @@ class PaginatedMenu(ButtonMenu):
         """
         return await self.output.edit(embed=embed)
 
-    def add_pages(self, embeds: List[Embed]):
+    def add_pages(self, embeds: List[Embed]) -> 'PaginatedMenu':
         """Helper method to convert embeds into Pagees and add them to a menu.
 
         :param embeds: A list of Discord :py:class:`~discord.Embed` objects.
@@ -86,6 +86,8 @@ class PaginatedMenu(ButtonMenu):
             self.pages.append(p)
 
         self.page = self.pages[0]
+
+        return self
 
     def set_event_cancel(self, embed: Embed) -> 'PaginatedMenu':
         """Sets the embed which will be displayed when the 'cancel' event runs. Returns itself for fluent-style chaining."""
@@ -108,6 +110,8 @@ class PaginatedMenu(ButtonMenu):
     def enable_skip_buttons(self) -> 'PaginatedMenu':
         """Adds two extra buttons for jumping to the first and last page. Returns itself for fluent-style chaining."""
         self.skip_buttons = True
+
+        return self
 
     # Internal Methods
     async def _get_reaction(self) -> Union[Emoji, str]:

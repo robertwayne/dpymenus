@@ -7,7 +7,7 @@ from discord.abc import GuildChannel, User
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
-from dpymenus.exceptions import ButtonsError, CallbackError
+from dpymenus.exceptions import ButtonsError, EventError
 
 
 class ButtonMenu(BaseMenu):
@@ -28,7 +28,6 @@ class ButtonMenu(BaseMenu):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         super()._validate_pages()
-        self._validate_buttons()
 
         if self._start_session() is False:
             return
@@ -54,6 +53,8 @@ class ButtonMenu(BaseMenu):
         """Adds reactions to the message object based on what was passed into the page buttons."""
         for button in self.page.buttons:
             await self.output.add_reaction(button)
+
+        self._validate_buttons()
 
     async def _get_reaction(self) -> Optional[Union[Emoji, str]]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
@@ -97,7 +98,7 @@ class ButtonMenu(BaseMenu):
                 warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
 
         if self.page.on_fail:
-            raise CallbackError('A ButtonMenu can not have an `on_fail` callback.')
+            raise EventError('A ButtonMenu can not have an `on_fail` callback.')
 
         if _cb_count < len(self.pages) - 1:
-            raise CallbackError(f'ButtonMenu missing `on_next` callbacks. Expected {len(self.pages) - 1}, found {_cb_count}.')
+            raise EventError(f'ButtonMenu missing `on_next` callbacks. Expected {len(self.pages) - 1}, found {_cb_count}.')

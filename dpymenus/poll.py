@@ -6,7 +6,7 @@ from discord import User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu
-from dpymenus.exceptions import ButtonsError, CallbackError, PagesError
+from dpymenus.exceptions import ButtonsError, EventError, PagesError
 
 
 class Poll(ButtonMenu):
@@ -146,7 +146,7 @@ class Poll(ButtonMenu):
             raise PagesError(f'A Poll can only have two pages. Expected 2, found {len(self.pages)}.')
 
         if self.page.on_cancel or self.page.on_fail or self.page.on_timeout:
-            raise CallbackError('A Poll can not have `on_cancel`, `on_fail`, or `on_timeout` callbacks.')
+            raise EventError('A Poll can not have `on_cancel`, `on_fail`, or `on_timeout` callbacks.')
 
         if len(self.page.buttons) > 5:
             warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')

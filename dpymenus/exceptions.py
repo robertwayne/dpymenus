@@ -11,5 +11,5 @@ class ButtonsError(MenuError):
     pass
 
 
-class CallbackError(MenuError):
+class EventError(MenuError):
     pass

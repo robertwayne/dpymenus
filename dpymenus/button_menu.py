@@ -1,13 +1,11 @@
 import asyncio
 from typing import Dict, Optional, Union
-from warnings import warn
 
 from discord import Emoji, PartialEmoji, Reaction
 from discord.abc import GuildChannel, User
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
-from dpymenus.exceptions import ButtonsError, EventError
 
 
 class ButtonMenu(BaseMenu):

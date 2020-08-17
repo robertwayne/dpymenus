@@ -20,7 +20,7 @@ class Poll(ButtonMenu):
         self.voted: Set[User] = set()
 
     def __repr__(self):
-        return f'Poll(pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, active={self.active} page={self.page_index},' \
+        return f'Poll(pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, active={self.active} page={self.page.index},' \
                f'data={self.data})'
 
     async def open(self):

@@ -72,15 +72,17 @@ class PaginatedMenu(ButtonMenu):
         return await self.output.edit(embed=embed)
 
     async def add_pages(self, embeds: List[Embed]):
-        """Helper method to add a list of pre-instantiated pages to a menu.
+        """Helper method to convert embeds into Pagees and add them to a menu.
 
-        :param embeds: A list of Discord :py:class:`~discord.Embed` object.
+        :param embeds: A list of Discord :py:class:`~discord.Embed` objects.
         """
         for i, embed in enumerate(embeds):
             if self.page_numbers:
                 embed.set_footer(text=f'{i + 1}/{len(embeds)}')
 
-            self.pages.append(Page(embed))
+            p = Page(embed)
+            p.index = i
+            self.pages.append(p)
 
         self.page = self.pages[0]
 

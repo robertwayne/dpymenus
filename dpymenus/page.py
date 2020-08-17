@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Union
 
 from discord import Embed, Emoji, PartialEmoji
 
@@ -11,7 +11,7 @@ class Page:
     """
     embed: Embed
     index: int
-    buttons: List[str, Emoji, PartialEmoji]
+    buttons: List[Union[str, Emoji, PartialEmoji]]
     on_next: Optional[Callable]
     on_fail: Optional[Callable]
     on_cancel: Optional[Callable]

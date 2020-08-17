@@ -102,7 +102,8 @@ class BaseMenu:
 
         self.page = self.pages[0]
 
-        self._validate_buttons()
+        if self.__class__.__name__ == 'ButtonMenu':
+            self._validate_buttons()
 
         return self
 

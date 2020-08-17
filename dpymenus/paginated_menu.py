@@ -1,5 +1,5 @@
 import asyncio
-from typing import Callable, List, Union
+from typing import List, Union
 
 from discord import Embed, Emoji, Message, PartialEmoji, Reaction
 from discord.abc import GuildChannel, User
@@ -19,11 +19,12 @@ class PaginatedMenu(ButtonMenu):
     def __init__(self, ctx: Context):
         super().__init__(ctx)
         self.page_numbers = False
+        self.skip_buttons = False
         self.on_cancel = None
         self.on_timeout = None
 
     def __repr__(self):
-        return f'PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, ' \
+        return f'PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, skip_buttons={self.skip_buttons} ' \
                f'page_numbers={self.page_numbers}, timeout={self.timeout}, on_timeout={self.on_timeout}, on_cancel={self.on_cancel})'
 
     async def open(self):
@@ -86,25 +87,27 @@ class PaginatedMenu(ButtonMenu):
 
         self.page = self.pages[0]
 
-    def set_event_cancel(self, func: Callable):
-        self.on_cancel = func
+    def set_event_cancel(self, embed: Embed):
+        """Sets the embed which will be displayed when the menu is cancelled by the user. Returns the menu instance to allow for fluent-style chaining."""
+        self.on_cancel = embed
 
         return self
 
-    def set_event_timeout(self, func: Callable):
-        self.on_timeout = func
+    def set_event_timeout(self, embed: Embed):
+        """Sets the embed which will be displayed when the menu times out. Returns the menu instance to allow for fluent-style chaining."""
+        self.on_timeout = embed
 
         return self
 
     def show_page_numbers(self):
+        """Adds page numbers to each embeds by overwriting the footer. Returns the menu instance to allow for fluent-style chaining."""
         self.page_numbers = True
 
         return self
 
-    def hide_page_numbers(self):
-        self.page_numbers = False
-
-        return self
+    def enable_skip_buttons(self):
+        """Adds two extra buttons for jumping to the first and last page. Returns the menu instance to allow for fluent-style chaining."""
+        self.skip_buttons = True
 
     # Internal Methods
     async def _get_reaction(self) -> Union[Emoji, str]:
@@ -133,10 +136,16 @@ class PaginatedMenu(ButtonMenu):
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
-        for button in GENERIC_BUTTONS:
-            await self.output.add_reaction(button)
+        if self.skip_buttons:
+            for button in GENERIC_BUTTONS:
+                await self.output.add_reaction(button)
+
+        else:
+            for button in GENERIC_BUTTONS[1:3]:
+                await self.output.add_reaction(button)
 
     async def _handle_transition(self):
         """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
-        transition_map = {GENERIC_BUTTONS[0]: self.previous, GENERIC_BUTTONS[1]: self.cancel, GENERIC_BUTTONS[2]: self.next}
+        transition_map = {GENERIC_BUTTONS[0]: self.to_first, GENERIC_BUTTONS[1]: self.previous, GENERIC_BUTTONS[2]: self.cancel,
+                          GENERIC_BUTTONS[3]: self.next, GENERIC_BUTTONS[4]: self.to_last}
         await transition_map[self.input]()

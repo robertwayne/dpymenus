@@ -44,6 +44,7 @@ class ButtonMenu(BaseMenu):
             await self.page.on_next(self)
 
     def set_data(self, data: Dict):
+        """Sets a dictionary up for persistant state data. Returns the menu instance to allow for fluent-style chaining."""
         self.data = data
 
         return self

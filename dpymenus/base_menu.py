@@ -67,6 +67,14 @@ class BaseMenu:
 
         await self.send_message(self.page.embed)
 
+    async def to_first(self):
+        """Helper method to jump to the first page."""
+        self.page = self.pages[0]
+
+    async def to_last(self):
+        """Helper method to jump to the last page."""
+        self.page = self.pages[-1:][0]
+
     async def go_to(self, page: Optional[Union[str, int]] = None):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed.
 
@@ -133,11 +141,13 @@ class BaseMenu:
         sessions.remove((self.ctx.author.id, self.ctx.channel.id))
 
     def set_timeout(self, timeout: int):
+        """Sets the timeout duration for the menu. Returns the menu instance to allow for fluent-style chaining."""
         self.timeout = timeout
 
         return self
 
     def set_destination(self, dest: Union[User, TextChannel]):
+        """Sets the message destination for the menu. Returns the menu instance to allow for fluent-style chaining."""
         self.destination = dest
 
         return self

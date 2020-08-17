@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.0] - UNRELEASED
+
+### Changed
+- **Breaking:** Refactored menus to adhere to a fluent interface style of programming. As more parameters 
+were being added, Page instantiation became significantly harder to read. This pattern is the same as used 
+by Embeds, so it should be familiar.
+
+### Added
+- Pages now have an `index` attribute instead of the menu class storing only the current index.
+
+### Removed
+- **Breaking:** Removed the `.add_page()` method in favor of `.add_pages()` and the new fluent-style. It reduces
+bot code, reduces visual noise, and makes it easier to reason about where things happen in your menu with dense or
+complex embeds.
+- **Breaking:** Removed the `page_index` attribute from `BaseMenu` in favor of each `Page` storing its own index in the
+order it was processed in from the `.add_pages()` method. As this takes a list, the order will be safely carried over.
+This also allows the user to swap pages simply by changing their order in the menu, and change the menu page order
+at runtime.
+
+
 ## [0.3.5] - 2020-08-12
 
 ### Added

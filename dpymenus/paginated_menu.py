@@ -29,9 +29,9 @@ class PaginatedMenu(ButtonMenu):
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        await super()._validate_pages()
+        super()._validate_pages()
 
-        if await self._start_session() is False:
+        if self._start_session() is False:
             return
 
         self.output = await self.destination.send(embed=self.page.embed)

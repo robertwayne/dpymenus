@@ -27,10 +27,10 @@ class ButtonMenu(BaseMenu):
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        await super()._validate_pages()
-        await self._validate_buttons()
+        super()._validate_pages()
+        self._validate_buttons()
 
-        if await self._start_session() is False:
+        if self._start_session() is False:
             return
 
         self.output = await self.destination.send(embed=self.page.embed)
@@ -79,7 +79,7 @@ class ButtonMenu(BaseMenu):
             return u == self.ctx.author and r.message.id == self.output.id
         return False
 
-    async def _validate_buttons(self):
+    def _validate_buttons(self):
         """Ensures that a button menu was passed the appropriate amount of buttons."""
         _cb_count = 0
         for page in self.pages:

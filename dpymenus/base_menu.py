@@ -180,7 +180,7 @@ class BaseMenu:
         await self.close_session()
         self.active = False
 
-    async def _is_cancelled(self) -> bool:
+    def _is_cancelled(self) -> bool:
         """Checks input for a cancellation string. If there is a match, it calls the ``menu.cancel()`` method and returns True."""
         if self.input.content in QUIT:
             await self.cancel()
@@ -206,12 +206,12 @@ class BaseMenu:
         """Returns true if the author is the person who responded and the channel is the same."""
         return m.author == self.ctx.author and self.output.channel == m.channel
 
-    async def _validate_pages(self):
+    def _validate_pages(self):
         """Checks that the Menu contains at least one Page."""
         if len(self.pages) <= 1:
             raise PagesError(f'There must be more than one page in a menu. Expected at least 2, found {len(self.pages)}.')
 
-    async def _start_session(self) -> bool:
+    def _start_session(self) -> bool:
         if (self.ctx.author.id, self.ctx.channel.id) in sessions:
             return False
 

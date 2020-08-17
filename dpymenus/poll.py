@@ -25,9 +25,9 @@ class Poll(ButtonMenu):
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        await self._validate_pages()
+        self._validate_pages()
 
-        if await self._start_session() is False:
+        if self._start_session() is False:
             return
 
         await self._set_data()
@@ -130,17 +130,17 @@ class Poll(ButtonMenu):
 
     async def _set_data(self):
         """Internally sets data field keys and values based on the current Page button properties."""
-        await self._validate_buttons()
+        self._validate_buttons()
 
         for button in self.page.buttons:
             self.data.update({button: set()})
 
-    async def _validate_buttons(self):
+    def _validate_buttons(self):
         """Checks that Poll objects always have more than two buttons."""
         if len(self.page.buttons) < 2:
             raise ButtonsError(f'A Poll primary page must have at least two buttons. Expected at least 2, found {len(self.page.buttons)}.')
 
-    async def _validate_pages(self):
+    def _validate_pages(self):
         """Checks that the Menu contains at least one Page."""
         if len(self.pages) != 2:
             raise PagesError(f'A Poll can only have two pages. Expected 2, found {len(self.pages)}.')

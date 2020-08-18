@@ -12,7 +12,7 @@ class Page:
     Attributes
         :embed: A discord Embed object. Used in place of utilizing the Page as an Embed object itself.
     """
-    __slots__ = ('index', 'embed', '_buttons', '_on_next', '_on_fail', '_on_cancel', '_on_timeout')
+    __slots__ = ('embed', '_index',  '_buttons', '_on_next', '_on_fail', '_on_cancel', '_on_timeout')
 
     def __init__(self, embed: Embed):
         self.embed = embed
@@ -25,11 +25,11 @@ class Page:
 
     @property
     def index(self):
-        return getattr(self, 'index', 0)
+        return getattr(self, '_index', 0)
 
     @index.setter
     def index(self, i: int):
-        self.index = i
+        self._index = i
 
     @property
     def buttons(self):

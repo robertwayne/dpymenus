@@ -20,7 +20,7 @@ class Poll(ButtonMenu):
         self.voted: Set[User] = set()
 
     def __repr__(self):
-        return f'Poll(pages={[p.__str__() for p in self.pages]}, page={self.page.index}, timeout={self.timeout}, data={self.data})'
+        return f'Poll(pages={len(self.pages)}, page={self.page.index}, timeout={self.timeout}, data={self.data})'
 
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.

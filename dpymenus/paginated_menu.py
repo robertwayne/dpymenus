@@ -124,7 +124,7 @@ class PaginatedMenu(ButtonMenu):
 
         if len(buttons) == 3:
             self.buttons.insert(0, GENERIC_BUTTONS[0])
-            self.buttons.insert(5, GENERIC_BUTTONS[4])
+            self.buttons.insert(4, GENERIC_BUTTONS[4])
 
         return self
 

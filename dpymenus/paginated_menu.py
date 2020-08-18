@@ -21,8 +21,9 @@ class PaginatedMenu(ButtonMenu):
         self.skip_buttons: bool = False
 
     def __repr__(self):
-        return f'PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, ' \
-               f'skip_buttons={self.skip_buttons} page_numbers={self.page_numbers}, timeout={self.timeout})'
+        return f'PaginatedMenu(pages={len(self.pages)}, page={self.page}, timeout={self.timeout}, ' \
+               f'skip_buttons={self.skip_buttons} page_numbers={self.page_numbers}, cancel_page={self.cancel_page}, ' \
+               f'timeout_page={self.timeout_page})'
 
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.

@@ -120,7 +120,11 @@ class PaginatedMenu(ButtonMenu):
         `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
          will be filled in as the defaults for you. If you enable the skip buttons without having values set, it will
          use those defaults."""
-        self.buttons = []
+        self.buttons = buttons
+
+        if len(buttons) == 3:
+            self.buttons.insert(0, GENERIC_BUTTONS[0])
+            self.buttons.insert(5, GENERIC_BUTTONS[4])
 
         return self
 
@@ -145,33 +149,26 @@ class PaginatedMenu(ButtonMenu):
 
     def _check_reaction(self, r: Reaction, u: User) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
-        if r.emoji in GENERIC_BUTTONS:
+        if r.emoji in self.buttons:
             return u == self.ctx.author and r.message.id == self.output.id
         return False
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
+        if not self.buttons:
+            self.buttons = GENERIC_BUTTONS
+
         if self.skip_buttons:
-            for button in GENERIC_BUTTONS:
+            for button in self.buttons:
                 await self.output.add_reaction(button)
 
         else:
-            for button in GENERIC_BUTTONS[1:4]:
+            for button in self.buttons[1:4]:
                 await self.output.add_reaction(button)
 
     async def _handle_transition(self):
         """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
         transitions = [self.to_first, self.previous, self.cancel, self.next, self.to_last]
-
-        if self.buttons:
-            if len(self.buttons) == 3:
-                self.buttons.insert(0, GENERIC_BUTTONS[0])
-                self.buttons.insert(5, GENERIC_BUTTONS[4])
-
-            transition_map = {button: transition for button, transition in zip(self.buttons, transitions)}
-
-        else:
-            transition_map = {GENERIC_BUTTONS[0]: self.to_first, GENERIC_BUTTONS[1]: self.previous, GENERIC_BUTTONS[2]: self.cancel,
-                              GENERIC_BUTTONS[3]: self.next, GENERIC_BUTTONS[4]: self.to_last}
+        transition_map = {button: transition for button, transition in zip(self.buttons, transitions)}
 
         await transition_map[self.input]()

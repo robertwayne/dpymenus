@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, TypeVar
 from warnings import warn
 
 from discord import Embed, Message, Reaction, TextChannel, User
@@ -9,6 +9,8 @@ from discord.ext.commands import Context
 from dpymenus.constants import QUIT
 from dpymenus.exceptions import ButtonsError, EventError, PagesError
 from dpymenus.page import Page
+
+TPages = TypeVar('TPages', Embed, Page)
 
 sessions: List[Tuple[int, int]] = list()
 
@@ -97,11 +99,18 @@ class BaseMenu:
 
         await self._post_next()
 
-    def add_pages(self, pages: List[Page]) -> 'BaseMenu':
+    def add_pages(self, pages: List[TPages]) -> 'BaseMenu':
         """Adds a list of pages to a menu, setting their index based on the position in the list.."""
-        for i, page in enumerate(pages):
-            page.index = i
-            self.pages.append(page)
+        if isinstance(pages[0], Embed):
+            for i, page in enumerate(pages):
+                page = Page(page).set_on_next(self.next).set_buttons([])
+                page.index = i
+                self.pages.append(page)
+
+        else:
+            for i, page in enumerate(pages):
+                page.index = i
+                self.pages.append(page)
 
         self.page = self.pages[0]
 

@@ -20,7 +20,7 @@ class ButtonMenu(BaseMenu):
         self.data: Dict = {}
 
     def __repr__(self):
-        return f'ButtonMenu(pages={len(self.pages)}, page={self.page}, timeout={self.timeout}, data={self.data})'
+        return f'ButtonMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, data={self.data})'
 
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.

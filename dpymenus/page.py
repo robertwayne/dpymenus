@@ -6,16 +6,24 @@ Callback = Optional[Callable]
 ButtonList = List[Union[str, Emoji, PartialEmoji]]
 
 
-class Page:
+class Page(Embed):
     """Represents a single page inside a menu.
 
     Attributes
         :embed: A discord Embed object. Used in place of utilizing the Page as an Embed object itself.
     """
-    __slots__ = ('embed', '_index',  '_buttons', '_on_next', '_on_fail', '_on_cancel', '_on_timeout')
+    __slots__ = (*Embed.__slots__, 'embed', '_index', '_buttons', '_on_next', '_on_fail',
+                 '_on_cancel', '_on_timeout', '_type', '_url', '_description', '_title')
 
-    def __init__(self, embed: Embed):
+    def __init__(self, embed: Optional[Embed] = None, **kwargs):
         self.embed = embed
+
+        if embed is None:
+            super().__init__(**kwargs)
+        else:
+            for k, v in embed.to_dict().items():
+                self.__setattr__(f'_{k}', v)
+            super().__init__(**embed.to_dict())
 
     def __repr__(self):
         return f"Page(title={self.embed.title} {''.join([f'{k}={v}' for k, v in self.__dict__.items()])})"
@@ -34,6 +42,10 @@ class Page:
     @property
     def buttons(self):
         return getattr(self, '_buttons', [])
+
+    @buttons.setter
+    def buttons(self, button: Union[Emoji, PartialEmoji, str]):
+        self._buttons.append(button)
 
     def set_buttons(self, buttons: List) -> 'Page':
         """Generates reaction buttons when the page is displayed. Returns itself for fluent-style chaining."""

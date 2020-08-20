@@ -169,3 +169,7 @@ use case scenarios.
 
 `.generate_results_page()` -- Adds all the result fields to your closing page as well as calculates the winner or 
 a draw.
+
+-----
+
+Check out my other discord.py utility: **[cogwatch](https://github.com/robertwayne/cogwatch)** -- *Automatic hot-reloading for your discord.py command files.*

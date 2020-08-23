@@ -14,7 +14,7 @@
   </a>
   
   <a href="https://python.org">
-    <img src="https://img.shields.io/pypi/pyversions/dpymenus?color=%233F7CAE&style=for-the-badge" alt="Python Version" />
+    <img src="https://img.shields.io/pypi/pyversions/dpymenus?color=0073B7&style=for-the-badge" alt="Python Version" />
   </a>
 </div>
 <br>

@@ -1,3 +1,4 @@
+<img align="left" src="assets/logo.png" alt="dpymenus">
 <h1 align="center">Discord Menus</h1>
     
 <div align="center">
@@ -18,8 +19,6 @@
   </a>
 </div>
 <br>
-
-<img align="left" src="assets/logo.png" alt="dpymenus">
 
 <br>
 

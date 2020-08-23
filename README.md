@@ -17,16 +17,13 @@
     <img src="https://img.shields.io/pypi/pyversions/dpymenus?color=0073B7&style=for-the-badge" alt="Python Version" />
   </a>
 </div>
-<br>
-
-<img align="left" src="assets/logo.png" alt="dpymenus">
 
 <br>
+
+-----
 
 <img align="right" src="assets/demo.gif" alt="user creates an embed, reaction buttons are added, and user navigates the menu
 by clicking the buttons">
-
-<br>
 
 ### Table of Contents
 **[Documentation](https://dpymenus.readthedocs.io/en/latest/?badge=latest)**
@@ -38,6 +35,11 @@ by clicking the buttons">
 + [Event Callbacks](#event-callbacks)
 + [Helper Methods](#helper-methods)
 + [Poll Utilities](#poll-utilities)
+
+<br>
+<br>
+
+-----
 
 ### Getting Started
 `dpymenus` is an unofficial add-on for the `discord.py` library that lets you quickly compose various styles of 

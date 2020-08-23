@@ -5,11 +5,11 @@
   <br>
   <br>
   
-  <a href="https://readthedocs.org/projects/dpymenus/badge/?version=latest">
+  <a href="https://pypi.org/project/dpymenus/">
     <img src="https://img.shields.io/pypi/v/dpymenus?color=0073B7&label=Latest&style=for-the-badge" alt="Version" />
   </a>
 
-  <a href="https://pypi.org/project/dpymenus/">
+  <a href="https://dpymenus.readthedocs.io/en/latest/">
     <img src="https://img.shields.io/readthedocs/dpymenus/latest?style=for-the-badge" alt="Docs" />
   </a>
   

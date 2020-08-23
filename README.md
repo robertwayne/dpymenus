@@ -1,4 +1,4 @@
-<img align="left" src="assets/logo.png" alt="dpymenus">
+<img align="right" src="assets/logo.png" alt="dpymenus">
 <h1 align="center">Discord Menus</h1>
     
 <div align="center">
@@ -18,18 +18,12 @@
     <img src="https://img.shields.io/pypi/pyversions/dpymenus?color=0073B7&style=for-the-badge" alt="Python Version" />
   </a>
 </div>
-<br>
 
 <br>
 
 <img align="right" src="assets/demo.gif" alt="user creates an embed, reaction buttons are added, and user navigates the menu
 by clicking the buttons">
 
-<br>
-<br>
-<br>
-<br>
-<br>
 <br>
 
 ### Table of Contents

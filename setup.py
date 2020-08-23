@@ -22,5 +22,5 @@ setuptools.setup(
             'Intended Audience :: Developers',
             'Development Status :: 4 - Beta',
         ],
-        python_requires='>=3.8',
+        python_requires='>=3.7',
 )

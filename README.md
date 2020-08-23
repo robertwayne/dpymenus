@@ -20,11 +20,11 @@
 </div>
 
 <br>
+<br>
+<br>
 
 <img align="right" src="assets/demo.gif" alt="user creates an embed, reaction buttons are added, and user navigates the menu
 by clicking the buttons">
-
-<br>
 
 ### Table of Contents
 **[Documentation](https://dpymenus.readthedocs.io/en/latest/?badge=latest)**

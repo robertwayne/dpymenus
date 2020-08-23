@@ -1,4 +1,3 @@
-<img align="right" src="assets/logo.png" alt="dpymenus">
 <h1 align="center">Discord Menus</h1>
     
 <div align="center">
@@ -19,8 +18,6 @@
   </a>
 </div>
 
-<br>
-<br>
 <br>
 
 <img align="right" src="assets/demo.gif" alt="user creates an embed, reaction buttons are added, and user navigates the menu

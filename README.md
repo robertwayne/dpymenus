@@ -1,15 +1,25 @@
-[![PyPI version](https://badge.fury.io/py/dpymenus.svg)](https://badge.fury.io/py/dpymenus)
-[![Documentation Status](https://readthedocs.org/projects/dpymenus/badge/?version=latest)](https://dpymenus.readthedocs.io/en/latest/?badge=latest)
+<h1 align="center">Discord Menus</h1>
+    
+<div align="center">
+  <strong><i>Simplified menus for discord.py developers.</i></strong>
+  <br>
+  <br>
+  
+  <a href="https://readthedocs.org/projects/dpymenus/badge/?version=latest">
+    <img src="https://img.shields.io/pypi/v/dpymenus?color=0073B7&label=Latest&style=for-the-badge" alt="Version" />
+  </a>
 
+  <a href="https://pypi.org/project/dpymenus/">
+    <img src="https://img.shields.io/readthedocs/dpymenus/latest?style=for-the-badge" alt="Docs" />
+  </a>
+  
+  <a href="https://python.org">
+    <img src="https://img.shields.io/pypi/pyversions/dpymenus?color=%233F7CAE&style=for-the-badge" alt="Python Version" />
+  </a>
+</div>
+<br>
 
 <img align="left" src="assets/logo.png" alt="dpymenus">
-
-# DPYMENUS
-
-*Simplified menus for discord.py developers.*
-
-`dpymenus` is an unofficial add-on for the `discord.py` library that lets you quickly compose various styles of 
-menus *(text, buttons, polls)* which react to user input.
 
 <br>
 
@@ -30,6 +40,9 @@ by clicking the buttons">
 + [Poll Utilities](#poll-utilities)
 
 ### Getting Started
+`dpymenus` is an unofficial add-on for the `discord.py` library that lets you quickly compose various styles of 
+menus *(text, buttons, polls)* which react to user input.
+
 You can install the library with `pip install dpymenus`.
 
 This very basic example will get the same menu running as the demo .gif!

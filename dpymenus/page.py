@@ -12,18 +12,10 @@ class Page(Embed):
     Attributes
         :embed: A discord Embed object. Used in place of utilizing the Page as an Embed object itself.
     """
-    __slots__ = (*Embed.__slots__, 'embed', '_index', '_buttons', '_on_next', '_on_fail',
-                 '_on_cancel', '_on_timeout')
+    __slots__ = ('_index', '_buttons', '_on_next', '_on_fail', '_on_cancel', '_on_timeout')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        # if embed is None:
-        #     super().__init__(**kwargs)
-        # else:
-        #     # for k, v in embed.to_dict().items():
-        #     #     self.__setattr__(f'_{k}', v)
-        #     super().__init__(**embed.to_dict())
 
     def __repr__(self):
         return f"Page(title={self.title} " \

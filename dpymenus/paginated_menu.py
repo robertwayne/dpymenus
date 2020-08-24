@@ -66,20 +66,20 @@ class PaginatedMenu(ButtonMenu):
         return self
 
     @property
-    def buttons(self) -> List:
-        return getattr(self, '_buttons', [])
+    def buttons_list(self) -> List:
+        return getattr(self, '_buttons_list', [])
 
-    def set_buttons(self, buttons: List) -> 'PaginatedMenu':
+    def buttons(self, buttons: List) -> 'PaginatedMenu':
         """Replaces the default butttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
         0 and 5 are only shown if `enable_skip_buttons` is set, otherwisee 2, 3, and 4 will be shown. You can pass in
         `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
          will be filled in as the defaults for you. If you enable the skip buttons without having values set, it will
          use those defaults."""
-        self._buttons = buttons
+        self._buttons_list = buttons
 
         if len(buttons) == 3:
-            self.buttons.insert(0, GENERIC_BUTTONS[0])
-            self.buttons.insert(4, GENERIC_BUTTONS[4])
+            self.buttons_list.insert(0, GENERIC_BUTTONS[0])
+            self.buttons_list.insert(4, GENERIC_BUTTONS[4])
 
         return self
 
@@ -124,8 +124,7 @@ class PaginatedMenu(ButtonMenu):
         return await self.output.edit(embed=embed)
 
     def add_pages(self, pages: List[TPages]) -> 'PaginatedMenu':
-        """Helper method to convert embeds into Pagees and add them to a menu.
-        """
+        """Helper method to convert embeds into Pagees and add them to a menu."""
         for i, page in enumerate(pages):
             if isinstance(page, Embed):
                 page = Page.from_dict(page.to_dict())
@@ -187,26 +186,26 @@ class PaginatedMenu(ButtonMenu):
 
     def _check_reaction(self, r: Reaction, u: User) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
-        if r.emoji in self.buttons:
+        if r.emoji in self.buttons_list:
             return u == self.ctx.author and r.message.id == self.output.id
         return False
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
-        if not self.buttons:
-            self.buttons = GENERIC_BUTTONS
+        if not self.buttons_list:
+            self.buttons(GENERIC_BUTTONS)
 
         if self.skip_buttons:
-            for button in self.buttons:
+            for button in self.buttons_list:
                 await self.output.add_reaction(button)
 
         else:
-            for button in self.buttons[1:4]:
+            for button in self.buttons_list[1:4]:
                 await self.output.add_reaction(button)
 
     async def _handle_transition(self):
         """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
         transitions = [self.to_first, self.previous, self.cancel, self.next, self.to_last]
-        transition_map = {button: transition for button, transition in zip(self.buttons, transitions)}
+        transition_map = {button: transition for button, transition in zip(self.buttons_list, transitions)}
 
         await transition_map[self.input]()

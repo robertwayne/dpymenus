@@ -96,7 +96,7 @@ class BaseMenu:
         """Adds a list of pages to a menu, setting their index based on the position in the list.."""
         for i, page in enumerate(pages):
             if isinstance(page, Embed):
-                page = Page(**page.to_dict()).set_on_next(self.next).set_buttons([])
+                page = Page(**page.to_dict()).on_next(self.next).buttons([])
             page.index = i
             self.pages.append(page)
 
@@ -120,7 +120,7 @@ class BaseMenu:
         """Sends a cancellation message."""
         # we check if the page has a callback
         if self.page.on_cancel:
-            return await self.page.on_cancel()
+            return await self.page.on_cancel_event()
 
         embed = Embed(title='Cancelled', description='Menu selection cancelled.')
         await self.send_message(embed)
@@ -163,7 +163,7 @@ class BaseMenu:
     async def _post_next(self):
         """Sends a message after the `next` method is called. Closes the session if there is no callback on the next page."""
         if self.__class__.__name__ != 'PaginatedMenu':
-            if self.page.on_next is None:
+            if self.page.on_next_event is None:
                 await self.close_session()
                 self.active = False
 
@@ -184,7 +184,7 @@ class BaseMenu:
         """Sends a timeout message."""
         # we check if the page has a callback
         if self.page.on_timeout:
-            return await self.page.on_timeout()
+            return await self.page.on_timeout_event()
 
         embed = Embed(title='Timed Out', description='You timed out at menu selection.')
         await self.send_message(embed)
@@ -205,7 +205,7 @@ class BaseMenu:
 
         except asyncio.TimeoutError:
             if self.page.on_timeout:
-                await self.page.on_timeout()
+                await self.page.on_timeout_event()
 
             else:
                 await self._timeout()
@@ -236,13 +236,13 @@ class BaseMenu:
             if not page.buttons:
                 break
 
-            if page.on_next:
+            if page.on_next_event:
                 _cb_count += 1
 
-            if len(page.buttons) <= 1:
+            if len(page.buttons_list) <= 1:
                 raise ButtonsError('Any page with an `on_next` event capture must have at least one button.')
 
-            if len(page.buttons) > 5:
+            if len(page.buttons_list) > 5:
                 warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
 
         if self.page.on_fail:

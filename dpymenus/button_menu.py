@@ -43,12 +43,12 @@ class ButtonMenu(BaseMenu):
             self.input = await self._get_reaction()
             await self._cleanup_reactions()
 
-            await self.page.on_next(self)
+            await self.page.on_next_event(self)
 
     # Internal Methods
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
-        for button in self.page.buttons:
+        for button in self.page.buttons_list:
             await self.output.add_reaction(button)
 
     async def _get_reaction(self) -> Optional[Union[Emoji, str]]:

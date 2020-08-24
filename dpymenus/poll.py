@@ -115,7 +115,7 @@ class Poll(ButtonMenu):
             voters -= cheaters
 
         await self.output.clear_reactions()
-        await self.page.on_next(self)
+        await self.page.on_next_event(self)
 
     async def _get_cheaters(self) -> Set[int]:
         """Returns a set of user ID's that appear in more than one state_field value."""
@@ -131,13 +131,13 @@ class Poll(ButtonMenu):
         """Internally sets data field keys and values based on the current Page button properties."""
         self._validate_buttons()
 
-        for button in self.page.buttons:
+        for button in self.page.buttons_list:
             self.data.update({button: set()})
 
     def _validate_buttons(self):
         """Checks that Poll objects always have more than two buttons."""
-        if len(self.page.buttons) < 2:
-            raise ButtonsError(f'A Poll primary page must have at least two buttons. Expected at least 2, found {len(self.page.buttons)}.')
+        if len(self.page.buttons_list) < 2:
+            raise ButtonsError(f'A Poll primary page must have at least two buttons. Expected at least 2, found {len(self.page.buttons_list)}.')
 
     def _validate_pages(self):
         """Checks that the Menu contains at least one Page."""
@@ -147,7 +147,7 @@ class Poll(ButtonMenu):
         if self.page.on_cancel or self.page.on_fail or self.page.on_timeout:
             raise EventError('A Poll can not capture a `cancel`, `fail`, or `timeout` event.')
 
-        if len(self.page.buttons) > 5:
+        if len(self.page.buttons_list) > 5:
             warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
 
     @staticmethod

@@ -14,7 +14,6 @@ class ButtonMenu(BaseMenu):
 
     :param ctx: A reference to the command context.
     """
-
     def __init__(self, ctx: Context):
         super().__init__(ctx)
         self.data: Dict = {}
@@ -26,6 +25,7 @@ class ButtonMenu(BaseMenu):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         await super()._open()
+        self._validate_buttons()
 
         while self.active:
             await self._add_buttons()

@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Optional, Tuple, Union, TypeVar
+from typing import List, Optional, Tuple, TypeVar, Union
 from warnings import warn
 
 from discord import Embed, Message, Reaction, TextChannel, User
@@ -49,7 +49,7 @@ class BaseMenu:
         if self._start_session() is False:
             return
 
-        self.output = await self.destination.send(embed=self.page.embed)
+        self.output = await self.destination.send(embed=self.page)
 
     async def next(self):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed."""
@@ -67,19 +67,19 @@ class BaseMenu:
 
         self.page = self.pages[self.page.index - 1]
 
-        await self.send_message(self.page.embed)
+        await self.send_message(self.page)
 
     async def to_first(self):
         """Helper method to jump to the first page."""
         self.page = self.pages[0]
 
-        await self.send_message(self.page.embed)
+        await self.send_message(self.page)
 
     async def to_last(self):
         """Helper method to jump to the last page."""
         self.page = self.pages[-1:][0]
 
-        await self.send_message(self.page.embed)
+        await self.send_message(self.page)
 
     async def go_to(self, page: Optional[Union[str, int]] = None):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed.
@@ -101,25 +101,17 @@ class BaseMenu:
 
     def add_pages(self, pages: List[TPages]) -> 'BaseMenu':
         """Adds a list of pages to a menu, setting their index based on the position in the list.."""
-        if isinstance(pages[0], Embed):
-            for i, page in enumerate(pages):
-                page = Page(page).set_on_next(self.next).set_buttons([])
-                page.index = i
-                self.pages.append(page)
-
-        else:
-            for i, page in enumerate(pages):
-                page.index = i
-                self.pages.append(page)
+        for i, page in enumerate(pages):
+            if isinstance(page, Embed):
+                page = Page(**page.to_dict()).set_on_next(self.next).set_buttons([])
+            page.index = i
+            self.pages.append(page)
 
         self.page = self.pages[0]
 
-        if self.__class__.__name__ == 'ButtonMenu':
-            self._validate_buttons()
-
         return self
 
-    async def send_message(self, embed: Embed) -> Message:
+    async def send_message(self, embed: Union[Page, Embed]) -> Message:
         """
         Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
 
@@ -141,8 +133,11 @@ class BaseMenu:
 
         # we check if the menu is a PaginatedMenu and perform edits instead of sends
         if self.__class__.__name__ == 'PaginatedMenu':
-            cancel_page = getattr(self, 'cancel_page')
-            await self.output.edit(embed=cancel_page if cancel_page else embed)
+            cancel_page = getattr(self, 'cancel_page', None)
+            if cancel_page:
+                await self.output.edit(embed=cancel_page if cancel_page else embed)
+            else:
+                await self._cleanup_output()
 
         else:
             await self.send_message(embed)
@@ -179,12 +174,17 @@ class BaseMenu:
                 await self.close_session()
                 self.active = False
 
-        await self.send_message(self.page.embed)
+        await self.send_message(self.page)
 
     async def _cleanup_input(self):
         """Deletes a Discord client user message."""
         if isinstance(self.output.channel, GuildChannel):
             await self.input.delete()
+
+    async def _cleanup_output(self):
+        """Deletes the Discord client bot message."""
+        if isinstance(self.output.channel, GuildChannel):
+            await self.output.delete()
 
     async def _timeout(self):
         """Sends a timeout message."""

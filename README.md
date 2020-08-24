@@ -1,23 +1,33 @@
 ## Please note that you are viewing the active development branch. The README, examples, and CHANGELOG may not be completely accurate.
 
-[![PyPI version](https://badge.fury.io/py/dpymenus.svg)](https://badge.fury.io/py/dpymenus)
-[![Documentation Status](https://readthedocs.org/projects/dpymenus/badge/?version=latest)](https://dpymenus.readthedocs.io/en/latest/?badge=latest)
+<br>
 
-<img align="left" src="assets/logo.png" alt="dpymenus">
+<h1 align="center">Discord Menus</h1>
+    
+<div align="center">
+  <strong><i>Simplified menus for discord.py developers.</i></strong>
+  <br>
+  <br>
+  
+  <a href="https://pypi.org/project/dpymenus/">
+    <img src="https://img.shields.io/pypi/v/dpymenus?color=0073B7&label=Latest&style=for-the-badge" alt="Version" />
+  </a>
 
-# DPYMENUS
-
-*Simplified menus for discord.py developers.*
-
-`dpymenus` is an unofficial add-on for the `discord.py` library that lets you quickly compose various styles of 
-menus *(text, buttons, polls)* which react to user input.
+  <a href="https://dpymenus.readthedocs.io/en/latest/">
+    <img src="https://img.shields.io/readthedocs/dpymenus/latest?style=for-the-badge" alt="Docs" />
+  </a>
+  
+  <a href="https://python.org">
+    <img src="https://img.shields.io/pypi/pyversions/dpymenus?color=0073B7&style=for-the-badge" alt="Python Version" />
+  </a>
+</div>
 
 <br>
+
+-----
 
 <img align="right" src="assets/demo.gif" alt="user creates an embed, reaction buttons are added, and user navigates the menu
 by clicking the buttons">
-
-<br>
 
 ### Table of Contents
 **[Documentation](https://dpymenus.readthedocs.io/en/latest/?badge=latest)**
@@ -30,7 +40,15 @@ by clicking the buttons">
 + [Helper Methods](#helper-methods)
 + [Poll Utilities](#poll-utilities)
 
+<br>
+<br>
+
+-----
+
 ### Getting Started
+`dpymenus` is an unofficial add-on for the `discord.py` library that lets you quickly compose various styles of 
+menus *(text, buttons, polls)* which react to user input.
+
 You can install the library with `pip install dpymenus`.
 
 This very basic example will get the same menu running as the demo .gif!

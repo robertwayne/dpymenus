@@ -6,6 +6,7 @@ from discord.abc import GuildChannel, User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, Page
+from dpymenus.base_menu import TPages
 from dpymenus.constants import GENERIC_BUTTONS
 
 
@@ -65,18 +66,18 @@ class PaginatedMenu(ButtonMenu):
         """
         return await self.output.edit(embed=embed)
 
-    def add_pages(self, embeds: List[Embed]) -> 'PaginatedMenu':
+    def add_pages(self, pages: List[TPages]) -> 'PaginatedMenu':
         """Helper method to convert embeds into Pagees and add them to a menu.
-
-        :param embeds: A list of Discord :py:class:`~discord.Embed` objects.
         """
-        for i, embed in enumerate(embeds):
-            if self.page_numbers:
-                embed.set_footer(text=f'{i + 1}/{len(embeds)}')
+        for i, page in enumerate(pages):
+            if isinstance(page, Embed):
+                page = Page(**page.to_dict()).set_on_next(self.next).set_buttons([])
 
-            p = Page(embed)
-            p.index = i
-            self.pages.append(p)
+            if self.page_numbers:
+                page.set_footer(text=f'{i + 1}/{len(pages)}')
+
+            page.index = i
+            self.pages.append(page)
 
         self.page = self.pages[0]
 
@@ -86,9 +87,9 @@ class PaginatedMenu(ButtonMenu):
     def cancel_page(self):
         return getattr(self, '_cancel_page', None)
 
-    def set_cancel_page(self, func: Embed) -> 'PaginatedMenu':
+    def set_cancel_page(self, embed: Embed) -> 'PaginatedMenu':
         """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
-        self._cancel_page = func
+        self._cancel_page = embed
 
         return self
 
@@ -96,9 +97,9 @@ class PaginatedMenu(ButtonMenu):
     def timeout_page(self):
         return getattr(self, '_timeout_page', None)
 
-    def set_timeout_page(self, func: Embed) -> 'PaginatedMenu':
+    def set_timeout_page(self, embed: Embed) -> 'PaginatedMenu':
         """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
-        self._timeout_page = func
+        self._timeout_page = embed
 
         return self
 

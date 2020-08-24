@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Union
+from typing import List, Optional, Union
 
 from discord import Embed, Emoji, Message, PartialEmoji, Reaction
 from discord.abc import GuildChannel, User
@@ -19,9 +19,6 @@ class PaginatedMenu(ButtonMenu):
 
     def __init__(self, ctx: Context):
         super().__init__(ctx)
-        self.page_numbers: bool = False
-        self.skip_buttons: bool = False
-        self.buttons: List = []
 
     def __repr__(self):
         return f'PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, ' \
@@ -29,7 +26,7 @@ class PaginatedMenu(ButtonMenu):
                f'timeout_page={self.timeout_page})'
 
     @property
-    def cancel_page(self):
+    def cancel_page(self) -> Optional[Embed]:
         return getattr(self, '_cancel_page', None)
 
     def set_cancel_page(self, embed: Embed) -> 'PaginatedMenu':
@@ -39,7 +36,7 @@ class PaginatedMenu(ButtonMenu):
         return self
 
     @property
-    def timeout_page(self):
+    def timeout_page(self) -> Optional[Embed]:
         return getattr(self, '_timeout_page', None)
 
     def set_timeout_page(self, embed: Embed) -> 'PaginatedMenu':
@@ -48,17 +45,29 @@ class PaginatedMenu(ButtonMenu):
 
         return self
 
+    @property
+    def page_numbers(self) -> bool:
+        return getattr(self, '_page_numbers', False)
+
     def show_page_numbers(self) -> 'PaginatedMenu':
         """Adds page numbers to each embeds by overwriting the footer. Returns itself for fluent-style chaining."""
-        self.page_numbers = True
+        self._page_numbers = True
 
         return self
+
+    @property
+    def skip_buttons(self) -> bool:
+        return getattr(self, '_skip_buttons', False)
 
     def enable_skip_buttons(self) -> 'PaginatedMenu':
         """Adds two extra buttons for jumping to the first and last page. Returns itself for fluent-style chaining."""
-        self.skip_buttons = True
+        self._skip_buttons = True
 
         return self
+
+    @property
+    def buttons(self) -> List:
+        return getattr(self, '_buttons', [])
 
     def set_buttons(self, buttons: List) -> 'PaginatedMenu':
         """Replaces the default butttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
@@ -66,7 +75,7 @@ class PaginatedMenu(ButtonMenu):
         `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
          will be filled in as the defaults for you. If you enable the skip buttons without having values set, it will
          use those defaults."""
-        self.buttons = buttons
+        self._buttons = buttons
 
         if len(buttons) == 3:
             self.buttons.insert(0, GENERIC_BUTTONS[0])

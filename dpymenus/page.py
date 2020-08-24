@@ -13,7 +13,7 @@ class Page(Embed):
         :embed: A discord Embed object. Used in place of utilizing the Page as an Embed object itself.
     """
 
-    __slots__ = ('_index', '_buttons', '_on_next', '_on_fail', '_on_cancel', '_on_timeout')
+    __slots__ = ('_index', '_buttons_list', '_on_next_event', '_on_fail_event', '_on_cancel_event', '_on_timeout_event')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -26,7 +26,7 @@ class Page(Embed):
         return f'Page {self.index} {self.title}'
 
     @property
-    def index(self):
+    def index(self) -> int:
         return getattr(self, '_index', 0)
 
     @index.setter
@@ -34,55 +34,55 @@ class Page(Embed):
         self._index = i
 
     @property
-    def buttons(self):
+    def buttons_list(self) -> List:
         return getattr(self, '_buttons', [])
 
-    @buttons.setter
-    def buttons(self, button: Union[Emoji, PartialEmoji, str]):
-        self._buttons.append(button)
+    @buttons_list.setter
+    def buttons_list(self, button: Union[Emoji, PartialEmoji, str]):
+        self._buttons_list.append(button)
 
-    def set_buttons(self, buttons: List) -> 'Page':
+    def buttons(self, buttons: List) -> 'Page':
         """Generates reaction buttons when the page is displayed. Returns itself for fluent-style chaining."""
-        self._buttons = buttons
+        self._buttons_list = buttons
 
         return self
 
     @property
-    def on_next(self):
-        return getattr(self, '_on_next', None)
+    def on_next_event(self) -> Callable:
+        return getattr(self, '_on_next_event', None)
 
-    def set_on_next(self, func: Callable) -> 'Page':
+    def on_next(self, func: Callable) -> 'Page':
         """Sets the function that will be called when the `next` event runs. Returns itself for fluent-style chaining."""
-        self._on_next = func
+        self._on_next_event = func
 
         return self
 
     @property
-    def on_fail(self):
-        return getattr(self, '_on_fail', None)
+    def on_fail_event(self) -> Callable:
+        return getattr(self, '_on_fail_event', None)
 
-    def set_on_fail(self, func: Callable) -> 'Page':
+    def on_fail(self, func: Callable) -> 'Page':
         """Sets the function that will be called when the `fail` event runs. Returns itself for fluent-style chaining."""
-        self._on_fail = func
+        self._on_fail_event = func
 
         return self
 
     @property
-    def on_cancel(self):
-        return getattr(self, '_on_cancel', None)
+    def on_cancel_event(self) -> Callable:
+        return getattr(self, '_on_cancel_event', None)
 
-    def set_on_cancel(self, func: Callable) -> 'Page':
+    def on_cancel(self, func: Callable) -> 'Page':
         """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
-        self._on_cancel = func
+        self._on_cancel_event = func
 
         return self
 
     @property
-    def on_timeout(self):
-        return getattr(self, '_on_timeout', None)
+    def on_timeout_event(self) -> Callable:
+        return getattr(self, '_on_timeout_event', None)
 
-    def set_on_timeout(self, func: Callable) -> 'Page':
+    def on_timeout(self, func: Callable) -> 'Page':
         """Sets the function that will be called when the `timeout` event runs. Returns itself for fluent-style chaining."""
-        self._on_timeout = func
+        self._on_timeout_event = func
 
         return self

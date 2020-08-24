@@ -44,16 +44,6 @@ class BaseMenu:
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         pass
 
-    async def _open(self):
-        self._validate_pages()
-
-        if self._start_session() is False:
-            return
-
-        self.output = await self.destination.send(embed=self.page)
-        self.input = self.ctx.message
-        await self._cleanup_input()
-
     async def next(self):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed."""
         if self.page.index + 1 > len(self.pages) - 1:
@@ -160,6 +150,16 @@ class BaseMenu:
         sessions.clear()
 
     # Internal Methods
+    async def _open(self):
+        self._validate_pages()
+
+        if self._start_session() is False:
+            return
+
+        self.output = await self.destination.send(embed=self.page)
+        self.input = self.ctx.message
+        await self._cleanup_input()
+
     async def _post_next(self):
         """Sends a message after the `next` method is called. Closes the session if there is no callback on the next page."""
         if self.__class__.__name__ != 'PaginatedMenu':

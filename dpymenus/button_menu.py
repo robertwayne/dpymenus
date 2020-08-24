@@ -22,7 +22,7 @@ class ButtonMenu(BaseMenu):
         return f'ButtonMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, data={self.data})'
 
     @property
-    def data(self):
+    def data(self) -> Dict:
         return getattr(self, '_data', {})
 
     def set_data(self, data: Dict) -> 'ButtonMenu':

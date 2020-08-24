@@ -131,11 +131,10 @@ class PaginatedMenu(ButtonMenu):
 
     async def cancel(self):
         """Sends a cancellation message."""
-        embed = Embed(title='Cancelled', description='Menu selection cancelled.')
         cancel_page = getattr(self, 'cancel_page', None)
 
         if cancel_page:
-            await self.output.edit(embed=cancel_page if cancel_page else embed)
+            await self.output.edit(embed=cancel_page)
 
         else:
             await self._cleanup_output()

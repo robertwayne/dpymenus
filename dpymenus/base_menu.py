@@ -130,17 +130,7 @@ class BaseMenu:
             return await self.page.on_cancel()
 
         embed = Embed(title='Cancelled', description='Menu selection cancelled.')
-
-        # we check if the menu is a PaginatedMenu and perform edits instead of sends
-        if self.__class__.__name__ == 'PaginatedMenu':
-            cancel_page = getattr(self, 'cancel_page', None)
-            if cancel_page:
-                await self.output.edit(embed=cancel_page if cancel_page else embed)
-            else:
-                await self._cleanup_output()
-
-        else:
-            await self.send_message(embed)
+        await self.send_message(embed)
 
         await self.close_session()
         self.active = False

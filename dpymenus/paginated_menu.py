@@ -129,6 +129,20 @@ class PaginatedMenu(ButtonMenu):
 
         return self
 
+    async def cancel(self):
+        """Sends a cancellation message."""
+        embed = Embed(title='Cancelled', description='Menu selection cancelled.')
+        cancel_page = getattr(self, 'cancel_page', None)
+
+        if cancel_page:
+            await self.output.edit(embed=cancel_page if cancel_page else embed)
+
+        else:
+            await self._cleanup_output()
+
+        await self.close_session()
+        self.active = False
+
     # Internal Methods
     async def _get_reaction(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""

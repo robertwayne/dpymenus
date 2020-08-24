@@ -57,7 +57,7 @@ class TextMenu(BaseMenu):
                 await self._cleanup_input()
 
                 if self._is_cancelled():
-                    return await self.cancel()
+                    return await self._cancel()
 
                 await self.page.on_next_event(self)
 

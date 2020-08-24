@@ -44,6 +44,11 @@ class BaseMenu:
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         pass
 
+    async def close(self):
+        """Helper method to close the menu properly."""
+        await self.close_session()
+        self.active = False
+
     async def next(self):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed."""
         if self.page.index + 1 > len(self.pages) - 1:
@@ -116,7 +121,7 @@ class BaseMenu:
         self.output = await self.destination.send(embed=embed)
         return self.output
 
-    async def cancel(self):
+    async def _cancel(self):
         """Sends a cancellation message."""
         # we check if the page has a callback
         if self.page.on_cancel:

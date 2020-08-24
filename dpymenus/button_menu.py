@@ -17,14 +17,13 @@ class ButtonMenu(BaseMenu):
 
     def __init__(self, ctx: Context):
         super().__init__(ctx)
-        self._data: Dict = {}
 
     def __repr__(self):
         return f'ButtonMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, data={self.data})'
 
     @property
     def data(self):
-        self._data = {}
+        return getattr(self, '_data', {})
 
     def set_data(self, data: Dict) -> 'ButtonMenu':
         """Sets a dictionary up for persistant state data. Returns itself for fluent-style chaining."""

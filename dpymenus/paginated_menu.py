@@ -28,6 +28,52 @@ class PaginatedMenu(ButtonMenu):
                f'skip_buttons={self.skip_buttons} page_numbers={self.page_numbers}, cancel_page={self.cancel_page}, ' \
                f'timeout_page={self.timeout_page})'
 
+    @property
+    def cancel_page(self):
+        return getattr(self, '_cancel_page', None)
+
+    def set_cancel_page(self, embed: Embed) -> 'PaginatedMenu':
+        """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
+        self._cancel_page = embed
+
+        return self
+
+    @property
+    def timeout_page(self):
+        return getattr(self, '_timeout_page', None)
+
+    def set_timeout_page(self, embed: Embed) -> 'PaginatedMenu':
+        """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
+        self._timeout_page = embed
+
+        return self
+
+    def show_page_numbers(self) -> 'PaginatedMenu':
+        """Adds page numbers to each embeds by overwriting the footer. Returns itself for fluent-style chaining."""
+        self.page_numbers = True
+
+        return self
+
+    def enable_skip_buttons(self) -> 'PaginatedMenu':
+        """Adds two extra buttons for jumping to the first and last page. Returns itself for fluent-style chaining."""
+        self.skip_buttons = True
+
+        return self
+
+    def set_buttons(self, buttons: List) -> 'PaginatedMenu':
+        """Replaces the default butttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
+        0 and 5 are only shown if `enable_skip_buttons` is set, otherwisee 2, 3, and 4 will be shown. You can pass in
+        `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
+         will be filled in as the defaults for you. If you enable the skip buttons without having values set, it will
+         use those defaults."""
+        self.buttons = buttons
+
+        if len(buttons) == 3:
+            self.buttons.insert(0, GENERIC_BUTTONS[0])
+            self.buttons.insert(4, GENERIC_BUTTONS[4])
+
+        return self
+
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
@@ -82,52 +128,6 @@ class PaginatedMenu(ButtonMenu):
             self.pages.append(page)
 
         self.page = self.pages[0]
-
-        return self
-
-    @property
-    def cancel_page(self):
-        return getattr(self, '_cancel_page', None)
-
-    def set_cancel_page(self, embed: Embed) -> 'PaginatedMenu':
-        """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
-        self._cancel_page = embed
-
-        return self
-
-    @property
-    def timeout_page(self):
-        return getattr(self, '_timeout_page', None)
-
-    def set_timeout_page(self, embed: Embed) -> 'PaginatedMenu':
-        """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
-        self._timeout_page = embed
-
-        return self
-
-    def show_page_numbers(self) -> 'PaginatedMenu':
-        """Adds page numbers to each embeds by overwriting the footer. Returns itself for fluent-style chaining."""
-        self.page_numbers = True
-
-        return self
-
-    def enable_skip_buttons(self) -> 'PaginatedMenu':
-        """Adds two extra buttons for jumping to the first and last page. Returns itself for fluent-style chaining."""
-        self.skip_buttons = True
-
-        return self
-
-    def set_buttons(self, buttons: List) -> 'PaginatedMenu':
-        """Replaces the default butttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
-        0 and 5 are only shown if `enable_skip_buttons` is set, otherwisee 2, 3, and 4 will be shown. You can pass in
-        `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
-         will be filled in as the defaults for you. If you enable the skip buttons without having values set, it will
-         use those defaults."""
-        self.buttons = buttons
-
-        if len(buttons) == 3:
-            self.buttons.insert(0, GENERIC_BUTTONS[0])
-            self.buttons.insert(4, GENERIC_BUTTONS[4])
 
         return self
 

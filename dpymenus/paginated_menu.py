@@ -71,7 +71,7 @@ class PaginatedMenu(ButtonMenu):
         """
         for i, page in enumerate(pages):
             if isinstance(page, Embed):
-                page = Page(**page.to_dict()).set_on_next(self.next).set_buttons([])
+                page = Page.from_dict(page.to_dict())
 
             if self.page_numbers:
                 page.set_footer(text=f'{i + 1}/{len(pages)}')

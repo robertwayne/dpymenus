@@ -50,6 +50,8 @@ class BaseMenu:
             return
 
         self.output = await self.destination.send(embed=self.page)
+        self.input = self.ctx.message
+        await self._cleanup_input()
 
     async def next(self):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed."""
@@ -175,6 +177,7 @@ class BaseMenu:
         """Deletes the Discord client bot message."""
         if isinstance(self.output.channel, GuildChannel):
             await self.output.delete()
+            self.output = None
 
     async def _timeout(self):
         """Sends a timeout message."""

@@ -175,9 +175,9 @@ class BaseMenu:
 
     async def _cleanup_output(self):
         """Deletes the Discord client bot message."""
-        if isinstance(self.output.channel, GuildChannel):
-            await self.output.delete()
-            self.output = None
+        self.output: Message
+        await self.output.delete()
+        self.output = None
 
     async def _timeout(self):
         """Sends a timeout message."""

@@ -28,6 +28,7 @@ class BaseMenu:
         :input: A reference to the captured user input message object.
         :output: A reference to the menus output message.
     """
+
     def __init__(self, ctx: Context):
         self.ctx: Context = ctx
         self.destination: Union[Context, User, TextChannel] = ctx

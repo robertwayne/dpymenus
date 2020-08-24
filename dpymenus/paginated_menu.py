@@ -16,6 +16,7 @@ class PaginatedMenu(ButtonMenu):
 
     :param ctx: A reference to the command context.
     """
+
     def __init__(self, ctx: Context):
         super().__init__(ctx)
         self.page_numbers: bool = False

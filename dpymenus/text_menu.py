@@ -12,6 +12,7 @@ class TextMenu(BaseMenu):
 
     :param ctx: A reference to the command context.
     """
+
     def __init__(self, ctx: Context):
         super().__init__(ctx)
         self.delay: float = 0.250

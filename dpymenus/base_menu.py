@@ -125,7 +125,7 @@ class BaseMenu:
     async def _cancel(self):
         """Sends a cancellation message."""
         # we check if the page has a callback
-        if self.page.on_cancel:
+        if self.page.on_cancel_event:
             return await self.page.on_cancel_event()
 
         embed = Embed(title='Cancelled', description='Menu selection cancelled.')
@@ -189,7 +189,7 @@ class BaseMenu:
     async def _timeout(self):
         """Sends a timeout message."""
         # we check if the page has a callback
-        if self.page.on_timeout:
+        if self.page.on_timeout_event:
             return await self.page.on_timeout_event()
 
         embed = Embed(title='Timed Out', description='You timed out at menu selection.')
@@ -210,7 +210,7 @@ class BaseMenu:
             message = await self.ctx.bot.wait_for('message', timeout=self.timeout, check=self._check_message)
 
         except asyncio.TimeoutError:
-            if self.page.on_timeout:
+            if self.page.on_timeout_event:
                 await self.page.on_timeout_event()
 
             else:

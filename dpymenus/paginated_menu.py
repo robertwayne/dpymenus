@@ -132,7 +132,7 @@ class PaginatedMenu(ButtonMenu):
         return self
 
     async def cancel(self):
-        """Sends a cancellation message."""
+        """Sends a cancellation message. Deletes the menu message if no page was set."""
         cancel_page = getattr(self, 'cancel_page', None)
 
         if cancel_page:
@@ -145,6 +145,19 @@ class PaginatedMenu(ButtonMenu):
         self.active = False
 
     # Internal Methods
+    async def _timeout(self):
+        """Sends a timeout message. Deletes the menu message if no page was set."""
+        timeout_page = getattr(self, 'timeout_page')
+
+        if timeout_page:
+            await self.output.edit(embed=timeout_page)
+
+        else:
+            await self._cleanup_output()
+
+        await self.close_session()
+        self.active = False
+
     async def _get_reaction(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction, user = await self.ctx.bot.wait_for('reaction_add',

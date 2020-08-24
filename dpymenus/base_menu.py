@@ -187,14 +187,7 @@ class BaseMenu:
             return await self.page.on_timeout()
 
         embed = Embed(title='Timed Out', description='You timed out at menu selection.')
-
-        # we check if the menu is a PaginatedMenu and perform edits instead of sends
-        if self.__class__.__name__ == 'PaginatedMenu':
-            timeout_page = getattr(self, 'timeout_page')
-            await self.output.edit(embed=timeout_page if timeout_page else embed)
-
-        else:
-            await self.send_message(embed)
+        await self.send_message(embed)
 
         await self.close_session()
         self.active = False

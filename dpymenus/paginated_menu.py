@@ -55,7 +55,8 @@ class PaginatedMenu(ButtonMenu):
             for task in pending:
                 task.cancel()
 
-        await self._cleanup_reactions()
+        if self.output:
+            await self._cleanup_reactions()
 
     async def send_message(self, embed: Embed) -> Message:
         """

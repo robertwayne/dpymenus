@@ -101,7 +101,8 @@ class BaseMenu:
         """Adds a list of pages to a menu, setting their index based on the position in the list.."""
         for i, page in enumerate(pages):
             if isinstance(page, Embed):
-                page = Page(**page.to_dict()).on_next(self.next).buttons([])
+                page = Page.from_dict(page.to_dict())
+
             page.index = i
             self.pages.append(page)
 

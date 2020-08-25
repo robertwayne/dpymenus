@@ -1,8 +1,8 @@
 import asyncio
 from typing import Dict, Optional, Union
 
-from discord import Emoji, PartialEmoji, Reaction
-from discord.abc import GuildChannel, User
+from discord import Emoji, RawReactionActionEvent
+from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
@@ -54,23 +54,21 @@ class ButtonMenu(BaseMenu):
     async def _get_reaction(self) -> Optional[Union[Emoji, str]]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         try:
-            reaction, user = await self.ctx.bot.wait_for('raw_reaction_add', timeout=self.timeout, check=self._check_reaction)
+            reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction)
 
         except asyncio.TimeoutError:
             await self._timeout()
 
         else:
-            if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
-                return reaction.emoji.name
-            return reaction.emoji
+            return reaction_event.emoji.name
 
     async def _cleanup_reactions(self):
         """Removes all reactions from the output message object."""
         if isinstance(self.output.channel, GuildChannel):
             await self.output.clear_reactions()
 
-    def _check_reaction(self, r: Reaction, u: User) -> bool:
+    def _check_reaction(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the pages buttons."""
-        if r.emoji in self.page.buttons or str(r.emoji) in self.page.buttons:
-            return u == self.ctx.author and r.message.id == self.output.id
+        if event.emoji.name in self.page.buttons:
+            return event.user_id == self.ctx.author.id and event.message_id == self.output.id
         return False

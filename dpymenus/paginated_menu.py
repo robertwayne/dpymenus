@@ -1,8 +1,8 @@
 import asyncio
 from typing import List, Optional, Union
 
-from discord import Embed, Emoji, Message, PartialEmoji, Reaction, RawReactionActionEvent
-from discord.abc import GuildChannel, User
+from discord import Embed, Emoji, Message, RawReactionActionEvent
+from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, Page
@@ -170,26 +170,21 @@ class PaginatedMenu(ButtonMenu):
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction_event = await self.ctx.bot.wait_for('raw_reaction_add',
                                                      check=self._check_reaction)
-        reaction, user = reaction_event.emoji, reaction_event.user_id
 
-        if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
-            return reaction.emoji.name
-        return reaction.emoji
+        return reaction_event.emoji.name
 
     async def _get_reaction_remove(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove',
                                                      check=self._check_reaction)
-        reaction, user = reaction_event.emoji, reaction_event.user_id
 
-        if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
-            return reaction.emoji.name
-        return reaction.emoji
+        return reaction_event.emoji.name
 
     def _check_reaction(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
-        if event.emoji in self.buttons_list:
-            return event.user_id == self.ctx.author.id and event.emoji.message.id == self.output.id
+
+        if event.emoji.name in self.buttons_list:
+            return event.user_id == self.ctx.author.id and event.message_id == self.output.id
         return False
 
     async def _add_buttons(self):

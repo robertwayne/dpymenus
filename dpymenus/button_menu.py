@@ -40,7 +40,7 @@ class ButtonMenu(BaseMenu):
         while self.active:
             await self._add_buttons()
 
-            self.input = await self._get_reaction()
+            self.input = await self._get_reaction_add()
             await self._cleanup_reactions()
 
             await self.page.on_next_event(self)
@@ -51,7 +51,7 @@ class ButtonMenu(BaseMenu):
         for button in self.page.buttons_list:
             await self.output.add_reaction(button)
 
-    async def _get_reaction(self) -> Optional[Union[Emoji, str]]:
+    async def _get_reaction_add(self) -> Optional[Union[Emoji, str]]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         try:
             reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction)

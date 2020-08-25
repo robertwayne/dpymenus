@@ -90,7 +90,7 @@ class PaginatedMenu(ButtonMenu):
         await self._add_buttons()
 
         while self.active:
-            done, pending = await asyncio.wait([asyncio.create_task(self._get_reaction()),
+            done, pending = await asyncio.wait([asyncio.create_task(self._get_reaction_add()),
                                                 asyncio.create_task(self._get_reaction_remove())],
                                                return_when=asyncio.FIRST_COMPLETED,
                                                timeout=self.timeout)
@@ -166,7 +166,7 @@ class PaginatedMenu(ButtonMenu):
         await self.close_session()
         self.active = False
 
-    async def _get_reaction(self) -> Union[Emoji, str]:
+    async def _get_reaction_add(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction)
 

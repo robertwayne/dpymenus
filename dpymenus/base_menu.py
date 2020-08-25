@@ -9,13 +9,14 @@ from discord.ext.commands import Context
 from dpymenus.constants import QUIT
 from dpymenus.exceptions import ButtonsError, EventError, PagesError
 from dpymenus.page import Page
+import abc
 
 TPages = TypeVar('TPages', Embed, Page)
 
 sessions: List[Tuple[int, int]] = list()
 
 
-class BaseMenu:
+class BaseMenu(abc.ABC):
     """Represents the base menu from which TextMenu, ButtonMenu, and Poll inherit from.
 
     Attributes
@@ -39,6 +40,7 @@ class BaseMenu:
         self.input: Optional[Union[Message, Reaction]] = None
         self.output: Optional[Message] = None
 
+    @abc.abstractmethod
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""

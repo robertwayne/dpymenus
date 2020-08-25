@@ -34,9 +34,7 @@ class ButtonMenu(BaseMenu):
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        if not await super()._open():
-            return
-
+        await super()._open()
         self._validate_buttons()
 
         while self.active:

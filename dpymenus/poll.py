@@ -2,7 +2,7 @@ import asyncio
 from typing import Dict, Set
 from warnings import warn
 
-from discord import User
+from discord import RawReactionActionEvent, User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu
@@ -76,7 +76,7 @@ class Poll(ButtonMenu):
         """Watches for a user adding a reaction on the Poll. Adds them to the relevant state_field values."""
         while True:
             try:
-                reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', timeout=self.timeout, check=self._check_not_bot)
+                reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', timeout=self.timeout)
 
             except asyncio.TimeoutError:
                 return
@@ -89,7 +89,7 @@ class Poll(ButtonMenu):
         """Watches for a user removing a reaction on the Poll. Removes them from the relevant state_field values."""
         while True:
             try:
-                reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', timeout=self.timeout, check=self._check_not_bot)
+                reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', timeout=self.timeout)
 
             except asyncio.TimeoutError:
                 return
@@ -101,10 +101,6 @@ class Poll(ButtonMenu):
     async def _poll_timer(self):
         """Handles poll duration."""
         await asyncio.sleep(self.timeout)
-
-    def _check_not_bot(self, _, u: User) -> bool:
-        """Returns true if the user who reacted is not a bot."""
-        return u != self.ctx.bot.user
 
     async def _finish_poll(self):
         """Removes multi-votes and calls the Page on_next function when finished."""

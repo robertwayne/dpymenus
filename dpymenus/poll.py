@@ -76,29 +76,27 @@ class Poll(ButtonMenu):
         """Watches for a user adding a reaction on the Poll. Adds them to the relevant state_field values."""
         while True:
             try:
-                reaction, user = await self.ctx.bot.wait_for('raw_reaction_add', timeout=self.timeout,
-                                                             check=self._check_not_bot)
+                reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', timeout=self.timeout, check=self._check_not_bot)
 
             except asyncio.TimeoutError:
                 return
 
             else:
-                if reaction.emoji in self.page.buttons:
-                    self.data[reaction.emoji].add(user.id)
+                if reaction_event.emoji.name in self.page.buttons:
+                    self.data[reaction_event.emoji.name].add(reaction_event.user_id)
 
     async def _get_vote_remove(self):
         """Watches for a user removing a reaction on the Poll. Removes them from the relevant state_field values."""
         while True:
             try:
-                reaction, user = await self.ctx.bot.wait_for('raw_reaction_remove', timeout=self.timeout,
-                                                             check=self._check_not_bot)
+                reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', timeout=self.timeout, check=self._check_not_bot)
 
             except asyncio.TimeoutError:
                 return
 
             else:
-                if reaction.emoji in self.page.buttons:
-                    self.data[reaction.emoji].remove(user.id)
+                if reaction_event.emoji.name in self.page.buttons:
+                    self.data[reaction_event.emoji.name].remove(reaction_event.user_id)
 
     async def _poll_timer(self):
         """Handles poll duration."""

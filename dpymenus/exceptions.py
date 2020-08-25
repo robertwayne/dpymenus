@@ -13,3 +13,7 @@ class ButtonsError(MenuError):
 
 class EventError(MenuError):
     pass
+
+
+class SessionError(MenuError):
+    pass

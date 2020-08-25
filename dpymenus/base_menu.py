@@ -7,7 +7,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus.constants import QUIT
-from dpymenus.exceptions import ButtonsError, EventError, PagesError
+from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError
 from dpymenus.page import Page
 import abc
 
@@ -162,7 +162,7 @@ class BaseMenu(abc.ABC):
         self._validate_pages()
 
         if self._start_session() is False:
-            return
+            raise SessionError(f'Session already active in {self.ctx.channel.id} for user {self.ctx.author.id}.')
 
         self.output = await self.destination.send(embed=self.page)
         self.input = self.ctx.message

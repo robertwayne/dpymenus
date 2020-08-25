@@ -1,7 +1,7 @@
 import asyncio
 from typing import List, Optional, Union
 
-from discord import Embed, Emoji, Message, PartialEmoji, Reaction
+from discord import Embed, Emoji, Message, PartialEmoji, Reaction, RawReactionActionEvent
 from discord.abc import GuildChannel, User
 from discord.ext.commands import Context
 
@@ -168,8 +168,9 @@ class PaginatedMenu(ButtonMenu):
 
     async def _get_reaction(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
-        reaction, user = await self.ctx.bot.wait_for('raw_reaction_add',
+        reaction_event = await self.ctx.bot.wait_for('raw_reaction_add',
                                                      check=self._check_reaction)
+        reaction, user = reaction_event.emoji, reaction_event.user_id
 
         if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
             return reaction.emoji.name
@@ -177,17 +178,18 @@ class PaginatedMenu(ButtonMenu):
 
     async def _get_reaction_remove(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
-        reaction, user = await self.ctx.bot.wait_for('raw_reaction_remove',
+        reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove',
                                                      check=self._check_reaction)
+        reaction, user = reaction_event.emoji, reaction_event.user_id
 
         if isinstance(reaction.emoji, (Emoji, PartialEmoji)):
             return reaction.emoji.name
         return reaction.emoji
 
-    def _check_reaction(self, r: Reaction, u: User) -> bool:
+    def _check_reaction(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
-        if r.emoji in self.buttons_list:
-            return u == self.ctx.author and r.message.id == self.output.id
+        if event.emoji in self.buttons_list:
+            return event.user_id == self.ctx.author.id and event.emoji.message.id == self.output.id
         return False
 
     async def _add_buttons(self):

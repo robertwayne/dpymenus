@@ -54,7 +54,7 @@ class ButtonMenu(BaseMenu):
     async def _get_reaction(self) -> Optional[Union[Emoji, str]]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         try:
-            reaction, user = await self.ctx.bot.wait_for('reaction_add', timeout=self.timeout, check=self._check_reaction)
+            reaction, user = await self.ctx.bot.wait_for('raw_reaction_add', timeout=self.timeout, check=self._check_reaction)
 
         except asyncio.TimeoutError:
             await self._timeout()

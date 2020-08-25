@@ -76,7 +76,7 @@ class Poll(ButtonMenu):
         """Watches for a user adding a reaction on the Poll. Adds them to the relevant state_field values."""
         while True:
             try:
-                reaction, user = await self.ctx.bot.wait_for('reaction_add', timeout=self.timeout,
+                reaction, user = await self.ctx.bot.wait_for('raw_reaction_add', timeout=self.timeout,
                                                              check=self._check_not_bot)
 
             except asyncio.TimeoutError:
@@ -90,7 +90,7 @@ class Poll(ButtonMenu):
         """Watches for a user removing a reaction on the Poll. Removes them from the relevant state_field values."""
         while True:
             try:
-                reaction, user = await self.ctx.bot.wait_for('reaction_remove', timeout=self.timeout,
+                reaction, user = await self.ctx.bot.wait_for('raw_reaction_remove', timeout=self.timeout,
                                                              check=self._check_not_bot)
 
             except asyncio.TimeoutError:

@@ -2,7 +2,7 @@ import asyncio
 from typing import Dict, Set
 from warnings import warn
 
-from discord import RawReactionActionEvent, User
+from discord import User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu

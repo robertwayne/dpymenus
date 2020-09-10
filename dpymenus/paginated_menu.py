@@ -6,7 +6,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, Page
-from dpymenus.base_menu import TPages
+from dpymenus.base_menu import EmbedPage
 from dpymenus.constants import GENERIC_BUTTONS
 
 
@@ -133,7 +133,7 @@ class PaginatedMenu(ButtonMenu):
         """
         return await self.output.edit(embed=embed)
 
-    def add_pages(self, pages: List[TPages]) -> 'PaginatedMenu':
+    def add_pages(self, pages: List[EmbedPage]) -> 'PaginatedMenu':
         """Helper method to convert embeds into Pagees and add them to a menu."""
         for i, page in enumerate(pages):
             if type(page) == Embed:

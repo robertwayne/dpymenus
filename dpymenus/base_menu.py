@@ -11,7 +11,7 @@ from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionErr
 from dpymenus.page import Page
 import abc
 
-TPages = TypeVar('TPages', Embed, Page)
+EmbedPage = TypeVar('EmbedPage', Embed, Page)
 
 sessions: List[Tuple[int, int]] = list()
 
@@ -99,7 +99,7 @@ class BaseMenu(abc.ABC):
 
         await self._post_next()
 
-    def add_pages(self, pages: List[TPages]) -> 'BaseMenu':
+    def add_pages(self, pages: List[EmbedPage]) -> 'BaseMenu':
         """Adds a list of pages to a menu, setting their index based on the position in the list.."""
         for i, page in enumerate(pages):
             if type(page) == Embed:
@@ -112,16 +112,16 @@ class BaseMenu(abc.ABC):
 
         return self
 
-    async def send_message(self, embed: Union[Page, Embed]) -> Message:
+    async def send_message(self, page: EmbedPage) -> Message:
         """
         Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
 
-        :param embed: A Discord :py:class:`~discord.Embed` object.
+        :param page: A Discord :py:class:`~discord.Embed` or Page object.
         """
         if isinstance(self.output.channel, GuildChannel):
-            return await self.output.edit(embed=embed)
+            return await self.output.edit(embed=page.as_safe_embed())
 
-        self.output = await self.destination.send(embed=embed)
+        self.output = await self.destination.send(embed=page.as_safe_embed())
         return self.output
 
     async def _cancel(self):

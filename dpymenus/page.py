@@ -35,7 +35,7 @@ class Page(Embed):
 
     @property
     def buttons_list(self) -> List:
-        return getattr(self, '_buttons', [])
+        return getattr(self, '_buttons_list', [])
 
     @buttons_list.setter
     def buttons_list(self, button: Union[Emoji, PartialEmoji, str]):

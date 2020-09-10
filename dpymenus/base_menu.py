@@ -92,7 +92,7 @@ class BaseMenu(abc.ABC):
         elif isinstance(page, str):
             # get a page index from its on_next callback function name and assign it
             for p in self.pages:
-                if p.on_next.__name__ == page:
+                if p.on_next_event.__name__ == page:
                     self.page = p
                     break
 
@@ -133,7 +133,6 @@ class BaseMenu(abc.ABC):
         await self.send_message(embed)
 
         await self.close_session()
-        self.active = False
 
     async def close_session(self):
         """Remove the user from the active users list."""

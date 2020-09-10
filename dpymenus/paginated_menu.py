@@ -66,6 +66,16 @@ class PaginatedMenu(ButtonMenu):
         return self
 
     @property
+    def cancel_button(self) -> bool:
+        return getattr(self, '_cancel_button', True)
+
+    def hide_cancel_button(self) -> 'PaginatedMenu':
+        """Sets whether to show the cancel button or not. Returns itself for fluent-style chaining."""
+        self._cancel_button = False
+
+        return self
+
+    @property
     def buttons_list(self) -> List:
         return getattr(self, '_buttons_list', [])
 

@@ -1,19 +1,17 @@
+# Visit https://dpymenus.com for detailed tutorials on getting started.
+
 from discord import Embed
 from discord.ext import commands
 
-# Make sure you import the type of menu you plan on using.
 from dpymenus import PaginatedMenu
 
 
-class MyButtonMenu(commands.Cog):
+class MyPaginatedMenu(commands.Cog):
     def __init__(self, client):
         self.client = client
 
     @commands.command()
-    async def buttons(self, ctx):
-        # In this example, we're going to start by defining a few embeds. If you have used `discord.py` before, this should be
-        # familiar syntax and is the idiomatic way to construct new embeds in the library. We will create five of them, three
-        # for the pages in the menu, then a page for cancelling and timing out.
+    async def demo(self, ctx):
         e1 = Embed(title='Page 1', description='First page test!')
         e1.add_field(name='Example A', value='Example B')
 
@@ -26,21 +24,29 @@ class MyButtonMenu(commands.Cog):
         cancel = Embed(title='Cancel Page', description='Cancel page test.')
         cancel.add_field(name='Example E', value='Example F')
 
-        timeout = Embed(title='Page 3', description='Timeout page test.')
+        timeout = Embed(title='Timeout Page', description='Timeout page test.')
         timeout.add_field(name='Example E', value='Example F')
 
-        # Then we will instantiate a menu object. In this case we're using `PaginatedMenu`. We have to pass our command context.
-        # We will also override the cancel and timeout defaults with our own we defined above. In addition, we will turn on page
-        # numbers which will be displayed in the footer.
-        menu = PaginatedMenu(ctx, page_numbers=True, on_cancel=cancel, on_timeout=timeout)
-
-        # Next we will add these pages using the `add_pages` method. This method will take a list of `Embed` objects,
-        # where each `Embed` should include an `embed` pointing to one of the previously created embeds.
-        await menu.add_pages([e1, e2, e3])
-
-        # Finally we can use the `open()` method on our menu object to start the menu loop.
+        menu = PaginatedMenu(ctx)
+        menu.add_pages([e1, e2, e3])
+        menu.set_timeout(10)
         await menu.open()
+
+        # You can also do fluent-style chaining on the menu methods; similar to a discord.py Embed. For example...
+        #
+        # menu = (PaginatedMenu(ctx)
+        #         .set_timeout(5)
+        #         .add_pages([page1, page2, page3, page4])
+        #         .show_skip_buttons()
+        #         .hide_cancel_button()
+        #         )
+        # await menu.open()
+        #
+        # ...or...
+        #
+        # menu = PaginatedMenu(ctx).add_pages([e1, e2, e3]).set_cancel_page(cancel).set_timeout_page(timeout).set_timeout(20)
+        # await menu.open()
 
 
 def setup(client):
-    client.add_cog(MyButtonMenu(client))
+    client.add_cog(MyPaginatedMenu(client))

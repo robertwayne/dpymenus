@@ -34,6 +34,7 @@ class BaseMenu(abc.ABC):
         self.ctx: Context = ctx
         self.destination: Union[Context, User, TextChannel] = ctx
         self.timeout: int = 300
+        self.command_messages = False
         self.pages: List[Page] = []
         self.page: Optional[Page] = None
         self.active: bool = True
@@ -153,6 +154,12 @@ class BaseMenu(abc.ABC):
 
         return self
 
+    def show_command_messages(self) -> 'BaseMenu':
+        """Persists user command invocation messages in the chat instead of deleting them after execution."""
+        self.command_messages = True
+
+        return self
+
     @staticmethod
     async def flush():
         """Helper method that will clear the user sessions list. Only call this if you know what you are doing."""
@@ -165,7 +172,9 @@ class BaseMenu(abc.ABC):
 
         self.output = await self.destination.send(embed=self.page.as_safe_embed())
         self.input = self.ctx.message
-        await self._cleanup_input()
+
+        if not self.command_messages:
+            await self._cleanup_input()
 
     async def _post_next(self):
         """Sends a message after the `next` method is called. Closes the session if there is no callback on the next page."""
@@ -234,6 +243,7 @@ class BaseMenu(abc.ABC):
             raise SessionError(f'Session already active in {self.ctx.channel.id} for user {self.ctx.author.id}.')
 
         sessions.append((self.ctx.author.id, self.ctx.channel.id))
+        print((self.ctx.author.id, self.ctx.channel.id))
         return True
 
     def _validate_buttons(self):

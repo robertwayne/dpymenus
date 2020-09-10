@@ -243,7 +243,6 @@ class BaseMenu(abc.ABC):
             raise SessionError(f'Session already active in {self.ctx.channel.id} for user {self.ctx.author.id}.')
 
         sessions.append((self.ctx.author.id, self.ctx.channel.id))
-        print((self.ctx.author.id, self.ctx.channel.id))
         return True
 
     def _validate_buttons(self):

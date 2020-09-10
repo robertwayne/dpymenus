@@ -203,14 +203,20 @@ class PaginatedMenu(ButtonMenu):
 
         # remove the cancel button if hide_cancel_button is true
         if not self.cancel_button:
-            self.buttons_list.pop(2)
+            self.buttons_list[2] = None
 
         if self.skip_buttons:
             for button in self.buttons_list:
+                if button is None:
+                    continue
+
                 await self.output.add_reaction(button)
 
         else:
             for button in self.buttons_list[1:4]:
+                if button is None:
+                    continue
+
                 await self.output.add_reaction(button)
 
     async def _handle_transition(self):

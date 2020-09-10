@@ -84,11 +84,6 @@ class Page(Embed):
         return self
 
     def as_safe_embed(self) -> 'Page':
-        """Returns a page stripped of Callables so we can send it as a standard Embed."""
-        safe_embed = self
-        safe_embed._on_next_event = None
-        safe_embed._on_cancel_event = None
-        safe_embed._on_fail_event = None
-        safe_embed._on_timeout_event = None
-
-        return self
+        """Returns a page stripped of Callables and Page-specific properties so we can send it as a standard Embed."""
+        safe_embed = self.to_dict()
+        return Embed.from_dict(safe_embed)

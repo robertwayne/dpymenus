@@ -34,7 +34,7 @@ class BaseMenu(abc.ABC):
         self.ctx: Context = ctx
         self.destination: Union[Context, User, TextChannel] = ctx
         self.timeout: int = 300
-        self.command_messages = False
+        self.command_message = False
         self.pages: List[Page] = []
         self.page: Optional[Page] = None
         self.active: bool = True
@@ -154,9 +154,9 @@ class BaseMenu(abc.ABC):
 
         return self
 
-    def show_command_messages(self) -> 'BaseMenu':
+    def show_command_message(self) -> 'BaseMenu':
         """Persists user command invocation messages in the chat instead of deleting them after execution."""
-        self.command_messages = True
+        self.command_message = True
 
         return self
 
@@ -173,7 +173,7 @@ class BaseMenu(abc.ABC):
         self.output = await self.destination.send(embed=self.page.as_safe_embed())
         self.input = self.ctx.message
 
-        if not self.command_messages:
+        if not self.command_message:
             await self._cleanup_input()
 
     async def _post_next(self):

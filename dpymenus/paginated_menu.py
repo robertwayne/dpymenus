@@ -59,7 +59,7 @@ class PaginatedMenu(ButtonMenu):
     def skip_buttons(self) -> bool:
         return getattr(self, '_skip_buttons', False)
 
-    def enable_skip_buttons(self) -> 'PaginatedMenu':
+    def show_skip_buttons(self) -> 'PaginatedMenu':
         """Adds two extra buttons for jumping to the first and last page. Returns itself for fluent-style chaining."""
         self._skip_buttons = True
 

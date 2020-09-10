@@ -202,8 +202,8 @@ class PaginatedMenu(ButtonMenu):
             self.buttons(GENERIC_BUTTONS)
 
         # remove the cancel button if hide_cancel_button is true
-        if not self._cancel_button:
-            self._buttons_list.pop(2)
+        if not self.cancel_button:
+            self.buttons_list.pop(2)
 
         if self.skip_buttons:
             for button in self.buttons_list:

@@ -138,7 +138,7 @@ class Poll(ButtonMenu):
         if len(self.pages) != 2:
             raise PagesError(f'A Poll can only have two pages. Expected 2, found {len(self.pages)}.')
 
-        if self.page.on_cancel or self.page.on_fail or self.page.on_timeout:
+        if self.page.on_cancel_event or self.page.on_fail_event or self.page.on_timeout_event:
             raise EventError('A Poll can not capture a `cancel`, `fail`, or `timeout` event.')
 
         if len(self.page.buttons_list) > 5:

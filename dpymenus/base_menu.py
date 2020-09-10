@@ -258,7 +258,7 @@ class BaseMenu(abc.ABC):
 
     def _start_session(self):
         if (self.ctx.author.id, self.ctx.channel.id) in sessions:
-            raise SessionError(f'Session already active in {self.ctx.channel.id} for user {self.ctx.author.id}.')
+            raise SessionError(f'Duplicate session in channel {self.ctx.channel.id} for user {self.ctx.author.id}.')
 
         sessions.append((self.ctx.author.id, self.ctx.channel.id))
         return True

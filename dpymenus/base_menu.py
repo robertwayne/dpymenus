@@ -1,3 +1,4 @@
+import abc
 import asyncio
 from typing import List, Optional, Tuple, TypeVar, Union
 from warnings import warn
@@ -9,7 +10,6 @@ from discord.ext.commands import Context
 from dpymenus.constants import QUIT
 from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError
 from dpymenus.page import Page
-import abc
 
 EmbedPage = TypeVar('EmbedPage', Embed, Page)
 

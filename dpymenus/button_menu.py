@@ -57,7 +57,7 @@ class ButtonMenu(BaseMenu):
             reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction)
 
         except asyncio.TimeoutError:
-            await self._timeout()
+            await self._execute_timeout()
 
         else:
             return reaction_event.emoji.name

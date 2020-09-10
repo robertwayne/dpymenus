@@ -107,7 +107,7 @@ class PaginatedMenu(ButtonMenu):
 
             # if we both tasks are still pending, we force a timeout by manually calling cleanup methods
             if len(pending) == 2:
-                await self._timeout()
+                await self._execute_timeout()
 
             else:
                 for future in done:
@@ -149,7 +149,7 @@ class PaginatedMenu(ButtonMenu):
 
         return self
 
-    async def _cancel(self):
+    async def _execute_cancel(self):
         """Sends a cancellation message. Deletes the menu message if no page was set."""
         cancel_page = getattr(self, 'cancel_page', None)
 
@@ -163,7 +163,7 @@ class PaginatedMenu(ButtonMenu):
         self.active = False
 
     # Internal Methods
-    async def _timeout(self):
+    async def _execute_timeout(self):
         """Sends a timeout message. Deletes the menu message if no page was set."""
         timeout_page = getattr(self, 'timeout_page')
 
@@ -221,7 +221,7 @@ class PaginatedMenu(ButtonMenu):
 
     async def _handle_transition(self):
         """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
-        transitions = [self.to_first, self.previous, self._cancel, self.next, self.to_last]
+        transitions = [self.to_first, self.previous, self.close, self.next, self.to_last]
         transition_map = {button: transition for button, transition in zip(self.buttons_list, transitions)}
 
         await transition_map[self.input]()

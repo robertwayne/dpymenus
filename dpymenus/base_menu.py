@@ -21,8 +21,6 @@ class BaseMenu(abc.ABC):
 
     Attributes
         :ctx: A reference to the command Context.
-        :destination: Whether the menu will open in the current channel, sent to a seperate guild channel, or sent to a DM channel.
-        :timeout: How long (in seconds) to wait before timing out.
         :pages: A list containing references to Page objects.
         :page: Current Page object.
         :active: Whether or not the menu is active or not.
@@ -32,9 +30,6 @@ class BaseMenu(abc.ABC):
 
     def __init__(self, ctx: Context):
         self.ctx: Context = ctx
-        self.destination: Union[Context, User, TextChannel] = ctx
-        self.timeout: int = 300
-        self.command_message = False
         self.pages: List[Page] = []
         self.page: Optional[Page] = None
         self.active: bool = True
@@ -49,7 +44,7 @@ class BaseMenu(abc.ABC):
 
     async def close(self):
         """Helper method to close the menu out properly. Used to manually call a cancel event."""
-        await self._cancel()
+        await self._execute_cancel()
 
     async def next(self):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed."""
@@ -126,7 +121,7 @@ class BaseMenu(abc.ABC):
         self.output = await self.destination.send(embed=safe_embed)
         return self.output
 
-    async def _cancel(self):
+    async def _execute_cancel(self):
         """Sends a cancellation message."""
         # we check if the page has a callback
         if self.page.on_cancel_event:
@@ -142,21 +137,43 @@ class BaseMenu(abc.ABC):
         sessions.remove((self.ctx.author.id, self.ctx.channel.id))
         self.active = False
 
+    @property
+    def timeout(self) -> int:
+        return getattr(self, '_timeout', 300)
+
     def set_timeout(self, timeout: int) -> 'BaseMenu':
         """Sets the timeout duration for the menu. Returns itself for fluent-style chaining."""
-        self.timeout = timeout
+        self._timeout = timeout
 
         return self
+
+    @property
+    def destination(self) -> Union[Context, User, TextChannel]:
+        return getattr(self, '_destination', self.ctx)
 
     def set_destination(self, dest: Union[User, TextChannel]) -> 'BaseMenu':
         """Sets the message destination for the menu. Returns itself for fluent-style chaining."""
-        self.destination = dest
+        self._destination = dest
 
         return self
 
+    @property
+    def command_message(self) -> bool:
+        return getattr(self, '_command_message', False)
+
     def show_command_message(self) -> 'BaseMenu':
         """Persists user command invocation messages in the chat instead of deleting them after execution."""
-        self.command_message = True
+        self._command_message = True
+
+        return self
+
+    @property
+    def persist(self) -> bool:
+        return getattr(self, '_persist', False)
+
+    def persist_on_close(self) -> 'BaseMenu':
+        """Prevents message cleanup from running when a menu closes."""
+        self._persist = True
 
         return self
 
@@ -173,8 +190,7 @@ class BaseMenu(abc.ABC):
         self.output = await self.destination.send(embed=self.page.as_safe_embed())
         self.input = self.ctx.message
 
-        if not self.command_message:
-            await self._cleanup_input()
+        await self._cleanup_input()
 
     async def _post_next(self):
         """Sends a message after the `next` method is called. Closes the session if there is no callback on the next page."""
@@ -187,16 +203,18 @@ class BaseMenu(abc.ABC):
 
     async def _cleanup_input(self):
         """Deletes a Discord client user message."""
-        if isinstance(self.input.channel, GuildChannel):
-            await self.input.delete()
+        if not self.command_message:
+            if isinstance(self.input.channel, GuildChannel):
+                await self.input.delete()
 
     async def _cleanup_output(self):
         """Deletes the Discord client bot message."""
-        self.output: Message
-        await self.output.delete()
-        self.output = None
+        if not self.persist:
+            self.output: Message
+            await self.output.delete()
+            self.output = None
 
-    async def _timeout(self):
+    async def _execute_timeout(self):
         """Sends a timeout message."""
         # we check if the page has a callback
         if self.page.on_timeout_event:
@@ -224,7 +242,7 @@ class BaseMenu(abc.ABC):
                 await self.page.on_timeout_event()
 
             else:
-                await self._timeout()
+                await self._execute_timeout()
 
         else:
             return message

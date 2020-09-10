@@ -37,10 +37,6 @@ class Page(Embed):
     def buttons_list(self) -> List:
         return getattr(self, '_buttons_list', [])
 
-    @buttons_list.setter
-    def buttons_list(self, button: Union[Emoji, PartialEmoji, str]):
-        self._buttons_list.append(button)
-
     def buttons(self, buttons: List) -> 'Page':
         """Generates reaction buttons when the page is displayed. Returns itself for fluent-style chaining."""
         self._buttons_list = buttons

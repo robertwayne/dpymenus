@@ -241,19 +241,20 @@ class BaseMenu(abc.ABC):
         """Ensures that a menu was passed the appropriate amount of buttons."""
         _cb_count = 0
         for page in self.pages:
-            if not page.buttons:
+            if not page.buttons_list:
                 break
 
             if page.on_next_event:
                 _cb_count += 1
 
-            if len(page.buttons_list) <= 1:
-                raise ButtonsError('Any page with an `on_next` event capture must have at least one button.')
+            if len(page.buttons_list) < 1:
+                raise ButtonsError('Any page with an `on_next` event capture must have at least one button.\n'
+                                   f'{page} {page.title} only has {len(page.buttons_list)} buttons.')
 
             if len(page.buttons_list) > 5:
                 warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
 
-        if self.page.on_fail:
+        if self.page.on_fail_event:
             raise EventError('A ButtonMenu can not capture an `on_fail` event.')
 
         if _cb_count < len(self.pages) - 1:

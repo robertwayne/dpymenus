@@ -1,19 +1,19 @@
-class MenuError(Exception):
-    def __init__(self, message):
+class MenuException(Exception):
+    def __init__(self, message: str = None):
         self.message = message
 
 
-class PagesError(MenuError):
+class PagesError(MenuException):
     pass
 
 
-class ButtonsError(MenuError):
+class ButtonsError(MenuException):
     pass
 
 
-class EventError(MenuError):
+class EventError(MenuException):
     pass
 
 
-class SessionError(MenuError):
+class SessionError(MenuException):
     pass

@@ -136,7 +136,7 @@ class PaginatedMenu(ButtonMenu):
     def add_pages(self, pages: List[TPages]) -> 'PaginatedMenu':
         """Helper method to convert embeds into Pagees and add them to a menu."""
         for i, page in enumerate(pages):
-            if isinstance(page, Embed):
+            if type(page) == Embed:
                 page = Page.from_dict(page.to_dict())
 
             if self.page_numbers:

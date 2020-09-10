@@ -102,7 +102,7 @@ class BaseMenu(abc.ABC):
     def add_pages(self, pages: List[TPages]) -> 'BaseMenu':
         """Adds a list of pages to a menu, setting their index based on the position in the list.."""
         for i, page in enumerate(pages):
-            if isinstance(page, Embed):
+            if type(page) == Embed:
                 page = Page.from_dict(page.to_dict())
 
             page.index = i

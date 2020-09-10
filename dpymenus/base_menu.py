@@ -47,9 +47,8 @@ class BaseMenu(abc.ABC):
         pass
 
     async def close(self):
-        """Helper method to close the menu properly."""
-        await self.close_session()
-        self.active = False
+        """Helper method to close the menu out properly. Used to manually call a cancel event."""
+        await self._cancel()
 
     async def next(self):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed."""
@@ -139,6 +138,7 @@ class BaseMenu(abc.ABC):
     async def close_session(self):
         """Remove the user from the active users list."""
         sessions.remove((self.ctx.author.id, self.ctx.channel.id))
+        self.active = False
 
     def set_timeout(self, timeout: int) -> 'BaseMenu':
         """Sets the timeout duration for the menu. Returns itself for fluent-style chaining."""

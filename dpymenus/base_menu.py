@@ -228,9 +228,9 @@ class BaseMenu(abc.ABC):
         if len(self.pages) <= 1:
             raise PagesError(f'There must be more than one page in a menu. Expected at least 2, found {len(self.pages)}.')
 
-    def _start_session(self) -> bool:
+    def _start_session(self):
         if (self.ctx.author.id, self.ctx.channel.id) in sessions:
-            return False
+            raise SessionError(f'Session already active in {self.ctx.channel.id} for user {self.ctx.author.id}.')
 
         sessions.append((self.ctx.author.id, self.ctx.channel.id))
         return True

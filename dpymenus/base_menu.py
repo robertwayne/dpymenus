@@ -47,7 +47,7 @@ class BaseMenu(abc.ABC):
         return getattr(self, '_timeout', 300)
 
     def set_timeout(self, timeout: int) -> 'BaseMenu':
-        """Sets the timeout duration for the menu. Returns itself for fluent-style chaining."""
+        """Sets the timeout duration (in seconds) for the menu. Returns itself for fluent-style chaining."""
         self._timeout = timeout
 
         return self

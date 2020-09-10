@@ -117,10 +117,12 @@ class BaseMenu(abc.ABC):
 
         :param page: A Discord :py:class:`~discord.Embed` or Page object.
         """
-        if isinstance(self.output.channel, GuildChannel):
-            return await self.output.edit(embed=page.as_safe_embed())
+        safe_embed = page.as_safe_embed() if type(page) == Page else page
 
-        self.output = await self.destination.send(embed=page.as_safe_embed())
+        if isinstance(self.output.channel, GuildChannel):
+            return await self.output.edit(embed=safe_embed)
+
+        self.output = await self.destination.send(embed=safe_embed)
         return self.output
 
     async def _cancel(self):

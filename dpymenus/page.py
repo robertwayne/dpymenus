@@ -83,7 +83,7 @@ class Page(Embed):
 
         return self
 
-    async def as_safe_embed(self) -> 'Page':
+    def as_safe_embed(self) -> 'Page':
         """Returns a page stripped of Callables so we can send it as a standard Embed."""
         safe_embed = self
         safe_embed._on_next_event = None

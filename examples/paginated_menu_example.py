@@ -39,6 +39,7 @@ class MyPaginatedMenu(commands.Cog):
         #         .add_pages([page1, page2, page3, page4])
         #         .show_skip_buttons()
         #         .hide_cancel_button()
+        #         .set_destination(ctx.author)
         #         )
         # await menu.open()
         #

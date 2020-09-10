@@ -82,7 +82,7 @@ class Poll(ButtonMenu):
                 return
 
             else:
-                if reaction_event.emoji.name in self.page.buttons:
+                if reaction_event.emoji.name in self.page.buttons_list:
                     self.data[reaction_event.emoji.name].add(reaction_event.user_id)
 
     async def _get_vote_remove(self):
@@ -95,7 +95,7 @@ class Poll(ButtonMenu):
                 return
 
             else:
-                if reaction_event.emoji.name in self.page.buttons:
+                if reaction_event.emoji.name in self.page.buttons_list:
                     self.data[reaction_event.emoji.name].remove(reaction_event.user_id)
 
     async def _poll_timer(self):
@@ -125,6 +125,7 @@ class Poll(ButtonMenu):
         """Internally sets data field keys and values based on the current Page button properties."""
         self._validate_buttons()
 
+        self.set_data({})
         for button in self.page.buttons_list:
             self.data.update({button: set()})
 

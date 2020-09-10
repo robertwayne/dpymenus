@@ -69,6 +69,6 @@ class ButtonMenu(BaseMenu):
 
     def _check_reaction(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the pages buttons."""
-        if event.emoji.name in self.page.buttons:
+        if event.emoji.name in self.page.buttons_list:
             return event.user_id == self.ctx.author.id and event.message_id == self.output.id
         return False

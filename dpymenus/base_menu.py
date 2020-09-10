@@ -162,7 +162,7 @@ class BaseMenu(abc.ABC):
         self._validate_pages()
         self._start_session()
 
-        self.output = await self.destination.send(embed=self.page)
+        self.output = await self.destination.send(embed=self.page.as_safe_embed())
         self.input = self.ctx.message
         await self._cleanup_input()
 

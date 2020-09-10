@@ -13,7 +13,7 @@ class Page(Embed):
         :embed: A discord Embed object. Used in place of utilizing the Page as an Embed object itself.
     """
 
-    __slots__ = ('_index', '_buttons_list', '_on_next_event', '_on_fail_event', '_on_cancel_event', '_on_timeout_event')
+    __slots__ = (*Embed.__slots__, '_index', '_buttons_list', '_on_next_event', '_on_fail_event', '_on_cancel_event', '_on_timeout_event')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

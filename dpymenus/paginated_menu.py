@@ -197,8 +197,13 @@ class PaginatedMenu(ButtonMenu):
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
+        # sets generic buttons to the instance if nothing has been set
         if not self.buttons_list:
             self.buttons(GENERIC_BUTTONS)
+
+        # remove the cancel button if hide_cancel_button is true
+        if not self._cancel_button:
+            self._buttons_list.pop(2)
 
         if self.skip_buttons:
             for button in self.buttons_list:

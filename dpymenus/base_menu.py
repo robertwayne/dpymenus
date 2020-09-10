@@ -160,9 +160,7 @@ class BaseMenu(abc.ABC):
     # Internal Methods
     async def _open(self):
         self._validate_pages()
-
-        if self._start_session() is False:
-            raise SessionError(f'Session already active in {self.ctx.channel.id} for user {self.ctx.author.id}.')
+        self._start_session()
 
         self.output = await self.destination.send(embed=self.page)
         self.input = self.ctx.message

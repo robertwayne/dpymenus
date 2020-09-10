@@ -42,6 +42,46 @@ class BaseMenu(abc.ABC):
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         pass
 
+    @property
+    def timeout(self) -> int:
+        return getattr(self, '_timeout', 300)
+
+    def set_timeout(self, timeout: int) -> 'BaseMenu':
+        """Sets the timeout duration for the menu. Returns itself for fluent-style chaining."""
+        self._timeout = timeout
+
+        return self
+
+    @property
+    def destination(self) -> Union[Context, User, TextChannel]:
+        return getattr(self, '_destination', self.ctx)
+
+    def set_destination(self, dest: Union[User, TextChannel]) -> 'BaseMenu':
+        """Sets the message destination for the menu. Returns itself for fluent-style chaining."""
+        self._destination = dest
+
+        return self
+
+    @property
+    def command_message(self) -> bool:
+        return getattr(self, '_command_message', False)
+
+    def show_command_message(self) -> 'BaseMenu':
+        """Persists user command invocation messages in the chat instead of deleting them after execution."""
+        self._command_message = True
+
+        return self
+
+    @property
+    def persist(self) -> bool:
+        return getattr(self, '_persist', False)
+
+    def persist_on_close(self) -> 'BaseMenu':
+        """Prevents message cleanup from running when a menu closes."""
+        self._persist = True
+
+        return self
+
     async def close(self):
         """Helper method to close the menu out properly. Used to manually call a cancel event."""
         await self._execute_cancel()
@@ -121,62 +161,6 @@ class BaseMenu(abc.ABC):
         self.output = await self.destination.send(embed=safe_embed)
         return self.output
 
-    async def _execute_cancel(self):
-        """Sends a cancellation message."""
-        # we check if the page has a callback
-        if self.page.on_cancel_event:
-            return await self.page.on_cancel_event()
-
-        embed = Embed(title='Cancelled', description='Menu selection cancelled.')
-        await self.send_message(embed)
-
-        await self.close_session()
-
-    async def close_session(self):
-        """Remove the user from the active users list."""
-        sessions.remove((self.ctx.author.id, self.ctx.channel.id))
-        self.active = False
-
-    @property
-    def timeout(self) -> int:
-        return getattr(self, '_timeout', 300)
-
-    def set_timeout(self, timeout: int) -> 'BaseMenu':
-        """Sets the timeout duration for the menu. Returns itself for fluent-style chaining."""
-        self._timeout = timeout
-
-        return self
-
-    @property
-    def destination(self) -> Union[Context, User, TextChannel]:
-        return getattr(self, '_destination', self.ctx)
-
-    def set_destination(self, dest: Union[User, TextChannel]) -> 'BaseMenu':
-        """Sets the message destination for the menu. Returns itself for fluent-style chaining."""
-        self._destination = dest
-
-        return self
-
-    @property
-    def command_message(self) -> bool:
-        return getattr(self, '_command_message', False)
-
-    def show_command_message(self) -> 'BaseMenu':
-        """Persists user command invocation messages in the chat instead of deleting them after execution."""
-        self._command_message = True
-
-        return self
-
-    @property
-    def persist(self) -> bool:
-        return getattr(self, '_persist', False)
-
-    def persist_on_close(self) -> 'BaseMenu':
-        """Prevents message cleanup from running when a menu closes."""
-        self._persist = True
-
-        return self
-
     @staticmethod
     async def flush():
         """Helper method that will clear the user sessions list. Only call this if you know what you are doing."""
@@ -200,6 +184,22 @@ class BaseMenu(abc.ABC):
                 self.active = False
 
         await self.send_message(self.page)
+
+    async def _execute_cancel(self):
+        """Sends a cancellation message."""
+        # we check if the page has a callback
+        if self.page.on_cancel_event:
+            return await self.page.on_cancel_event()
+
+        embed = Embed(title='Cancelled', description='Menu selection cancelled.')
+        await self.send_message(embed)
+
+        await self.close_session()
+
+    async def close_session(self):
+        """Remove the user from the active users list."""
+        sessions.remove((self.ctx.author.id, self.ctx.channel.id))
+        self.active = False
 
     async def _cleanup_input(self):
         """Deletes a Discord client user message."""

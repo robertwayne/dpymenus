@@ -29,10 +29,10 @@ by clicking the buttons">
 **[Documentation](https://dpymenus.readthedocs.io/en/latest/?badge=latest)**
 + [Getting Started](#getting-started)
 + [Menu Options](#menu-options)
++ [Helper Methods](#helper-methods)
++ [Event Callbacks](#event-callbacks)
 + [Generic Input Matching](#generic-input-matching)
 + [Reaction Buttons](#reaction-buttons)
-+ [Event Callbacks](#event-callbacks)
-+ [Helper Methods](#helper-methods)
 + [Poll Utilities](#poll-utilities)
 
 <br>

@@ -6,7 +6,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, Page
-from dpymenus.base_menu import EmbedPage
+from dpymenus.base_menu import EmbedPage, sessions
 from dpymenus.constants import GENERIC_BUTTONS
 
 
@@ -93,25 +93,49 @@ class PaginatedMenu(ButtonMenu):
 
         return self
 
+    @property
+    def prevent_multisessions(self) -> bool:
+        return getattr(self, '_prevent_multisessions', True)
+
+    def allow_multisession(self):
+        """Sets whether or not a user can open a new menu when one is already open. This will close the old menu.
+        Returns itself for fluent-style chaining."""
+        self._prevent_multisessions = False
+
+        return self
+
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
+        if not self.prevent_multisessions:
+            if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
+                session: 'PaginatedMenu' = sessions.get((self.ctx.author.id, self.ctx.channel.id))
+                await session._cleanup_reactions()
+                await session.close_session()
+
         await super()._open()
         await self._add_buttons()
 
         while self.active:
             done, pending = await asyncio.wait([asyncio.create_task(self._get_reaction_add()),
-                                                asyncio.create_task(self._get_reaction_remove())],
+                                                asyncio.create_task(self._get_reaction_remove()),
+                                                asyncio.create_task(self._shortcircuit())],
                                                return_when=asyncio.FIRST_COMPLETED,
                                                timeout=self.timeout)
 
-            # if we both tasks are still pending, we force a timeout by manually calling cleanup methods
-            if len(pending) == 2:
+            # if all tasks are still pending, we force a timeout by manually calling cleanup methods
+            if len(pending) == 3:
                 await self._execute_timeout()
 
             else:
                 for future in done:
-                    self.input = future.result()
+                    result = future.result()
+                    if result:
+                        self.input = result
+                        break
+
+                    else:
+                        return
 
                 if isinstance(self.output.channel, GuildChannel):
                     await self.output.remove_reaction(self.input, self.ctx.author)
@@ -165,6 +189,12 @@ class PaginatedMenu(ButtonMenu):
     # Internal Methods
     async def _execute_timeout(self):
         """Sends a timeout message. Deletes the menu message if no page was set."""
+        try:
+            await self.close_session()
+
+        except KeyError:
+            return
+
         timeout_page = getattr(self, 'timeout_page')
 
         if timeout_page:
@@ -173,8 +203,14 @@ class PaginatedMenu(ButtonMenu):
         else:
             await self._cleanup_output()
 
-        await self.close_session()
         self.active = False
+
+    async def _shortcircuit(self):
+        while self.active:
+            await asyncio.sleep(1)
+
+        else:
+            return
 
     async def _get_reaction_add(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""

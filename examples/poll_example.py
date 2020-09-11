@@ -22,9 +22,7 @@ class MyPoll(commands.Cog):
 
     @staticmethod
     async def finish(menu):
-
         await menu.generate_results_page()
-
         await menu.next()
 
 

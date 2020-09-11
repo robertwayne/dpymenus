@@ -14,7 +14,6 @@ from dpymenus.page import Page
 EmbedPage = TypeVar('EmbedPage', Embed, Page)
 
 sessions: Dict[Tuple[int, int], Any]
-
 sessions = dict()
 
 
@@ -259,6 +258,7 @@ class BaseMenu(abc.ABC):
             raise PagesError(f'There must be more than one page in a menu. Expected at least 2, found {len(self.pages)}.')
 
     def _start_session(self):
+        """Starts a new user session in the sessions storage. Raises a SessionError if the key already exists."""
         if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
             raise SessionError(f'Duplicate session in channel {self.ctx.channel.id} for user {self.ctx.author.id}.')
 

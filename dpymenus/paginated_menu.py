@@ -206,6 +206,8 @@ class PaginatedMenu(ButtonMenu):
         self.active = False
 
     async def _shortcircuit(self):
+        """Runs a background loop to poll the menus `active` state. Returns when False. Allows for short-circuiting the main
+        loop when it is waiting for user reaction events from discord.py."""
         while self.active:
             await asyncio.sleep(1)
 

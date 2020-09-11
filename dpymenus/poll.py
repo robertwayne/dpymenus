@@ -6,43 +6,39 @@ from discord import User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu
-from dpymenus.exceptions import ButtonsError, CallbackError, PagesError
+from dpymenus.exceptions import ButtonsError, EventError, PagesError
 
 
 class Poll(ButtonMenu):
     """Represents a Poll menu.
 
     :param ctx: A reference to the command context.
-    :param timeout: How long (in seconds) before the poll ends.
-    :param destination: Whether the menu will open in the current channel, sent to a seperate guild channel, or sent to a DM channel.
     """
 
-    def __init__(self, ctx: Context, **kwargs):
-        super().__init__(ctx, **kwargs)
+    def __init__(self, ctx: Context):
+        super().__init__(ctx)
         self.voted: Set[User] = set()
 
     def __repr__(self):
-        return f'Poll(pages={[p.__str__() for p in self.pages]}, timeout={self.timeout}, active={self.active} page={self.page_index},' \
-               f'data={self.data})'
+        return f'Poll(pages={[p.__str__() for p in self.pages]}, page={self.page.index}, timeout={self.timeout}, data={self.data})'
 
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        await self._validate_pages()
-
-        if await self._start_session() is False:
-            return
-
+        await super()._open()
         await self._set_data()
-
-        self.output = await self.destination.send(embed=self.page)
         await self._add_buttons()
 
         pending = set()
         while self.active:
             try:
-                _, pending = await asyncio.wait([asyncio.create_task(self._get_vote_add()), asyncio.create_task(self._get_vote_remove()),
-                                                 asyncio.create_task(self._poll_timer())], return_when=asyncio.FIRST_COMPLETED)
+                _, pending = await asyncio.wait(
+                        [
+                            asyncio.create_task(self._get_vote_add()),
+                            asyncio.create_task(self._get_vote_remove()),
+                            asyncio.create_task(self._poll_timer())
+                         ],
+                        return_when=asyncio.FIRST_COMPLETED)
             finally:
                 for task in pending:
                     task.cancel()
@@ -57,12 +53,12 @@ class Poll(ButtonMenu):
     async def add_results_fields(self):
         """Utility method to add new fields to your next page automatically."""
         for choice, voters in self.data.items():
-            next_page = await self.get_next_page()
+            next_page = self.pages[self.page.index + 1]
             next_page.add_field(name=choice, value=str(len(voters)))
 
     async def generate_results_page(self):
         """Utility method to build your entire results page automatically."""
-        next_page = await self.get_next_page()
+        next_page = self.pages[self.page.index + 1]
 
         await self.add_results_fields()
 
@@ -80,37 +76,31 @@ class Poll(ButtonMenu):
         """Watches for a user adding a reaction on the Poll. Adds them to the relevant state_field values."""
         while True:
             try:
-                reaction, user = await self.ctx.bot.wait_for('reaction_add', timeout=self.timeout,
-                                                             check=self._check_not_bot)
+                reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', timeout=self.timeout)
 
             except asyncio.TimeoutError:
                 return
 
             else:
-                if reaction.emoji in self.page.buttons:
-                    self.data[reaction.emoji].add(user.id)
+                if reaction_event.emoji.name in self.page.buttons_list:
+                    self.data[reaction_event.emoji.name].add(reaction_event.user_id)
 
     async def _get_vote_remove(self):
         """Watches for a user removing a reaction on the Poll. Removes them from the relevant state_field values."""
         while True:
             try:
-                reaction, user = await self.ctx.bot.wait_for('reaction_remove', timeout=self.timeout,
-                                                             check=self._check_not_bot)
+                reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', timeout=self.timeout)
 
             except asyncio.TimeoutError:
                 return
 
             else:
-                if reaction.emoji in self.page.buttons:
-                    self.data[reaction.emoji].remove(user.id)
+                if reaction_event.emoji.name in self.page.buttons_list:
+                    self.data[reaction_event.emoji.name].remove(reaction_event.user_id)
 
     async def _poll_timer(self):
         """Handles poll duration."""
         await asyncio.sleep(self.timeout)
-
-    def _check_not_bot(self, _, u: User) -> bool:
-        """Returns true if the user who reacted is not a bot."""
-        return u != self.ctx.bot.user
 
     async def _finish_poll(self):
         """Removes multi-votes and calls the Page on_next function when finished."""
@@ -119,7 +109,7 @@ class Poll(ButtonMenu):
             voters -= cheaters
 
         await self.output.clear_reactions()
-        await self.page.on_next(self)
+        await self.page.on_next_event(self)
 
     async def _get_cheaters(self) -> Set[int]:
         """Returns a set of user ID's that appear in more than one state_field value."""
@@ -133,25 +123,26 @@ class Poll(ButtonMenu):
 
     async def _set_data(self):
         """Internally sets data field keys and values based on the current Page button properties."""
-        await self._validate_buttons()
+        self._validate_buttons()
 
-        for button in self.page.buttons:
+        self.set_data({})
+        for button in self.page.buttons_list:
             self.data.update({button: set()})
 
-    async def _validate_buttons(self):
+    def _validate_buttons(self):
         """Checks that Poll objects always have more than two buttons."""
-        if len(self.page.buttons) < 2:
-            raise ButtonsError(f'A Poll primary page must have at least two buttons. Expected at least 2, found {len(self.page.buttons)}.')
+        if len(self.page.buttons_list) < 2:
+            raise ButtonsError(f'A Poll primary page must have at least two buttons. Expected at least 2, found {len(self.page.buttons_list)}.')
 
-    async def _validate_pages(self):
+    def _validate_pages(self):
         """Checks that the Menu contains at least one Page."""
         if len(self.pages) != 2:
             raise PagesError(f'A Poll can only have two pages. Expected 2, found {len(self.pages)}.')
 
-        if self.page.on_cancel or self.page.on_fail or self.page.on_timeout:
-            raise CallbackError('A Poll can not have `on_cancel`, `on_fail`, or `on_timeout` callbacks.')
+        if self.page.on_cancel_event or self.page.on_fail_event or self.page.on_timeout_event:
+            raise EventError('A Poll can not capture a `cancel`, `fail`, or `timeout` event.')
 
-        if len(self.page.buttons) > 5:
+        if len(self.page.buttons_list) > 5:
             warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
 
     @staticmethod

@@ -1,0 +1,19 @@
+[tool.black]
+line-length = 120
+target-version = ['py39']
+exclude = '''
+
+(
+  /(
+    | \.git
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+)
+
+'''

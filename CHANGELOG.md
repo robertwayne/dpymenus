@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.0] - UNRELEASED
+This marks the first stable release of dpymenus. As of now, I will not be making any breaking changes to the API without
+a major version increase. This release also sees the finalization of the fluent-interface style for building menus, as
+well as various bug fixes, stability fixes, stronger error handling and validation, and better customizability for users.
+
+### Changed
+- **Breaking:** Menus options are now set via fluent-interface style of programming rather than parameters. The primary 
+influences for this change was a growing number of options (which meant very long parameter lists) and the benefit of
+matching how discord.py builds Embed objects -- this means it is more familiar to users of the library, even if they 
+aren't completely familiar with that paradigm.
+- Sessions are now stored as a dictionary with the keys being a tuple of (user_id, channel_id) now. This is faster for
+lookups, and allows the menu reference to be carried outside the current menu, so session limiting is more flexible. This
+was primarily changed to allow the new `allow_multisession` option.
+- The BaseMenu class now subclasses ABC.
+- **Breaking:** The `.cancel()` method on menus is now `.close()`. The reason for this change is convention -- it aligns
+with `.open()` better.
+- Reactions now use the raw_reaction event API. 
+- Menus now utilize properties to define their option attributes.
+- **Breaking:** Pages now use \_\_slots\_\_ to define their attributes for increases performance / memory usage.
+- All examples updated to use the latest features.
+- Fixed a bug where `add_pages` would not handle mixed Page and Embed objects gracefully.
+
+### Added
+- Pages now have an `index` attribute instead of the menu class storing only the current index.
+- Improved validation checks for menu errors. Stronger error handling will be a focus of v1.1, however.
+- Many new methods for use with menu objects to define their options. See the README section titled 'Menu Options'
+or the API documentation for a complete list.
+
+### Removed
+- **Breaking:** Removed the `.add_page()` method in favor of `.add_pages()` and the new fluent-style. It reduces
+bot code, reduces visual noise, and makes it easier to reason about where things happen in your menu with dense or
+complex embeds.
+- **Breaking:** Removed the `page_index` attribute from `BaseMenu` in favor of each `Page` storing its own index in the
+order it was processed in from the `.add_pages()` method. As this takes a list, the order will be safely carried over.
+This also allows the user to swap pages simply by changing their order in the menu, and change the menu page order
+at runtime.
+- **Breaking:** Pages no longer have an `embed` parameter, as they subclass Embed and use internal methods to handle
+safe handling and display.
+- **Breaking:** All menu and page optional parameters have been removed in favor of methods.
+- Inline comment guides in examples have been removed in favor of a small tutorial website that is being worked on.
+
+
 ## [0.3.5] - 2020-08-12
 
 ### Added

@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.0.0] - UNRELEASED
+This marks the first stable release of dpymenus. As of now, I will not be making any breaking changes to the API without
+a major version increase. This release also sees the finalization of the fluent-interface style for building menus, as
+well as various bug fixes, stability fixes, stronger error handling and validation, and better customizability for users.
 
 ### Changed
 - **Breaking:** Menus options are now set via fluent-interface style of programming rather than parameters. The primary 
@@ -18,7 +21,7 @@ was primarily changed to allow the new `allow_multisession` option.
 - The BaseMenu class now subclasses ABC.
 - **Breaking:** The `.cancel()` method on menus is now `.close()`. The reason for this change is convention -- it aligns
 with `.open()` better.
-- Reactions now use the raw_reaction even API. 
+- Reactions now use the raw_reaction event API. 
 - Menus now utilize properties to define their option attributes.
 - **Breaking:** Pages now use \_\_slots\_\_ to define their attributes for increases performance / memory usage.
 - All examples updated to use the latest features.

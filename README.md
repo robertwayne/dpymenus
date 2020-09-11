@@ -46,7 +46,7 @@ menus *(text, buttons, polls)* which react to user input.
 
 You can install the library with `pip install dpymenus`.
 
-This very basic example will get the same menu running as the demo .gif!
+This very basic example will get a menu running similar to the one in the .gif!
 
 ```python
 from discord.ext import commands
@@ -83,7 +83,8 @@ Can't find something you were looking for? Open an issue and I'll add a relevant
 
 ### Menu Options
 Menus use fluent-style chaining, similar to how one builds a discord.py Embed, to set their behaviours. Below is a list
-of methods available for chaining, and what they do.
+of methods available for chaining, and what they do. If you are unfamiliar with how to use these, look at the examples in
+the *examples/* directory for various ways to compose and apply these options.
 
 #### All Menu Types
 `.add_pages()` -- takes a list of Embed or Page objects and turns them into menu pages.
@@ -144,8 +145,8 @@ and should not be overwritten.
 
 
 ### Generic Input Matching
-For Text Menu styles, the library contains some preset constants to use in the constants directory. You can
-import what you need as such:
+For Text Menu styles, the library contains some preset constants for quick, generic use-cases. You can
+import what you need by name, or all at once like such:
 
 `from dpymenus.constants import *`
 
@@ -166,7 +167,6 @@ btn3 = '<:example2:35434643573451>'  # guild emoji
 btn4 = '\N{SNAKE}'  # unicode emoji as text
 btn5 = '\U00002714'  # unicode emoji codepoint :heavy_check_mark:
 ```
-
 
 ### Poll Utilities
 Polls have a handful of quick utility methods built-in that should make using them simpler and faster for most

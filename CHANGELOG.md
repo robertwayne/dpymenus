@@ -20,7 +20,7 @@ was primarily changed to allow the new `allow_multisession` option.
 with `.open()` better.
 - Reactions now use the raw_reaction even API. 
 - Menus now utilize properties to define their option attributes.
-- **Breaking:** Pages now use __slots__ to define their attributes for increases performance / memory usage.
+- **Breaking:** Pages now use \_\_slots\_\_ to define their attributes for increases performance / memory usage.
 - All examples updated to use the latest features.
 - Fixed a bug where `add_pages` would not handle mixed Page and Embed objects gracefully.
 

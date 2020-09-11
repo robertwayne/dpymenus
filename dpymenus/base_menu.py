@@ -1,6 +1,6 @@
 import abc
 import asyncio
-from typing import List, Optional, Tuple, TypeVar, Union
+from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
 from warnings import warn
 
 from discord import Embed, Message, Reaction, TextChannel, User
@@ -13,7 +13,9 @@ from dpymenus.page import Page
 
 EmbedPage = TypeVar('EmbedPage', Embed, Page)
 
-sessions: List[Tuple[int, int]] = list()
+sessions: Dict[Tuple[int, int], Any]
+
+sessions = dict()
 
 
 class BaseMenu(abc.ABC):
@@ -198,7 +200,7 @@ class BaseMenu(abc.ABC):
 
     async def close_session(self):
         """Remove the user from the active users list."""
-        sessions.remove((self.ctx.author.id, self.ctx.channel.id))
+        del sessions[(self.ctx.author.id, self.ctx.channel.id)]
         self.active = False
 
     async def _cleanup_input(self):
@@ -257,10 +259,10 @@ class BaseMenu(abc.ABC):
             raise PagesError(f'There must be more than one page in a menu. Expected at least 2, found {len(self.pages)}.')
 
     def _start_session(self):
-        if (self.ctx.author.id, self.ctx.channel.id) in sessions:
+        if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
             raise SessionError(f'Duplicate session in channel {self.ctx.channel.id} for user {self.ctx.author.id}.')
 
-        sessions.append((self.ctx.author.id, self.ctx.channel.id))
+        sessions.update({(self.ctx.author.id, self.ctx.channel.id): self})
         return True
 
     def _validate_buttons(self):

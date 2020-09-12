@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import Dict, Optional, Union
 
 from discord import Emoji, RawReactionActionEvent
@@ -6,6 +7,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
+from dpymenus.exceptions import ButtonsError, EventError, TooManyButtonsWarning
 
 
 class ButtonMenu(BaseMenu):
@@ -35,7 +37,15 @@ class ButtonMenu(BaseMenu):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         await super()._open()
-        self._validate_buttons()
+
+        try:
+            self._validate_buttons()
+
+        except (ButtonsError, EventError) as exc:
+            logging.exception(exc.message)
+
+        except TooManyButtonsWarning as exc:
+            logging.warning(exc.message)
 
         while self.active:
             await self._add_buttons()

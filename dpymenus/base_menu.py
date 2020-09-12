@@ -1,20 +1,23 @@
 import abc
 import asyncio
+import logging
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
-from warnings import warn
 
 from discord import Embed, Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus.constants import QUIT
-from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError
+from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError, TooManyButtonsWarning
 from dpymenus.page import Page
 
 EmbedPage = TypeVar('EmbedPage', Embed, Page)
 
 sessions: Dict[Tuple[int, int], Any]
 sessions = dict()
+
+logger = logging.getLogger('dpymenus')
+logger.addHandler(logging.NullHandler())
 
 
 class BaseMenu(abc.ABC):
@@ -169,8 +172,17 @@ class BaseMenu(abc.ABC):
 
     # Internal Methods
     async def _open(self):
-        self._validate_pages()
-        self._start_session()
+        try:
+            self._validate_pages()
+
+        except PagesError as exc:
+            logging.exception(exc.message)
+
+        try:
+            self._start_session()
+
+        except SessionError as exc:
+            logging.info(exc.message)
 
         self.output = await self.destination.send(embed=self.page.as_safe_embed())
         self.input = self.ctx.message
@@ -260,7 +272,7 @@ class BaseMenu(abc.ABC):
     def _start_session(self):
         """Starts a new user session in the sessions storage. Raises a SessionError if the key already exists."""
         if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
-            raise SessionError(f'Duplicate session in channel {self.ctx.channel.id} for user {self.ctx.author.id}.')
+            raise SessionError(f'Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}].')
 
         sessions.update({(self.ctx.author.id, self.ctx.channel.id): self})
         return True
@@ -280,7 +292,7 @@ class BaseMenu(abc.ABC):
                                    f'{page} {page.title} only has {len(page.buttons_list)} buttons.')
 
             if len(page.buttons_list) > 5:
-                warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
+                raise TooManyButtonsWarning('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
 
         if self.page.on_fail_event:
             raise EventError('A ButtonMenu can not capture an `on_fail` event.')

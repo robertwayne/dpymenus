@@ -117,14 +117,17 @@ class PaginatedMenu(ButtonMenu):
         await self._add_buttons()
 
         while self.active:
-            done, pending = await asyncio.wait([asyncio.create_task(self._get_reaction_add()),
-                                                asyncio.create_task(self._get_reaction_remove()),
-                                                asyncio.create_task(self._shortcircuit())],
-                                               return_when=asyncio.FIRST_COMPLETED,
+            tasks = [asyncio.create_task(self._get_reaction_add()),
+                     asyncio.create_task(self._get_reaction_remove())]
+
+            if not self.prevent_multisessions:
+                tasks.append(asyncio.create_task(self._shortcircuit()))
+
+            done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED,
                                                timeout=self.timeout)
 
             # if all tasks are still pending, we force a timeout by manually calling cleanup methods
-            if len(pending) == 3:
+            if len(pending) == len(tasks):
                 await self._execute_timeout()
 
             else:

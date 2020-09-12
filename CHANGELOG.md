@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0] - UNRELEASED
+
+### Changed
+
+### Added
+
+### Removed
+
 ## [1.0.0 - 1.0.4] - 2020-09-12
 This marks the first stable release of dpymenus. As of now, I will not be making any breaking changes to the API without
 a major version increase. This release also sees the finalization of the fluent-interface style for building menus, as

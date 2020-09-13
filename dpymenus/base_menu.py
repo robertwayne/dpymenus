@@ -256,7 +256,7 @@ class BaseMenu(abc.ABC):
         return m.author == self.ctx.author and self.output.channel == m.channel
 
     def _validate_pages(self):
-        """Checks that the Menu contains at least one Page."""
+        """Checks that the Menu contains at least two pages."""
         if len(self.pages) <= 1:
             raise PagesError(f'There must be more than one page in a menu. Expected at least 2, found {len(self.pages)}.')
 

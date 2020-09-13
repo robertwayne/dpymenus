@@ -8,7 +8,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus.constants import QUIT
-from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError, TooManyButtonsWarning
+from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError
 from dpymenus.page import Page
 
 EmbedPage = TypeVar('EmbedPage', Embed, Page)
@@ -283,7 +283,7 @@ class BaseMenu(abc.ABC):
                                    f'{page} {page.title} only has {len(page.buttons_list)} buttons.')
 
             if len(page.buttons_list) > 5:
-                raise TooManyButtonsWarning('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
+                logging.warning('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
 
         if self.page.on_fail_event:
             raise EventError('A ButtonMenu can not capture an `on_fail` event.')

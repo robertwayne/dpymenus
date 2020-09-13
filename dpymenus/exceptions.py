@@ -17,7 +17,3 @@ class EventError(MenuException):
 
 class SessionError(MenuException):
     pass
-
-
-class TooManyButtonsWarning(MenuException):
-    pass

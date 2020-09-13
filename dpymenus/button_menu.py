@@ -7,7 +7,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
-from dpymenus.exceptions import ButtonsError, EventError, TooManyButtonsWarning
+from dpymenus.exceptions import ButtonsError, EventError, SessionError
 
 
 class ButtonMenu(BaseMenu):
@@ -41,8 +41,8 @@ class ButtonMenu(BaseMenu):
             self._validate_buttons()
         except (ButtonsError, EventError) as exc:
             logging.exception(exc.message)
-        except TooManyButtonsWarning as exc:
-            logging.warning(exc.message)
+        except SessionError as exc:
+            logging.info(exc.message)
         else:
             while self.active:
                 await self._add_buttons()

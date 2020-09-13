@@ -1,9 +1,11 @@
+import logging
 from typing import Dict
 
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
+from dpymenus.exceptions import SessionError
 
 
 class TextMenu(BaseMenu):
@@ -42,24 +44,27 @@ class TextMenu(BaseMenu):
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        await super()._open()
+        try:
+            await super()._open()
+        except SessionError as exc:
+            logging.info(exc.message)
+        else:
+            first_iter = True
+            while self.active:
+                if not first_iter and self.page.on_fail_event:
+                    return await self.page.on_fail_event()
 
-        first_iter = True
-        while self.active:
-            if not first_iter and self.page.on_fail_event:
-                return await self.page.on_fail_event()
+                first_iter = False
 
-            first_iter = False
+                self.input = await self._get_input()
 
-            self.input = await self._get_input()
+                if self.input:
+                    await self._cleanup_input()
 
-            if self.input:
-                await self._cleanup_input()
+                    if self._is_cancelled():
+                        return await self._execute_cancel()
 
-                if self._is_cancelled():
-                    return await self._execute_cancel()
-
-                await self.page.on_next_event(self)
+                    await self.page.on_next_event(self)
 
     # Internal Methods
     async def _cleanup_input(self):

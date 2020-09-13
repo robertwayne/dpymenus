@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import List, Optional, Union
 
 from discord import Embed, Emoji, Message, RawReactionActionEvent
@@ -8,6 +9,7 @@ from discord.ext.commands import Context
 from dpymenus import ButtonMenu, Page
 from dpymenus.base_menu import EmbedPage, sessions
 from dpymenus.constants import GENERIC_BUTTONS
+from dpymenus.exceptions import PagesError, SessionError
 
 
 class PaginatedMenu(ButtonMenu):
@@ -113,43 +115,49 @@ class PaginatedMenu(ButtonMenu):
                 await session._cleanup_reactions()
                 await session.close_session()
 
-        await super()._open()
-        await self._add_buttons()
+        try:
+            await super()._open()
+        except PagesError as exc:
+            logging.exception(exc.message)
+        except SessionError as exc:
+            logging.info(exc.message)
+        else:
+            await self._add_buttons()
 
-        while self.active:
-            tasks = [asyncio.create_task(self._get_reaction_add()),
-                     asyncio.create_task(self._get_reaction_remove())]
+            while self.active:
+                tasks = [asyncio.create_task(self._get_reaction_add()),
+                         asyncio.create_task(self._get_reaction_remove())]
 
-            if not self.prevent_multisessions:
-                tasks.append(asyncio.create_task(self._shortcircuit()))
+                if not self.prevent_multisessions:
+                    tasks.append(asyncio.create_task(self._shortcircuit()))
 
-            done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED,
-                                               timeout=self.timeout)
+                done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED,
+                                                   timeout=self.timeout)
 
-            # if all tasks are still pending, we force a timeout by manually calling cleanup methods
-            if len(pending) == len(tasks):
-                await self._execute_timeout()
+                # if all tasks are still pending, we force a timeout by manually calling cleanup methods
+                if len(pending) == len(tasks):
+                    await self._execute_timeout()
 
-            else:
-                for future in done:
-                    result = future.result()
-                    if result:
-                        self.input = result
-                        break
+                else:
+                    for future in done:
+                        result = future.result()
+                        if result:
+                            self.input = result
+                            break
 
-                    else:
-                        return
+                        else:
+                            return
 
-                if isinstance(self.output.channel, GuildChannel):
-                    await self.output.remove_reaction(self.input, self.ctx.author)
+                    if isinstance(self.output.channel, GuildChannel):
+                        await self.output.remove_reaction(self.input, self.ctx.author)
 
-                await self._handle_transition()
+                    await self._handle_transition()
 
-            for task in pending:
-                task.cancel()
+                for task in pending:
+                    task.cancel()
 
-        if self.output:
-            await self._cleanup_reactions()
+            if self.output:
+                await self._cleanup_reactions()
 
     async def send_message(self, embed: Embed) -> Message:
         """

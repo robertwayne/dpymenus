@@ -172,17 +172,8 @@ class BaseMenu(abc.ABC):
 
     # Internal Methods
     async def _open(self):
-        try:
-            self._validate_pages()
-
-        except PagesError as exc:
-            logging.exception(exc.message)
-
-        try:
-            self._start_session()
-
-        except SessionError as exc:
-            logging.info(exc.message)
+        self._validate_pages()
+        self._start_session()
 
         self.output = await self.destination.send(embed=self.page.as_safe_embed())
         self.input = self.ctx.message
@@ -273,9 +264,9 @@ class BaseMenu(abc.ABC):
         """Starts a new user session in the sessions storage. Raises a SessionError if the key already exists."""
         if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
             raise SessionError(f'Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}].')
-
-        sessions.update({(self.ctx.author.id, self.ctx.channel.id): self})
-        return True
+        else:
+            sessions.update({(self.ctx.author.id, self.ctx.channel.id): self})
+            return True
 
     def _validate_buttons(self):
         """Ensures that a menu was passed the appropriate amount of buttons."""

@@ -36,24 +36,21 @@ class ButtonMenu(BaseMenu):
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        await super()._open()
-
         try:
+            await super()._open()
             self._validate_buttons()
-
         except (ButtonsError, EventError) as exc:
             logging.exception(exc.message)
-
         except TooManyButtonsWarning as exc:
             logging.warning(exc.message)
+        else:
+            while self.active:
+                await self._add_buttons()
 
-        while self.active:
-            await self._add_buttons()
+                self.input = await self._get_reaction_add()
+                await self._cleanup_reactions()
 
-            self.input = await self._get_reaction_add()
-            await self._cleanup_reactions()
-
-            await self.page.on_next_event(self)
+                await self.page.on_next_event(self)
 
     # Internal Methods
     async def _add_buttons(self):

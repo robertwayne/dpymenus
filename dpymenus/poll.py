@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import Dict, Set
 from warnings import warn
 
@@ -6,7 +7,7 @@ from discord import User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu
-from dpymenus.exceptions import ButtonsError, EventError, PagesError
+from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError
 
 
 class Poll(ButtonMenu):
@@ -25,25 +26,29 @@ class Poll(ButtonMenu):
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        await super()._open()
-        await self._set_data()
-        await self._add_buttons()
+        try:
+            await super()._open()
+        except SessionError as exc:
+            logging.info(exc.message)
+        else:
+            await self._set_data()
+            await self._add_buttons()
 
-        pending = set()
-        while self.active:
-            try:
-                _, pending = await asyncio.wait(
-                        [
-                            asyncio.create_task(self._get_vote_add()),
-                            asyncio.create_task(self._get_vote_remove()),
-                            asyncio.create_task(self._poll_timer())
-                         ],
-                        return_when=asyncio.FIRST_COMPLETED)
-            finally:
-                for task in pending:
-                    task.cancel()
+            pending = set()
+            while self.active:
+                try:
+                    _, pending = await asyncio.wait(
+                            [
+                                asyncio.create_task(self._get_vote_add()),
+                                asyncio.create_task(self._get_vote_remove()),
+                                asyncio.create_task(self._poll_timer())
+                             ],
+                            return_when=asyncio.FIRST_COMPLETED)
+                finally:
+                    for task in pending:
+                        task.cancel()
 
-                await self._finish_poll()
+                    await self._finish_poll()
 
     # Utility Methods
     async def results(self) -> Dict[str, int]:

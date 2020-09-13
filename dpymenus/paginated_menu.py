@@ -2,7 +2,7 @@ import asyncio
 import logging
 from typing import List, Optional, Union
 
-from discord import Embed, Emoji, Message, RawReactionActionEvent
+from discord import Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -81,7 +81,7 @@ class PaginatedMenu(ButtonMenu):
     def buttons_list(self) -> List:
         return getattr(self, '_buttons_list', [])
 
-    def buttons(self, buttons: List) -> 'PaginatedMenu':
+    def buttons(self, buttons: List[Union[Emoji, PartialEmoji, str]]) -> 'PaginatedMenu':
         """Replaces the default butttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
         0 and 5 are only shown if `enable_skip_buttons` is set, otherwisee 2, 3, and 4 will be shown. You can pass in
         `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they

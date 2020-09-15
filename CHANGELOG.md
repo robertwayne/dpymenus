@@ -8,8 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.1.0] - UNRELEASED
 
 ### Changed
+- Fixed a bug where bot reactions were being captured by the menu event loop when using the raw reaction event API.
+- All raised errors are now caught and logged appropriately.
+- Fixed a bug where certain custom Emoji objects would fail as buttons.
+- PaginatedMenu & ButtonMenu now refresh their output attr after buttons have been added. This allows them to be
+referenced with the `.reactions` value.
+- Optimized PaginatedMenu when using default buttons by skipping intensive check paths.
+- Optimized PaginatedMenu reaction_add/remove event checks when using default buttons by skipping intensive check predicate.
 
 ### Added
+- Logger added to the library as 'dpymenus'.
+- `emoji` added as a dependency for fast, safe unicode emoji lookups, button checks, and conversions.
+- PaginatedMenu now does pre-validation on provided buttons.
 
 ### Removed
 

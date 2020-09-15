@@ -117,6 +117,10 @@ class PaginatedMenu(ButtonMenu):
                 await session.close_session()
 
         try:
+            # we have to set these here so we can validate cleanly
+            if len(self.buttons_list) == 0:
+                self.buttons(GENERIC_BUTTONS)
+
             self._validate_buttons()
             await super()._open()
         except (ButtonsError, PagesError) as exc:
@@ -262,6 +266,9 @@ class PaginatedMenu(ButtonMenu):
 
     def _validate_buttons(self):
         if self.buttons_list != GENERIC_BUTTONS:
+            if len(self.buttons_list) != 3 and len(self.buttons_list) != 5:
+                raise ButtonsError(f'Buttons length mismatch. Expected 3 or 5, found {len(self.buttons_list)}')
+
             for button in self.buttons_list:
                 if isinstance(button, (Emoji, PartialEmoji)):
                     continue
@@ -282,11 +289,6 @@ class PaginatedMenu(ButtonMenu):
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
-        # sets generic buttons to the instance if nothing has been set
-        if not self.buttons_list:
-            self.buttons(GENERIC_BUTTONS)
-
-        # remove the cancel button if hide_cancel_button is true
         if not self.cancel_button:
             self.buttons_list[2] = None
 

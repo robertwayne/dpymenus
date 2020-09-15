@@ -1,7 +1,7 @@
 import abc
 import asyncio
 import logging
-from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
+from typing import List, Optional, TypeVar, Union
 
 from discord import Embed, Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
@@ -12,12 +12,6 @@ from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionErr
 from dpymenus.page import Page
 
 EmbedPage = TypeVar('EmbedPage', Embed, Page)
-
-sessions: Dict[Tuple[int, int], Any]
-sessions = dict()
-
-logger = logging.getLogger('dpymenus')
-logger.addHandler(logging.NullHandler())
 
 
 class BaseMenu(abc.ABC):

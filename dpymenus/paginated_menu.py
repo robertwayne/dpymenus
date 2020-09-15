@@ -9,7 +9,7 @@ from discord.ext.commands import Context
 from dpymenus import ButtonMenu, Page
 from dpymenus.base_menu import EmbedPage, sessions
 from dpymenus.constants import GENERIC_BUTTONS
-from dpymenus.exceptions import PagesError, SessionError
+from dpymenus.exceptions import ButtonsError, PagesError, SessionError
 
 
 class PaginatedMenu(ButtonMenu):
@@ -116,8 +116,9 @@ class PaginatedMenu(ButtonMenu):
                 await session.close_session()
 
         try:
+            self._validate_buttons()
             await super()._open()
-        except PagesError as exc:
+        except (ButtonsError, PagesError) as exc:
             logging.error(exc.message)
         except SessionError as exc:
             logging.info(exc.message)
@@ -242,6 +243,9 @@ class PaginatedMenu(ButtonMenu):
                 and event.member.bot is False
                 and event.emoji.name in self.buttons_list
                 )
+
+    def _validate_buttons(self):
+        pass
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""

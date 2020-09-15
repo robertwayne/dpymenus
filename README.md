@@ -135,13 +135,13 @@ and should not be overwritten.
 
 **Events**
 
-**next** -- Emit when the menu instance calls `.next()`. 
+- **next** -- Emit when the menu instance calls `.next()`. 
 
-**fail** -- Emit when user input on a page is invalid. Usable on Text menus.
+- **fail** -- Emit when user input on a page is invalid. Usable on Text menus.
 
-**timeout** -- Emit when a menu times out. Usable on Text, Button, and Paginated menus.
+- **timeout** -- Emit when a menu times out. Usable on Text, Button, and Paginated menus.
 
-**cancel** -- Emit when a menu is cancelled from user input. Usable on Text, Button, and Paginated menus.
+- **cancel** -- Emit when a menu is cancelled from user input. Usable on Text, Button, and Paginated menus.
 
 
 ### Generic Input Matching

@@ -230,18 +230,26 @@ class PaginatedMenu(ButtonMenu):
 
     async def _get_reaction_add(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
-        reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction)
+        reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction if self.buttons_list != GENERIC_BUTTONS else self._check_reaction_defaults)
 
         return reaction_event.emoji
 
     async def _get_reaction_remove(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
-        reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', check=self._check_reaction)
+        reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', check=self._check_reaction if self.buttons_list != GENERIC_BUTTONS else self._check_reaction_defaults)
 
         return reaction_event.emoji
 
-    def _check_reaction(self, event: RawReactionActionEvent) -> bool:
+    def _check_reaction_defaults(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
+        return (event.member is not None
+                and event.user_id == self.ctx.author.id
+                and event.message_id == self.output.id
+                and event.member.bot is False
+                and any(event.emoji.name == btn for btn in self.buttons_list))
+
+    def _check_reaction(self, event: RawReactionActionEvent) -> bool:
+        """Returns true if the author is the person who reacted and the message ID's match. Checks custom buttons."""
         # cursed code, not sure how else to cover all cases though; watch for performance issues
         return (event.member is not None
                 and event.user_id == self.ctx.author.id

@@ -8,7 +8,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, Page
-from dpymenus.base_menu import EmbedPage, sessions
+from dpymenus.base_menu import PageType, sessions
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
 
@@ -178,10 +178,14 @@ class PaginatedMenu(ButtonMenu):
         """
         return await self.output.edit(embed=embed)
 
-    def add_pages(self, pages: List[EmbedPage]) -> 'PaginatedMenu':
+    def add_pages(self, pages: List[PageType]) -> 'PaginatedMenu':
         """Helper method to convert embeds into Pagees and add them to a menu."""
         for i, page in enumerate(pages):
-            if type(page) == Embed:
+            if isinstance(page, dict):
+                page = Page.from_dict(page)
+
+            # explicit type check here because Pages are instances of Embeds
+            elif type(page) == Embed:
                 page = Page.from_dict(page.to_dict())
 
             if self.page_numbers:
@@ -313,7 +317,7 @@ class PaginatedMenu(ButtonMenu):
         """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
         if len(self.output.reactions) == 3:
             transitions = [self.previous, self.close, self.next]
-            
+
         else:
             transitions = [self.to_first, self.previous, self.close, self.next, self.to_last]
 

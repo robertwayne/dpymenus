@@ -11,7 +11,7 @@ from dpymenus.constants import QUIT
 from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError
 from dpymenus.page import Page
 
-EmbedPage = TypeVar('EmbedPage', Embed, Page)
+PageType = TypeVar('PageType', Embed, Page, Dict)
 
 sessions: Dict[Tuple[int, int], Any]
 sessions = dict()
@@ -138,7 +138,7 @@ class BaseMenu(abc.ABC):
 
         await self._post_next()
 
-    def add_pages(self, pages: List[EmbedPage]) -> 'BaseMenu':
+    def add_pages(self, pages: List[PageType]) -> 'BaseMenu':
         """Adds a list of pages to a menu, setting their index based on the position in the list.."""
         for i, page in enumerate(pages):
             if type(page) == Embed:
@@ -151,7 +151,7 @@ class BaseMenu(abc.ABC):
 
         return self
 
-    async def send_message(self, page: EmbedPage) -> Message:
+    async def send_message(self, page: PageType) -> Message:
         """
         Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
 

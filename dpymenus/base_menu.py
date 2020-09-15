@@ -7,6 +7,7 @@ from discord import Embed, Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
+from dpymenus import sessions
 from dpymenus.constants import QUIT
 from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError
 from dpymenus.page import Page

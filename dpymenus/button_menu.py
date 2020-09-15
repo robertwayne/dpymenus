@@ -39,10 +39,13 @@ class ButtonMenu(BaseMenu):
         try:
             self._validate_buttons()
             await super()._open()
+
         except (ButtonsError, EventError) as exc:
             logging.error(exc.message)
+
         except SessionError as exc:
             logging.info(exc.message)
+
         else:
             while self.active:
                 await self._add_buttons()

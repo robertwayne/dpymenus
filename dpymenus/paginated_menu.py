@@ -123,10 +123,13 @@ class PaginatedMenu(ButtonMenu):
 
             self._validate_buttons()
             await super()._open()
+
         except (ButtonsError, PagesError) as exc:
             logging.error(exc.message)
+
         except SessionError as exc:
             logging.info(exc.message)
+
         else:
             await self._add_buttons()
 
@@ -310,6 +313,7 @@ class PaginatedMenu(ButtonMenu):
         """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
         if len(self.output.reactions) == 3:
             transitions = [self.previous, self.close, self.next]
+            
         else:
             transitions = [self.to_first, self.previous, self.close, self.next, self.to_last]
 

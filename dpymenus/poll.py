@@ -44,6 +44,7 @@ class Poll(ButtonMenu):
                                 asyncio.create_task(self._poll_timer())
                              ],
                             return_when=asyncio.FIRST_COMPLETED)
+
                 finally:
                     for task in pending:
                         task.cancel()

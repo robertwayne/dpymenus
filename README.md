@@ -34,6 +34,7 @@ by clicking the buttons">
 + [Generic Input Matching](#generic-input-matching)
 + [Reaction Buttons](#reaction-buttons)
 + [Poll Utilities](#poll-utilities)
++ [Logging](#logging)
 
 <br>
 <br>
@@ -178,6 +179,28 @@ use case scenarios.
 
 `.generate_results_page()` -- Adds all the result fields to your closing page as well as calculates the winner or 
 a draw.
+
+### Logging
+If you just wish to have basic logging, you can enable it by placing this at the start of your code:
+
+```python
+import logging
+
+logging.basicConfig(level=logging.INFO)
+```
+
+If you are looking to customize the logger, you can use the example below for an idea on how to set it up.
+
+```python
+import logging
+import sys
+
+menus_logger = logging.getLogger('dpymenus')
+menus_logger.setLevel(logging.INFO)
+menus_handler = logging.StreamHandler(sys.stdout)
+menus_handler.setFormatter(logging.Formatter('[%(name)s] %(message)s'))
+menus_logger.addHandler(menus_handler)
+```
 
 -----
 

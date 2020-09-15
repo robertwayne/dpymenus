@@ -2,7 +2,8 @@ import asyncio
 import logging
 from typing import List, Optional, Union
 
-from discord import Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent
+import emoji
+from discord import Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -125,6 +126,9 @@ class PaginatedMenu(ButtonMenu):
         else:
             await self._add_buttons()
 
+            # refresh our message content with the reactions added
+            self.output = await self.ctx.channel.fetch_message(self.output.id)
+
             while self.active:
                 tasks = [asyncio.create_task(self._get_reaction_add()), asyncio.create_task(self._get_reaction_remove())]
 
@@ -228,25 +232,41 @@ class PaginatedMenu(ButtonMenu):
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction)
 
-        return reaction_event.emoji.name
+        return reaction_event.emoji
 
     async def _get_reaction_remove(self) -> Union[Emoji, str]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', check=self._check_reaction)
 
-        return reaction_event.emoji.name
+        return reaction_event.emoji
 
     def _check_reaction(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
+        # cursed code, not sure how else to cover all cases though; watch for performance issues
         return (event.member is not None
                 and event.user_id == self.ctx.author.id
                 and event.message_id == self.output.id
                 and event.member.bot is False
-                and event.emoji.name in self.buttons_list
-                )
+                and any(event.emoji.name == btn
+                        for btn in [(reaction.emoji.name if isinstance(reaction.emoji, Emoji) else reaction.emoji)
+                                    if isinstance(reaction, Reaction) else reaction
+                                    for reaction in self.output.reactions]))
 
     def _validate_buttons(self):
-        pass
+        for button in self.buttons_list:
+            if isinstance(button, (Emoji, PartialEmoji)):
+                continue
+
+            if isinstance(button, str):
+                if button.replace('<', '').replace('>', '').replace(':', '') in [e.name for e in self.ctx.bot.emojis]:
+                    continue
+
+                # check by key; faster than iterating over the list w/ for loop
+                _test = emoji.UNICODE_EMOJI_ALIAS.get(button, None)
+                if _test:
+                    continue
+
+            raise ButtonsError(f'Invalid Emoji or unicode string: {button}')
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
@@ -274,7 +294,14 @@ class PaginatedMenu(ButtonMenu):
 
     async def _handle_transition(self):
         """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
-        transitions = [self.to_first, self.previous, self.close, self.next, self.to_last]
-        transition_map = {button: transition for button, transition in zip(self.buttons_list, transitions)}
+        if len(self.output.reactions) == 3:
+            transitions = [self.previous, self.close, self.next]
+        else:
+            transitions = [self.to_first, self.previous, self.close, self.next, self.to_last]
 
-        await transition_map[self.input]()
+        # cursed code, not sure how else to cover all cases though; watch for performance issues
+        transition_map = {(button.emoji.name if isinstance(button.emoji, Emoji) else button.emoji)
+                          if isinstance(button, Reaction) else button: transition
+                          for button, transition in zip(self.output.reactions, transitions)}
+
+        await transition_map[self.input.name]()

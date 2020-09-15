@@ -15,11 +15,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 referenced with the `.reactions` value.
 - Optimized PaginatedMenu when using default buttons by skipping intensive check paths.
 - Optimized PaginatedMenu reaction_add/remove event checks when using default buttons by skipping intensive check predicate.
+- Internal type var `PageEmbed` renamed to `PageType`; added `Dict` type to the new type var.
 
 ### Added
 - Logger added to the library as 'dpymenus'.
 - `emoji` added as a dependency for fast, safe unicode emoji lookups, button checks, and conversions.
 - PaginatedMenu now does pre-validation on provided buttons.
+- The `.add_pages()` method can now take a dictionary-style embeds *(though I do recommend against this unless you're
+retrieving JSON data)*.
 
 ### Removed
 

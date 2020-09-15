@@ -253,20 +253,24 @@ class PaginatedMenu(ButtonMenu):
                                     for reaction in self.output.reactions]))
 
     def _validate_buttons(self):
-        for button in self.buttons_list:
-            if isinstance(button, (Emoji, PartialEmoji)):
-                continue
-
-            if isinstance(button, str):
-                if button.replace('<', '').replace('>', '').replace(':', '') in [e.name for e in self.ctx.bot.emojis]:
+        if self.buttons_list != GENERIC_BUTTONS:
+            for button in self.buttons_list:
+                if isinstance(button, (Emoji, PartialEmoji)):
                     continue
 
-                # check by key; faster than iterating over the list w/ for loop
-                _test = emoji.UNICODE_EMOJI_ALIAS.get(button, None)
-                if _test:
-                    continue
+                if isinstance(button, str):
+                    # split the str and test if the value between ':' is in the bot list
+                    _test = button.split(':')
+                    if len(_test) > 1:
+                        if _test[1] in [e.name for e in self.ctx.bot.emojis]:
+                            continue
 
-            raise ButtonsError(f'Invalid Emoji or unicode string: {button}')
+                    # check by key; faster than iterating over the list w/ for loop
+                    _test = emoji.UNICODE_EMOJI_ALIAS.get(button, None)
+                    if _test:
+                        continue
+
+                raise ButtonsError(f'Invalid Emoji or unicode string: {button}')
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""

@@ -118,21 +118,19 @@ class PaginatedMenu(ButtonMenu):
         try:
             await super()._open()
         except PagesError as exc:
-            logging.exception(exc.message)
+            logging.error(exc.message)
         except SessionError as exc:
             logging.info(exc.message)
         else:
             await self._add_buttons()
 
             while self.active:
-                tasks = [asyncio.create_task(self._get_reaction_add()),
-                         asyncio.create_task(self._get_reaction_remove())]
+                tasks = [asyncio.create_task(self._get_reaction_add()), asyncio.create_task(self._get_reaction_remove())]
 
                 if not self.prevent_multisessions:
                     tasks.append(asyncio.create_task(self._shortcircuit()))
 
-                done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED,
-                                                   timeout=self.timeout)
+                done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout)
 
                 # if all tasks are still pending, we force a timeout by manually calling cleanup methods
                 if len(pending) == len(tasks):
@@ -239,9 +237,8 @@ class PaginatedMenu(ButtonMenu):
 
     def _check_reaction(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
-
+        if event.emoji in self.buttons_list or event.emoji.name in self.buttons_list:
             return event.user_id == self.ctx.author.id and event.message_id == self.output.id and event.member.bot is False
-            return event.user_id == self.ctx.author.id and event.message_id == self.output.id
         return False
 
     async def _add_buttons(self):

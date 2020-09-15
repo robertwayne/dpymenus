@@ -76,7 +76,8 @@ class ButtonMenu(BaseMenu):
 
     def _check_reaction(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the pages buttons."""
-        return (event.user_id == self.ctx.author.id
+        return (event.member is not None
+                and event.user_id == self.ctx.author.id
                 and event.message_id == self.output.id
                 and event.member.bot is False
-                and event.emoji.name in self.page.buttons_list)
+                and any(event.emoji.name == btn for btn in self.page.buttons_list))

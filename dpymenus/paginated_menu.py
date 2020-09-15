@@ -238,7 +238,8 @@ class PaginatedMenu(ButtonMenu):
 
     def _check_reaction(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
-        return (event.user_id == self.ctx.author.id
+        return (event.member is not None
+                and event.user_id == self.ctx.author.id
                 and event.message_id == self.output.id
                 and event.member.bot is False
                 and event.emoji.name in self.buttons_list

@@ -16,6 +16,7 @@ referenced with the `.reactions` value.
 - Optimized PaginatedMenu when using default buttons by skipping intensive check paths.
 - Optimized PaginatedMenu reaction_add/remove event checks when using default buttons by skipping intensive check predicate.
 - Internal type var `PageEmbed` renamed to `PageType`; added `Dict` type to the new type var.
+- Fixed a bug where the bot was counting its own reactions when tallying poll votes.
 
 ### Added
 - Logger added to the library as 'dpymenus'.
@@ -25,6 +26,9 @@ referenced with the `.reactions` value.
 retrieving JSON data)*.
 
 ### Removed
+- The default cancel page has been removed from all menu styles to align with PaginatedMenus behaviour. As these
+menu styles define an `on_cancel` callback, users can still add their own in if they wish. This is primarily for
+consistency across the library.
 
 ## [1.0.0 - 1.0.4] - 2020-09-12
 This marks the first stable release of dpymenus. As of now, I will not be making any breaking changes to the API without

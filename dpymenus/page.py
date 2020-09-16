@@ -2,7 +2,7 @@ from typing import Callable, List, Optional
 
 from discord import Embed
 
-from dpymenus.base_menu import Button
+from dpymenus.typevars import Button
 
 Callback = Optional[Callable]
 ButtonList = List[Button]

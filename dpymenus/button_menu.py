@@ -8,8 +8,8 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
-from dpymenus.base_menu import Button
 from dpymenus.exceptions import ButtonsError, EventError, SessionError
+from dpymenus.typevars import Button
 
 
 class ButtonMenu(BaseMenu):

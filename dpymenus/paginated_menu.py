@@ -8,9 +8,10 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, Page
-from dpymenus.base_menu import Button, PageType, sessions
+from dpymenus.base_menu import sessions
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
+from dpymenus.typevars import Button, PageType
 
 
 class PaginatedMenu(ButtonMenu):

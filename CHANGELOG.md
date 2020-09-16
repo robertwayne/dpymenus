@@ -29,18 +29,18 @@ forcing all the buttons to be added again.
 - PaginatedMenu now does pre-validation on provided buttons.
 - The `.add_pages()` method can now take a dictionary-style embeds *(though I do recommend against this unless you're
 retrieving JSON data)*.
-- Added a new helper method for ButtomMenu styles: `button_pressed` -- this is meant for simplifying the check for
+- Added a new helper method for ButtonMenu styles: `button_pressed` -- this is meant for simplifying the check for
 which button was pressed in your `on_next` callbacks. It takes the button you are checking for and returns True when
 the button you passed in is the same as what the menus received input was.
 - Added a new helper method for TextMenu styles: `response_is' -- this is meant for simplifying the check for
 what a user had typed in when building your `on_next` callbacks. It takes a string or a list of strings and returns True
 when the text passed in matches what the user had typed.
-- Added a new meno option for TextMenus: `normalize_responses` -- if called on your menu instance, user text responses
+- Added a new menu option for TextMenus: `normalize_responses` -- if called on your menu instance, user text responses
 will be stripped of whitespace *(incl. leading, trailing, and anything over 2 spaces within)* and lower-cased. 
 - Internally, added a new TypeVar: `Button` to replace `Union[Emoji, PartialEmoji, str]`.
 
 ### Removed
-- The default cancel page has been removed from all menu styles to align with PaginatedMenus behaviour. As these
+- The default cancel page has been removed from all menu styles to align with PaginatedMenus behavior. As these
 menu styles define an `on_cancel` callback, users can still add their own in if they wish. This is primarily for
 consistency across the library.
 

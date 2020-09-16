@@ -209,7 +209,6 @@ class PaginatedMenu(ButtonMenu):
             await self._cleanup_output()
 
         await self.close_session()
-        self.active = False
 
     # Internal Methods
     async def _execute_timeout(self):

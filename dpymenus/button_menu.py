@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
 
 import emoji
 from discord import Emoji, PartialEmoji, RawReactionActionEvent, Reaction
@@ -8,6 +8,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
+from dpymenus.base_menu import Button
 from dpymenus.exceptions import ButtonsError, EventError, SessionError
 
 
@@ -34,7 +35,7 @@ class ButtonMenu(BaseMenu):
 
         return self
 
-    def button_pressed(self, button: Union[Emoji, PartialEmoji, str]) -> bool:
+    def button_pressed(self, button: Button) -> bool:
         """Helper method for testing what button was pressed."""
         return button == self.input
 
@@ -69,7 +70,7 @@ class ButtonMenu(BaseMenu):
         for button in self.page.buttons_list:
             await self.output.add_reaction(button)
 
-    async def _get_reaction_add(self) -> Optional[Union[Emoji, PartialEmoji, str]]:
+    async def _get_reaction_add(self) -> Optional[Button]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         try:
             reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction)

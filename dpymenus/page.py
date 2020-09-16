@@ -2,8 +2,10 @@ from typing import Callable, List, Optional, Union
 
 from discord import Embed, Emoji, PartialEmoji
 
+from dpymenus.base_menu import Button
+
 Callback = Optional[Callable]
-ButtonList = List[Union[str, Emoji, PartialEmoji]]
+ButtonList = List[Button]
 
 
 class Page(Embed):

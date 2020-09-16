@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import List, Optional, Union
+from typing import List, Optional
 
 import emoji
 from discord import Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction
@@ -8,7 +8,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, Page
-from dpymenus.base_menu import PageType, sessions
+from dpymenus.base_menu import Button, PageType, sessions
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
 
@@ -82,7 +82,7 @@ class PaginatedMenu(ButtonMenu):
     def buttons_list(self) -> List:
         return getattr(self, '_buttons_list', [])
 
-    def buttons(self, buttons: List[Union[Emoji, PartialEmoji, str]]) -> 'PaginatedMenu':
+    def buttons(self, buttons: List[Button]) -> 'PaginatedMenu':
         """Replaces the default butttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
         0 and 5 are only shown if `enable_skip_buttons` is set, otherwisee 2, 3, and 4 will be shown. You can pass in
         `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
@@ -238,13 +238,13 @@ class PaginatedMenu(ButtonMenu):
         else:
             return
 
-    async def _get_reaction_add(self) -> Union[Emoji, str]:
+    async def _get_reaction_add(self) -> Button:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction if self.buttons_list != GENERIC_BUTTONS else self._check_reaction_defaults)
 
         return reaction_event.emoji
 
-    async def _get_reaction_remove(self) -> Union[Emoji, str]:
+    async def _get_reaction_remove(self) -> Button:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', check=self._check_reaction if self.buttons_list != GENERIC_BUTTONS else self._check_reaction_defaults)
 

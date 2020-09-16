@@ -3,15 +3,16 @@ import asyncio
 import logging
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
 
-from discord import Embed, Message, Reaction, TextChannel, User
+from discord import Embed, Emoji, Message, PartialEmoji, Reaction, TextChannel, User
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus.constants import QUIT
-from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError
+from dpymenus.exceptions import PagesError, SessionError
 from dpymenus.page import Page
 
 PageType = TypeVar('PageType', Embed, Page, Dict)
+Button = TypeVar('Button', Emoji, PartialEmoji, str)
 
 sessions: Dict[Tuple[int, int], Any]
 sessions = dict()

@@ -19,12 +19,14 @@ class Ping(commands.Cog):
 
         page2 = Page(title='Ping Menu', description='Pong!')
 
-        menu = TextMenu(ctx).add_pages([page1, page2])
+        menu = TextMenu(ctx)
+        menu.add_pages([page1, page2])
+        menu.normalize_responses()
         await menu.open()
 
     @staticmethod
     async def confirm(menu) -> None:
-        if menu.input.content in CONFIRM:
+        if menu.response_is(CONFIRM):
             await menu.next()
 
 

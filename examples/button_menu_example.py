@@ -32,21 +32,21 @@ class MyButtonMenu(commands.Cog):
 
     @staticmethod
     async def first(menu):
-        if menu.input == forward:
+        if menu.button_pressed(forward):
             await menu.next()
 
-        elif menu.input == stop:
+        elif menu.button_pressed(stop):
             await menu.close()
 
     @staticmethod
     async def second(menu):
-        if menu.input == reverse:
+        if menu.button_pressed(reverse):
             await menu.go_to('first')
 
-        elif menu.input == forward:
+        elif menu.button_pressed(forward):
             await menu.next()
 
-        elif menu.input == stop:
+        elif menu.button_pressed(stop):
             await menu.close()
 
 

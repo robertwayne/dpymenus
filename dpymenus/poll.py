@@ -1,12 +1,13 @@
 import asyncio
+import logging
 from typing import Dict, Set
 from warnings import warn
 
-from discord import User
+from discord import RawReactionActionEvent, User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu
-from dpymenus.exceptions import ButtonsError, EventError, PagesError
+from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError
 
 
 class Poll(ButtonMenu):
@@ -25,25 +26,30 @@ class Poll(ButtonMenu):
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        await super()._open()
-        await self._set_data()
-        await self._add_buttons()
+        try:
+            await super()._open()
+        except SessionError as exc:
+            logging.info(exc.message)
+        else:
+            await self._set_data()
+            await self._add_buttons()
 
-        pending = set()
-        while self.active:
-            try:
-                _, pending = await asyncio.wait(
-                        [
-                            asyncio.create_task(self._get_vote_add()),
-                            asyncio.create_task(self._get_vote_remove()),
-                            asyncio.create_task(self._poll_timer())
-                         ],
-                        return_when=asyncio.FIRST_COMPLETED)
-            finally:
-                for task in pending:
-                    task.cancel()
+            pending = set()
+            while self.active:
+                try:
+                    _, pending = await asyncio.wait(
+                            [
+                                asyncio.create_task(self._get_vote_add()),
+                                asyncio.create_task(self._get_vote_remove()),
+                                asyncio.create_task(self._poll_timer())
+                             ],
+                            return_when=asyncio.FIRST_COMPLETED)
 
-                await self._finish_poll()
+                finally:
+                    for task in pending:
+                        task.cancel()
+
+                    await self._finish_poll()
 
     # Utility Methods
     async def results(self) -> Dict[str, int]:
@@ -76,7 +82,8 @@ class Poll(ButtonMenu):
         """Watches for a user adding a reaction on the Poll. Adds them to the relevant state_field values."""
         while True:
             try:
-                reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', timeout=self.timeout)
+                reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', timeout=self.timeout,
+                                                             check=self._check_reaction)
 
             except asyncio.TimeoutError:
                 return
@@ -89,7 +96,8 @@ class Poll(ButtonMenu):
         """Watches for a user removing a reaction on the Poll. Removes them from the relevant state_field values."""
         while True:
             try:
-                reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', timeout=self.timeout)
+                reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', timeout=self.timeout,
+                                                             check=self._check_reaction)
 
             except asyncio.TimeoutError:
                 return
@@ -97,6 +105,10 @@ class Poll(ButtonMenu):
             else:
                 if reaction_event.emoji.name in self.page.buttons_list:
                     self.data[reaction_event.emoji.name].remove(reaction_event.user_id)
+
+    def _check_reaction(self, event: RawReactionActionEvent) -> bool:
+        """Returns true only if the reaction event member is not a bot (ie. excludes self from counts)."""
+        return event.member is not None and event.member.bot is False
 
     async def _poll_timer(self):
         """Handles poll duration."""

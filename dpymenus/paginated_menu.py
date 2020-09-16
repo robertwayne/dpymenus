@@ -1,13 +1,19 @@
 import asyncio
-from typing import List, Optional, Union
+import logging
+from typing import Dict, List, Optional, TypeVar
 
-from discord import Embed, Emoji, Message, RawReactionActionEvent
+import emoji
+from discord import Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, Page
-from dpymenus.base_menu import EmbedPage, sessions
+from dpymenus.base_menu import sessions
 from dpymenus.constants import GENERIC_BUTTONS
+from dpymenus.exceptions import ButtonsError, PagesError, SessionError
+
+Button = TypeVar('Button', Emoji, PartialEmoji, str)
+PageType = TypeVar('PageType', Embed, Page, Dict)
 
 
 class PaginatedMenu(ButtonMenu):
@@ -79,7 +85,7 @@ class PaginatedMenu(ButtonMenu):
     def buttons_list(self) -> List:
         return getattr(self, '_buttons_list', [])
 
-    def buttons(self, buttons: List) -> 'PaginatedMenu':
+    def buttons(self, buttons: List[Button]) -> 'PaginatedMenu':
         """Replaces the default butttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
         0 and 5 are only shown if `enable_skip_buttons` is set, otherwisee 2, 3, and 4 will be shown. You can pass in
         `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
@@ -113,40 +119,58 @@ class PaginatedMenu(ButtonMenu):
                 await session._cleanup_reactions()
                 await session.close_session()
 
-        await super()._open()
-        await self._add_buttons()
+        try:
+            # we have to set these here so we can validate cleanly
+            if len(self.buttons_list) == 0:
+                self.buttons(GENERIC_BUTTONS)
 
-        while self.active:
-            done, pending = await asyncio.wait([asyncio.create_task(self._get_reaction_add()),
-                                                asyncio.create_task(self._get_reaction_remove()),
-                                                asyncio.create_task(self._shortcircuit())],
-                                               return_when=asyncio.FIRST_COMPLETED,
-                                               timeout=self.timeout)
+            self._validate_buttons()
+            await super()._open()
 
-            # if all tasks are still pending, we force a timeout by manually calling cleanup methods
-            if len(pending) == 3:
-                await self._execute_timeout()
+        except (ButtonsError, PagesError) as exc:
+            logging.error(exc.message)
 
-            else:
-                for future in done:
-                    result = future.result()
-                    if result:
-                        self.input = result
-                        break
+        except SessionError as exc:
+            logging.info(exc.message)
 
-                    else:
-                        return
+        else:
+            await self._add_buttons()
 
-                if isinstance(self.output.channel, GuildChannel):
-                    await self.output.remove_reaction(self.input, self.ctx.author)
+            # refresh our message content with the reactions added
+            self.output = await self.ctx.channel.fetch_message(self.output.id)
 
-                await self._handle_transition()
+            while self.active:
+                tasks = [asyncio.create_task(self._get_reaction_add()), asyncio.create_task(self._get_reaction_remove())]
 
-            for task in pending:
-                task.cancel()
+                if not self.prevent_multisessions:
+                    tasks.append(asyncio.create_task(self._shortcircuit()))
 
-        if self.output:
-            await self._cleanup_reactions()
+                done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout)
+
+                # if all tasks are still pending, we force a timeout by manually calling cleanup methods
+                if len(pending) == len(tasks):
+                    await self._execute_timeout()
+
+                else:
+                    for future in done:
+                        result = future.result()
+                        if result:
+                            self.input = result
+                            break
+
+                        else:
+                            return
+
+                    if isinstance(self.output.channel, GuildChannel):
+                        await self.output.remove_reaction(self.input, self.ctx.author)
+
+                    await self._handle_transition()
+
+                for task in pending:
+                    task.cancel()
+
+            if self.output:
+                await self._cleanup_reactions()
 
     async def send_message(self, embed: Embed) -> Message:
         """
@@ -157,10 +181,14 @@ class PaginatedMenu(ButtonMenu):
         """
         return await self.output.edit(embed=embed)
 
-    def add_pages(self, pages: List[EmbedPage]) -> 'PaginatedMenu':
+    def add_pages(self, pages: List[PageType]) -> 'PaginatedMenu':
         """Helper method to convert embeds into Pagees and add them to a menu."""
         for i, page in enumerate(pages):
-            if type(page) == Embed:
+            if isinstance(page, dict):
+                page = Page.from_dict(page)
+
+            # explicit type check here because Pages are instances of Embeds
+            elif type(page) == Embed:
                 page = Page.from_dict(page.to_dict())
 
             if self.page_numbers:
@@ -184,7 +212,6 @@ class PaginatedMenu(ButtonMenu):
             await self._cleanup_output()
 
         await self.close_session()
-        self.active = False
 
     # Internal Methods
     async def _execute_timeout(self):
@@ -214,32 +241,51 @@ class PaginatedMenu(ButtonMenu):
         else:
             return
 
-    async def _get_reaction_add(self) -> Union[Emoji, str]:
+    async def _get_reaction_add(self) -> Button:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
-        reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction)
+        reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction if self.buttons_list != GENERIC_BUTTONS else self._check_reaction_defaults)
 
-        return reaction_event.emoji.name
+        return reaction_event.emoji
 
-    async def _get_reaction_remove(self) -> Union[Emoji, str]:
+    async def _get_reaction_remove(self) -> Button:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
-        reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', check=self._check_reaction)
+        reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', check=self._check_reaction if self.buttons_list != GENERIC_BUTTONS else self._check_reaction_defaults)
 
-        return reaction_event.emoji.name
+        return reaction_event.emoji
 
-    def _check_reaction(self, event: RawReactionActionEvent) -> bool:
+    def _check_reaction_defaults(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
+        return (event.member is not None
+                and event.user_id == self.ctx.author.id
+                and event.message_id == self.output.id
+                and event.member.bot is False
+                and any(event.emoji.name == btn for btn in self.buttons_list))
 
-        if event.emoji.name in self.buttons_list:
-            return event.user_id == self.ctx.author.id and event.message_id == self.output.id
-        return False
+    def _validate_buttons(self):
+        if self.buttons_list != GENERIC_BUTTONS:
+            if len(self.buttons_list) != 3 and len(self.buttons_list) != 5:
+                raise ButtonsError(f'Buttons length mismatch. Expected 3 or 5, found {len(self.buttons_list)}')
+
+            for button in self.buttons_list:
+                if isinstance(button, (Emoji, PartialEmoji)):
+                    continue
+
+                if isinstance(button, str):
+                    # split the str and test if the value between ':' is in the bot list
+                    _test = button.split(':')
+                    if len(_test) > 1:
+                        if _test[1] in [e.name for e in self.ctx.bot.emojis]:
+                            continue
+
+                    # check by key; faster than iterating over the list w/ for loop
+                    _test = emoji.UNICODE_EMOJI_ALIAS.get(button, None)
+                    if _test:
+                        continue
+
+                raise ButtonsError(f'Invalid Emoji or unicode string: {button}')
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
-        # sets generic buttons to the instance if nothing has been set
-        if not self.buttons_list:
-            self.buttons(GENERIC_BUTTONS)
-
-        # remove the cancel button if hide_cancel_button is true
         if not self.cancel_button:
             self.buttons_list[2] = None
 
@@ -259,7 +305,15 @@ class PaginatedMenu(ButtonMenu):
 
     async def _handle_transition(self):
         """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
-        transitions = [self.to_first, self.previous, self.close, self.next, self.to_last]
-        transition_map = {button: transition for button, transition in zip(self.buttons_list, transitions)}
+        if len(self.output.reactions) == 3:
+            transitions = [self.previous, self.close, self.next]
 
-        await transition_map[self.input]()
+        else:
+            transitions = [self.to_first, self.previous, self.close, self.next, self.to_last]
+
+        # cursed code, not sure how else to cover all cases though; watch for performance issues
+        transition_map = {(button.emoji.name if isinstance(button.emoji, Emoji) else button.emoji)
+                          if isinstance(button, Reaction) else button: transition
+                          for button, transition in zip(self.output.reactions, transitions)}
+
+        await transition_map[self.input.name]()

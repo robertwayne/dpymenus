@@ -1,9 +1,6 @@
-from typing import Callable, List, Optional, Union
+from typing import Callable, List
 
-from discord import Embed, Emoji, PartialEmoji
-
-Callback = Optional[Callable]
-ButtonList = List[Union[str, Emoji, PartialEmoji]]
+from discord import Embed
 
 
 class Page(Embed):

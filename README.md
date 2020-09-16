@@ -34,6 +34,7 @@ by clicking the buttons">
 + [Generic Input Matching](#generic-input-matching)
 + [Reaction Buttons](#reaction-buttons)
 + [Poll Utilities](#poll-utilities)
++ [Logging](#logging)
 
 <br>
 <br>
@@ -87,45 +88,53 @@ of methods available for chaining, and what they do. If you are unfamiliar with 
 the *examples/* directory for various ways to compose and apply these options.
 
 #### All Menu Types
-`.add_pages()` -- takes a list of Embed or Page objects and turns them into menu pages.
+`.add_pages(x)` -- takes a list of Embed or Page objects and turns them into menu pages.
 
-`.set_timeout()` -- takes an integer and sets the duration *(in seconds)* before the menu will timeout.
+`.set_timeout(x)` -- takes an integer and sets the duration *(in seconds)* before the menu will timeout.
 
-`.set_destination()` -- takes a User, TextChannel, or Context object and sends all menu output to that location.
+`.set_destination(x)` -- takes a User, TextChannel, or Context object and sends all menu output to that location.
 
 `.show_command_message()` -- prevents the message that invoked the menu from being deleted when the menu opens.
 
 `.persist_on_close()` -- prevents the menu from being deleted when closed. Clears reactions and remains on the last page.
 
 #### Text & Button Menus
-`.set_data()` -- takes a dictionary of arbitrary data that can be used across menu and page functions.
+`.set_data(x` -- takes a dictionary of arbitrary data that can be used across menu and page functions.
 
 #### Text Menus
-`.set_delay` -- takes an integer and sets the duration *(in seconds)* before the users response message will be deleted.
+`.set_delay(x)` -- takes an integer and sets the duration *(in seconds)* before the users response message will be deleted.
+
+`.normalize_responses()` -- user text responses will be stripped of whitespace *(incl. leading, trailing, and anything over 2 spaces within)* and lower-cased
 
 #### Paginated Menus
-`.buttons()` -- takes a list of Emoji or str objects and uses them to replace the default buttons. Must be 3 or 5 in length.
+`.buttons(x)` -- takes a list of Emoji or str objects and uses them to replace the default buttons. Must be 3 or 5 in length.
 
-`.set_cancel_page()` -- takes an Embed or Page object and displays that page when a user cancels the menu.
+`.set_cancel_page(x)` -- takes an Embed or Page object and displays that page when a user cancels the menu.
 
-`.set_timeout_page()` -- takes an Embed or Page object and displays that page when the menu times out.
+`.set_timeout_page(x)` -- takes an Embed or Page object and displays that page when the menu times out.
 
-`.show_page_numbers` -- adds pages numbers to the footer of each menu page *(in current_page/total_pages format)*. Overwrites
+`.show_page_numbers()` -- adds pages numbers to the footer of each menu page *(in current_page/total_pages format)*. Overwrites
 user set footers.
 
-`.show_skip_buttons` -- adds two extra buttons to the menu, one for skipping to the first page and one for the last page.
+`.show_skip_buttons()` -- adds two extra buttons to the menu, one for skipping to the first page and one for the last page.
 
-`.hide_cancel_button` -- removes the cancel button from the menu.
+`.hide_cancel_button()` -- removes the cancel button from the menu.
 
-`.allow_multisession` -- disables the one menu per user+channel session limit. Old menus are closed when a new one is opened.
+`.allow_multisession()` -- disables the one menu per user+channel session limit. Old menus are closed when a new one is opened.
 
 ### Helper Methods
 `.next()`, `.previous()` -- goes forward or backward one page.
 
-`to_first(), to_last()` -- jumps to the first or last page.
+`.to_first()`, `.to_last()` -- jumps to the first or last page.
 
 `.go_to(x)` -- takes a string or integer *(on_next function name or page index)* and jumps to that specific page. 
 Useful for non-linear menus.
+
+`.button_pressed(x)` -- takes an Emoji or str button and returns True if that was the button the user had pressed.
+Only usable on ButtonMenu.
+
+`.response_is(x)` -- takes a string or list of strings and returns True if that matches what a user had typed.
+Only usable on TextMenu.
 
 ### Event Callbacks
 By default, the base menu implements methods for all events except `next` events, which should
@@ -135,13 +144,13 @@ and should not be overwritten.
 
 **Events**
 
-**next** -- Emit when the menu instance calls `.next()`. 
+- **next** -- Emit when the menu instance calls `.next()`. 
 
-**fail** -- Emit when user input on a page is invalid. Usable on Text menus.
+- **fail** -- Emit when user input on a page is invalid. Usable on Text menus.
 
-**timeout** -- Emit when a menu times out. Usable on Text, Button, and Paginated menus.
+- **timeout** -- Emit when a menu times out. Usable on Text, Button, and Paginated menus.
 
-**cancel** -- Emit when a menu is cancelled from user input. Usable on Text, Button, and Paginated menus.
+- **cancel** -- Emit when a menu is cancelled from user input. Usable on Text, Button, and Paginated menus.
 
 
 ### Generic Input Matching
@@ -178,6 +187,28 @@ use case scenarios.
 
 `.generate_results_page()` -- Adds all the result fields to your closing page as well as calculates the winner or 
 a draw.
+
+### Logging
+If you just wish to have basic logging, you can enable it by placing this at the start of your code:
+
+```python
+import logging
+
+logging.basicConfig(level=logging.INFO)
+```
+
+If you are looking to customize the logger, you can use the example below for an idea on how to set it up.
+
+```python
+import logging
+import sys
+
+menus_logger = logging.getLogger('dpymenus')
+menus_logger.setLevel(logging.INFO)
+menus_handler = logging.StreamHandler(sys.stdout)
+menus_handler.setFormatter(logging.Formatter('[%(name)s] %(message)s'))
+menus_logger.addHandler(menus_handler)
+```
 
 -----
 

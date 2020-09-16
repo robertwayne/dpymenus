@@ -1,20 +1,22 @@
 import abc
 import asyncio
+import logging
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
-from warnings import warn
 
 from discord import Embed, Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus.constants import QUIT
-from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError
+from dpymenus.exceptions import PagesError, SessionError
 from dpymenus.page import Page
 
-EmbedPage = TypeVar('EmbedPage', Embed, Page)
+PageType = TypeVar('PageType', Embed, Page, Dict)
 
 sessions: Dict[Tuple[int, int], Any]
 sessions = dict()
+
+logger = logging.getLogger('dpymenus')
+logger.addHandler(logging.NullHandler())
 
 
 class BaseMenu(abc.ABC):
@@ -135,7 +137,7 @@ class BaseMenu(abc.ABC):
 
         await self._post_next()
 
-    def add_pages(self, pages: List[EmbedPage]) -> 'BaseMenu':
+    def add_pages(self, pages: List[PageType]) -> 'BaseMenu':
         """Adds a list of pages to a menu, setting their index based on the position in the list.."""
         for i, page in enumerate(pages):
             if type(page) == Embed:
@@ -148,7 +150,7 @@ class BaseMenu(abc.ABC):
 
         return self
 
-    async def send_message(self, page: EmbedPage) -> Message:
+    async def send_message(self, page: PageType) -> Message:
         """
         Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
 
@@ -192,10 +194,9 @@ class BaseMenu(abc.ABC):
         if self.page.on_cancel_event:
             return await self.page.on_cancel_event()
 
-        embed = Embed(title='Cancelled', description='Menu selection cancelled.')
-        await self.send_message(embed)
-
+        await self._cleanup_output()
         await self.close_session()
+        self.active = False
 
     async def close_session(self):
         """Remove the user from the active users list."""
@@ -227,12 +228,6 @@ class BaseMenu(abc.ABC):
         await self.close_session()
         self.active = False
 
-    def _is_cancelled(self) -> bool:
-        """Checks input for a cancellation string. If there is a match, it calls the ``menu.cancel()`` method and returns True."""
-        if self.input.content in QUIT:
-            return True
-        return False
-
     async def _get_input(self) -> Message:
         """Collects user input and places it into the input attribute."""
         try:
@@ -250,40 +245,18 @@ class BaseMenu(abc.ABC):
 
     def _check_message(self, m: Message) -> bool:
         """Returns true if the author is the person who responded and the channel is the same."""
-        return m.author == self.ctx.author and self.output.channel == m.channel
+        return (m.author == self.ctx.author
+                and self.output.channel == m.channel)
 
     def _validate_pages(self):
-        """Checks that the Menu contains at least one Page."""
+        """Checks that the Menu contains at least two pages."""
         if len(self.pages) <= 1:
             raise PagesError(f'There must be more than one page in a menu. Expected at least 2, found {len(self.pages)}.')
 
     def _start_session(self):
         """Starts a new user session in the sessions storage. Raises a SessionError if the key already exists."""
         if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
-            raise SessionError(f'Duplicate session in channel {self.ctx.channel.id} for user {self.ctx.author.id}.')
-
-        sessions.update({(self.ctx.author.id, self.ctx.channel.id): self})
-        return True
-
-    def _validate_buttons(self):
-        """Ensures that a menu was passed the appropriate amount of buttons."""
-        _cb_count = 0
-        for page in self.pages:
-            if not page.buttons_list:
-                break
-
-            if page.on_next_event:
-                _cb_count += 1
-
-            if len(page.buttons_list) < 1:
-                raise ButtonsError('Any page with an `on_next` event capture must have at least one button.\n'
-                                   f'{page} {page.title} only has {len(page.buttons_list)} buttons.')
-
-            if len(page.buttons_list) > 5:
-                warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
-
-        if self.page.on_fail_event:
-            raise EventError('A ButtonMenu can not capture an `on_fail` event.')
-
-        if _cb_count < len(self.pages) - 1:
-            raise EventError(f'ButtonMenu missing `on_next` captures. Expected {len(self.pages) - 1}, found {_cb_count}.')
+            raise SessionError(f'Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}].')
+        else:
+            sessions.update({(self.ctx.author.id, self.ctx.channel.id): self})
+            return True

@@ -2,6 +2,7 @@ import asyncio
 import logging
 from typing import Dict, Optional, Union
 
+import emoji
 from discord import Emoji, PartialEmoji, RawReactionActionEvent
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
@@ -117,6 +118,24 @@ class ButtonMenu(BaseMenu):
 
             if len(page.buttons_list) > 5:
                 logging.warning('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
+
+            for button in page.buttons_list:
+                if isinstance(button, (Emoji, PartialEmoji)):
+                    continue
+
+                if isinstance(button, str):
+                    # split the str and test if the value between ':' is in the bot list
+                    _test = button.split(':')
+                    if len(_test) > 1:
+                        if _test[1] in [e.name for e in self.ctx.bot.emojis]:
+                            continue
+
+                    # check by key; faster than iterating over the list w/ for loop
+                    _test = emoji.UNICODE_EMOJI_ALIAS.get(button, None)
+                    if _test:
+                        continue
+
+                raise ButtonsError(f'Invalid Emoji or unicode string: {button}')
 
         if self.page.on_fail_event:
             raise EventError('A ButtonMenu can not capture an `on_fail` event.')

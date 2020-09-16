@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Dict, Optional
+from typing import Dict, Optional, TypeVar
 
 import emoji
 from discord import Emoji, PartialEmoji, RawReactionActionEvent, Reaction
@@ -9,7 +9,8 @@ from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
 from dpymenus.exceptions import ButtonsError, EventError, SessionError
-from dpymenus.typevars import Button
+
+Button = TypeVar('Button', Emoji, PartialEmoji, str)
 
 
 class ButtonMenu(BaseMenu):

@@ -3,7 +3,7 @@ import logging
 from typing import Dict, Optional, Union
 
 import emoji
-from discord import Emoji, PartialEmoji, RawReactionActionEvent
+from discord import Emoji, PartialEmoji, RawReactionActionEvent, Reaction
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -55,6 +55,9 @@ class ButtonMenu(BaseMenu):
             while self.active:
                 await self._add_buttons()
 
+                # refresh our message content with the reactions added
+                self.output = await self.ctx.channel.fetch_message(self.output.id)
+
                 self.input = await self._get_reaction_add()
 
                 await self._cleanup_reactions()
@@ -101,10 +104,15 @@ class ButtonMenu(BaseMenu):
 
     def _check_reaction(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the pages buttons."""
+        # cursed code, not sure how else to cover all cases though; watch for performance issues
         return (event.member is not None
                 and event.user_id == self.ctx.author.id
                 and event.message_id == self.output.id
-                and event.member.bot is False)
+                and event.member.bot is False
+                and any(event.emoji.name == btn
+                        for btn in [(reaction.emoji.name if isinstance(reaction.emoji, Emoji) else reaction.emoji)
+                                    if isinstance(reaction, Reaction) else reaction
+                                    for reaction in self.output.reactions]))
 
     def _validate_buttons(self):
         """Ensures that a menu was passed the appropriate amount of buttons."""

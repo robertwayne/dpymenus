@@ -258,18 +258,6 @@ class PaginatedMenu(ButtonMenu):
                 and event.member.bot is False
                 and any(event.emoji.name == btn for btn in self.buttons_list))
 
-    def _check_reaction(self, event: RawReactionActionEvent) -> bool:
-        """Returns true if the author is the person who reacted and the message ID's match. Checks custom buttons."""
-        # cursed code, not sure how else to cover all cases though; watch for performance issues
-        return (event.member is not None
-                and event.user_id == self.ctx.author.id
-                and event.message_id == self.output.id
-                and event.member.bot is False
-                and any(event.emoji.name == btn
-                        for btn in [(reaction.emoji.name if isinstance(reaction.emoji, Emoji) else reaction.emoji)
-                                    if isinstance(reaction, Reaction) else reaction
-                                    for reaction in self.output.reactions]))
-
     def _validate_buttons(self):
         if self.buttons_list != GENERIC_BUTTONS:
             if len(self.buttons_list) != 3 and len(self.buttons_list) != 5:

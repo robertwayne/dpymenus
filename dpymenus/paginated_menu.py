@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import List, Optional
+from typing import Dict, List, Optional, TypeVar
 
 import emoji
 from discord import Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction
@@ -11,7 +11,9 @@ from dpymenus import ButtonMenu, Page
 from dpymenus.base_menu import sessions
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
-from dpymenus.typevars import Button, PageType
+
+Button = TypeVar('Button', Emoji, PartialEmoji, str)
+PageType = TypeVar('PageType', Embed, Page, Dict)
 
 
 class PaginatedMenu(ButtonMenu):

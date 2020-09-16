@@ -1,11 +1,6 @@
-from typing import Callable, List, Optional
+from typing import Callable, List
 
 from discord import Embed
-
-from dpymenus.button_menu import Button
-
-Callback = Optional[Callable]
-ButtonList = List[Button]
 
 
 class Page(Embed):

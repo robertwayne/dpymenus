@@ -36,7 +36,7 @@ class ButtonMenu(BaseMenu):
         return self
 
     def button_pressed(self, button: Button) -> bool:
-        """Helper method for testing what button was pressed."""
+        """Helper method which checks if the button the user pressed is the button passed in."""
         return button == self.input
 
     async def open(self):

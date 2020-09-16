@@ -7,7 +7,6 @@ from discord import Embed, Emoji, Message, PartialEmoji, Reaction, TextChannel, 
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus.constants import QUIT
 from dpymenus.exceptions import PagesError, SessionError
 from dpymenus.page import Page
 
@@ -229,12 +228,6 @@ class BaseMenu(abc.ABC):
 
         await self.close_session()
         self.active = False
-
-    def _is_cancelled(self) -> bool:
-        """Checks input for a cancellation string. If there is a match, it calls the ``menu.cancel()`` method and returns True."""
-        if self.input.content in QUIT:
-            return True
-        return False
 
     async def _get_input(self) -> Message:
         """Collects user input and places it into the input attribute."""

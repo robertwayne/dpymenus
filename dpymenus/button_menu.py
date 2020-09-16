@@ -2,7 +2,7 @@ import asyncio
 import logging
 from typing import Dict, Optional, Union
 
-from discord import Emoji, RawReactionActionEvent
+from discord import Emoji, PartialEmoji, RawReactionActionEvent
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -50,12 +50,9 @@ class ButtonMenu(BaseMenu):
             while self.active:
                 await self._add_buttons()
 
-                # refresh our message content with the reactions added
-                self.output = await self.ctx.channel.fetch_message(self.output.id)
-
                 self.input = await self._get_reaction_add()
-                await self._cleanup_reactions()
 
+                await self._cleanup_reactions()
                 await self.page.on_next_event(self)
 
     # Internal Methods
@@ -64,7 +61,7 @@ class ButtonMenu(BaseMenu):
         for button in self.page.buttons_list:
             await self.output.add_reaction(button)
 
-    async def _get_reaction_add(self) -> Optional[Union[Emoji, str]]:
+    async def _get_reaction_add(self) -> Optional[Union[Emoji, PartialEmoji, str]]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         try:
             reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction)
@@ -73,7 +70,24 @@ class ButtonMenu(BaseMenu):
             await self._execute_timeout()
 
         else:
-            return reaction_event.emoji
+            for btn in self.page.buttons_list:
+                if isinstance(btn, Emoji):
+                    if btn == reaction_event.emoji:
+                        return btn
+
+                elif isinstance(btn, str):
+                    # split the str and test if the value between ':' is the same as the PartialEmoji name
+                    _test = btn.split(':')
+                    if len(_test) > 1:
+                        if _test[1] == reaction_event.emoji.name:
+                            return btn
+
+                    else:
+                        if btn == reaction_event.emoji.name:
+                            return btn
+
+                else:
+                    return reaction_event.emoji
 
     async def _cleanup_reactions(self):
         """Removes all reactions from the output message object."""
@@ -85,8 +99,7 @@ class ButtonMenu(BaseMenu):
         return (event.member is not None
                 and event.user_id == self.ctx.author.id
                 and event.message_id == self.output.id
-                and event.member.bot is False
-                and any(event.emoji.name == btn for btn in self.page.buttons_list))
+                and event.member.bot is False)
 
     def _validate_buttons(self):
         """Ensures that a menu was passed the appropriate amount of buttons."""

@@ -195,10 +195,9 @@ class BaseMenu(abc.ABC):
         if self.page.on_cancel_event:
             return await self.page.on_cancel_event()
 
-        embed = Embed(title='Cancelled', description='Menu selection cancelled.')
-        await self.send_message(embed)
-
+        await self._cleanup_output()
         await self.close_session()
+        self.active = False
 
     async def close_session(self):
         """Remove the user from the active users list."""

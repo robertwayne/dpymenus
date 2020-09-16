@@ -50,6 +50,9 @@ class ButtonMenu(BaseMenu):
             while self.active:
                 await self._add_buttons()
 
+                # refresh our message content with the reactions added
+                self.output = await self.ctx.channel.fetch_message(self.output.id)
+
                 self.input = await self._get_reaction_add()
                 await self._cleanup_reactions()
 
@@ -70,7 +73,7 @@ class ButtonMenu(BaseMenu):
             await self._execute_timeout()
 
         else:
-            return reaction_event.emoji.name
+            return reaction_event.emoji
 
     async def _cleanup_reactions(self):
         """Removes all reactions from the output message object."""

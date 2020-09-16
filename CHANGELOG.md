@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.1.0] - UNRELEASED
+## [1.1.0] - 2020-09-16
 
 ### Changed
 - Fixed a bug where bot reactions were being captured by the menu event loop when using the raw reaction event API.
@@ -17,6 +17,11 @@ referenced with the `.reactions` value.
 - Optimized PaginatedMenu reaction_add/remove event checks when using default buttons by skipping intensive check predicate.
 - Internal type var `PageEmbed` renamed to `PageType`; added `Dict` type to the new type var.
 - Fixed a bug where the bot was counting its own reactions when tallying poll votes.
+- Fixed a bug where specific mixes of emoji types would crash a ButtonMenu.
+- Fixed a bug where a user applying a non-button reaction to a menu in a ButtonMenu would cause it to reload the page,
+forcing all the buttons to be added again.
+- Moved the private _is_cancelled method into TextMenus, as it is only called in that class.
+- Examples have been updated to showcase any new features. 
 
 ### Added
 - Logger added to the library as 'dpymenus'.
@@ -24,6 +29,15 @@ referenced with the `.reactions` value.
 - PaginatedMenu now does pre-validation on provided buttons.
 - The `.add_pages()` method can now take a dictionary-style embeds *(though I do recommend against this unless you're
 retrieving JSON data)*.
+- Added a new helper method for ButtomMenu styles: `button_pressed` -- this is meant for simplifying the check for
+which button was pressed in your `on_next` callbacks. It takes the button you are checking for and returns True when
+the button you passed in is the same as what the menus received input was.
+- Added a new helper method for TextMenu styles: `response_is' -- this is meant for simplifying the check for
+what a user had typed in when building your `on_next` callbacks. It takes a string or a list of strings and returns True
+when the text passed in matches what the user had typed.
+- Added a new meno option for TextMenus: `normalize_responses` -- if called on your menu instance, user text responses
+will be stripped of whitespace *(incl. leading, trailing, and anything over 2 spaces within)* and lower-cased. 
+- Internally, added a new TypeVar: `Button` to replace `Union[Emoji, PartialEmoji, str]`.
 
 ### Removed
 - The default cancel page has been removed from all menu styles to align with PaginatedMenus behaviour. As these

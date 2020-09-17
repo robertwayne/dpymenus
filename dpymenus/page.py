@@ -4,11 +4,7 @@ from discord import Embed
 
 
 class Page(Embed):
-    """Represents a single page inside a menu.
-
-    Attributes
-        :embed: A discord Embed object. Used in place of utilizing the Page as an Embed object itself.
-    """
+    """Represents a single page inside a menu."""
 
     __slots__ = (*Embed.__slots__, '_index', '_buttons_list', '_on_next_event', '_on_fail_event', '_on_cancel_event', '_on_timeout_event')
 

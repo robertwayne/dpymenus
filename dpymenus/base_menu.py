@@ -154,7 +154,7 @@ class BaseMenu(abc.ABC):
         """
         Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
 
-        :param page: A Discord :py:class:`~discord.Embed` or Page object.
+        :param page: A Discord :py:class:`~discord.Embed` or :class:`~dpymenus.Page` object.
         """
         safe_embed = page.as_safe_embed() if type(page) == Page else page
 

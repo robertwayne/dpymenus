@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.0] - 2020-09-29
+
+### Changed
+- Dropped support for discord.py versions < 1.5 due to mandatory breaking changes with the Discord API and the new
+Intents system. This is a forced change as of October 7th. You can read more 
+[here](https://discordpy.readthedocs.io/en/latest/intents.html#intents-primer).
+
+
 ## [1.1.0] - 2020-09-16
 
 ### Changed

@@ -6,7 +6,7 @@ from dpymenus import Page, TextMenu
 from dpymenus.constants import CONFIRM
 
 
-class Ping(commands.Cog):
+class MyTextMenu(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -31,5 +31,5 @@ class Ping(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Ping(client))
+    client.add_cog(MyTextMenu(client))
 

@@ -27,7 +27,7 @@ setuptools.setup(
         ],
         python_requires='>=3.7',
         install_requires=[
-            'discord.py>=1.4.1',
+            'discord.py>=1.5',
             'emoji==0.6.0'
         ]
 )

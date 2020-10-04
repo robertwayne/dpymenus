@@ -1,9 +1,8 @@
 # Visit https://dpymenus.com for detailed tutorials on getting started.
 
-import discord
 from discord.ext import commands
 
-from dpymenus import Poll
+from dpymenus import Page, Poll
 
 
 class MyPoll(commands.Cog):
@@ -12,12 +11,14 @@ class MyPoll(commands.Cog):
 
     @commands.command()
     async def poll(self, ctx):
-        first = discord.Embed(title='Sun vs Moon Poll', description='Do you prefer the sun or the moon?')
+        first = Page(title='Sun vs Moon Poll', description='Do you prefer the sun or the moon?')
         first.set_footer(text="Only vote once! Your vote won't count if you cheat!")
+        first.buttons(['\U00002600', '\U0001F315'])
+        first.on_next(self.finish)
 
-        second = discord.Embed(title='Sun vs Moon Poll', description=f'Results are in!')
+        second = Page(title='Sun vs Moon Poll', description=f'Results are in!')
 
-        menu = Poll(ctx).set_timeout(60).add_pages([first, second])
+        menu = Poll(ctx).set_timeout(10).add_pages([first, second])
         await menu.open()
 
     @staticmethod

@@ -30,6 +30,7 @@ by clicking the buttons">
 + [Getting Started](#getting-started)
 + [Menu Options](#menu-options)
 + [Helper Methods](#helper-methods)
++ [Building Pages](#building-pages)
 + [Event Callbacks](#event-callbacks)
 + [Generic Input Matching](#generic-input-matching)
 + [Reaction Buttons](#reaction-buttons)
@@ -99,7 +100,7 @@ the *examples/* directory for various ways to compose and apply these options.
 `.persist_on_close()` -- prevents the menu from being deleted when closed. Clears reactions and remains on the last page.
 
 #### Text & Button Menus
-`.set_data(x` -- takes a dictionary of arbitrary data that can be used across menu and page functions.
+`.set_data(x)` -- takes a dictionary of arbitrary data that can be used across menu and page functions.
 
 #### Text Menus
 `.set_delay(x)` -- takes an integer and sets the duration *(in seconds)* before the users response message will be deleted.
@@ -136,8 +137,22 @@ Only usable on ButtonMenu.
 `.response_is(x)` -- takes a string or list of strings and returns True if that matches what a user had typed.
 Only usable on TextMenu.
 
+
+### Building Pages
+Menus are built with Embed objects, but the library also defines a subclass of Embed which is Page. Menus can 
+take a mix of Embed and Page objects when you call the `add_pages()` method, and although there are use cases, 
+I recommend defining all pages as Page objects to keep your codebase clear and understandable. Pages have additional 
+methods and attributes available:
+
+`.buttons(x)` -- takes a list of Emoji or str objects to display on the page.
+
+`.index()` -- returns the page index in the menu.
+
+Additionally, pages have methods for defining callbacks based on specific events. See the next section for information
+on events, how to call them, and what menus they each work on.
+
 ### Event Callbacks
-By default, the base menu implements methods for all events except `next` events, which should
+By default, the base menu implements methods for all events except `next`, which should
 be handled by the user. Events can be overridden using `.on_EVENTNAME` methods when creating your
 menu object. Note that Polls and Paginated menus implement their own `next` event methods
 and should not be overwritten.
@@ -151,6 +166,8 @@ and should not be overwritten.
 - **timeout** -- Emit when a menu times out. Usable on Text, Button, and Paginated menus.
 
 - **cancel** -- Emit when a menu is cancelled from user input. Usable on Text, Button, and Paginated menus.
+
+*You can see these in use in the text, button, and poll menu examples.*
 
 
 ### Generic Input Matching

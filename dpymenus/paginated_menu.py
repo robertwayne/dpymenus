@@ -59,6 +59,11 @@ class PaginatedMenu(ButtonMenu):
         """Adds page numbers to each embeds by overwriting the footer. Returns itself for fluent-style chaining."""
         self._page_numbers = True
 
+        # check if pages were set prior to calling this method; if so, we reset footers
+        if self.pages:
+            for i, page in enumerate(self.pages):
+                page.set_footer(text=f'{i + 1}/{len(self.pages)}')
+
         return self
 
     @property

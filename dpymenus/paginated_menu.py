@@ -59,6 +59,11 @@ class PaginatedMenu(ButtonMenu):
         """Adds page numbers to each embeds by overwriting the footer. Returns itself for fluent-style chaining."""
         self._page_numbers = True
 
+        # check if pages were set prior to calling this method; if so, we reset footers
+        if self.pages:
+            for i, page in enumerate(self.pages):
+                page.set_footer(text=f'{i + 1}/{len(self.pages)}')
+
         return self
 
     @property
@@ -305,11 +310,14 @@ class PaginatedMenu(ButtonMenu):
 
     async def _handle_transition(self):
         """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
-        if len(self.output.reactions) == 3:
-            transitions = [self.previous, self.close, self.next]
+        transitions = [self.to_first, self.previous, self.close, self.next, self.to_last]
 
-        else:
-            transitions = [self.to_first, self.previous, self.close, self.next, self.to_last]
+        if not self.cancel_button:
+            transitions.remove(self.close)
+
+        if not self.skip_buttons:
+            transitions.remove(self.to_first)
+            transitions.remove(self.to_last)
 
         # cursed code, not sure how else to cover all cases though; watch for performance issues
         transition_map = {(button.emoji.name if isinstance(button.emoji, Emoji) else button.emoji)

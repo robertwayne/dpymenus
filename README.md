@@ -159,7 +159,7 @@ and should not be overwritten.
 
 **Events**
 
-- **next** -- Emit when the menu instance calls `.next()`. 
+- **next** -- Emit whenever a valid response is received by the menu. Valid just meaning it passes the predicate checks.
 
 - **fail** -- Emit when user input on a page is invalid. Usable on Text menus.
 

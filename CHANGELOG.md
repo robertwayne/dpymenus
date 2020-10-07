@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.1] - 2020-10-07
+
+### Changed
+- Fixed a bug where button indexes would become offset based on method call order.
+- Fixed a bug where page numbers would not be shown based on method call order.
+- Fixed a typo in the poll_example.py file so it now works correctly again.
+- Clarified when the `next` event was emit in the README.
+
 ## [1.2.0] - 2020-09-29
 
 ### Changed

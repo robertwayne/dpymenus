@@ -54,16 +54,28 @@ class ButtonMenu(BaseMenu):
             logging.info(exc.message)
 
         else:
+            await self._add_buttons()
+            _first_iter = True
+
             while self.active:
-                await self._add_buttons()
+                if not _first_iter and self.last_visited_page() != self.page.index:
+                    await self._add_buttons()
+
+                elif not _first_iter and self.last_visited_page() == self.page.index:
+                    if isinstance(self.output.channel, GuildChannel):
+                        await self.output.remove_reaction(self.input, self.ctx.author)
 
                 # refresh our message content with the reactions added
                 self.output = await self.ctx.channel.fetch_message(self.output.id)
 
                 self.input = await self._get_reaction_add()
 
-                await self._cleanup_reactions()
                 await self.page.on_next_event(self)
+
+                if self.last_visited_page() != self.page.index:
+                    await self._cleanup_reactions()
+
+                _first_iter = False
 
     # Internal Methods
     async def _add_buttons(self):

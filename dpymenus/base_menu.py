@@ -29,6 +29,7 @@ class BaseMenu(abc.ABC):
         :active: Whether or not the menu is active or not.
         :input: A reference to the captured user input message object.
         :output: A reference to the menus output message.
+        :history: An ordered history of pages visited by the user.
     """
 
     def __init__(self, ctx: Context):
@@ -38,6 +39,7 @@ class BaseMenu(abc.ABC):
         self.active: bool = True
         self.input: Optional[Union[Message, Reaction]] = None
         self.output: Optional[Message] = None
+        self.history: List[int] = []
 
     @abc.abstractmethod
     async def open(self):
@@ -137,6 +139,10 @@ class BaseMenu(abc.ABC):
 
         await self._post_next()
 
+    def last_visited_page(self) -> int:
+        """Returns the last visited pages index."""
+        return self.history[-2] if len(self.history) > 1 else 0
+
     def add_pages(self, pages: List[PageType]) -> 'BaseMenu':
         """Adds a list of pages to a menu, setting their index based on the position in the list.."""
         for i, page in enumerate(pages):
@@ -176,6 +182,7 @@ class BaseMenu(abc.ABC):
 
         self.output = await self.destination.send(embed=self.page.as_safe_embed())
         self.input = self.ctx.message
+        self.history.append(self.page.index)
 
         await self._cleanup_input()
 
@@ -186,6 +193,7 @@ class BaseMenu(abc.ABC):
                 await self.close_session()
                 self.active = False
 
+        self.history.append(self.page.index)
         await self.send_message(self.page)
 
     async def _execute_cancel(self):

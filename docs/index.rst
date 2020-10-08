@@ -46,3 +46,5 @@ Poll
 Page
 -------------------
 .. autoclass:: dpymenus.Page
+    :inherited-members:
+    :members:

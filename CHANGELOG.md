@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.2] - 2020-10-08
+
+### Added
+- Menus now expose a history attribute, an ordered list of user-visited pages. This lasts until the menu is closed.
+- Added new helper method `.last_visited_page()` -- returns the last page index that a user had visited.
+
+### Changed
+- ButtonMenu buttons will no longer refresh if the pages' index has not changed. This helps curb rate limiting, as well
+as provides a cleaner end-user experience.
+- Updated the API docs to include Page properties and methods.
+- Refactored internal `next` events to remove repeated code.
+- Removed redundant internal checks.
+
+
 ## [1.2.1] - 2020-10-07
 
 ### Changed

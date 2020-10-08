@@ -105,19 +105,19 @@ class BaseMenu(abc.ABC):
 
         self.page = self.pages[self.page.index - 1]
 
-        await self.send_message(self.page)
+        await self._post_next()
 
     async def to_first(self):
         """Helper method to jump to the first page."""
         self.page = self.pages[0]
 
-        await self.send_message(self.page)
+        await self._post_next()
 
     async def to_last(self):
         """Helper method to jump to the last page."""
         self.page = self.pages[-1:][0]
 
-        await self.send_message(self.page)
+        await self._post_next()
 
     async def go_to(self, page: Optional[Union[str, int]] = None):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed.

@@ -113,7 +113,7 @@ class ButtonMenu(BaseMenu):
 
     async def _cleanup_reactions(self):
         """Removes all reactions from the output message object."""
-        if isinstance(self.output.channel, GuildChannel):
+        if self.output and isinstance(self.output.channel, GuildChannel):
             await self.output.clear_reactions()
 
     def _check_reaction(self, event: RawReactionActionEvent) -> bool:

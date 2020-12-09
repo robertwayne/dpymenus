@@ -142,7 +142,7 @@ class PaginatedMenu(ButtonMenu):
             await self._add_buttons()
 
             # refresh our message content with the reactions added
-            self.output = await self.ctx.channel.fetch_message(self.output.id)
+            self.output = await self.destination.fetch_message(self.output.id)
 
             while self.active:
                 tasks = [asyncio.create_task(self._get_reaction_add()), asyncio.create_task(self._get_reaction_remove())]

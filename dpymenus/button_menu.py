@@ -66,7 +66,7 @@ class ButtonMenu(BaseMenu):
                         await self.output.remove_reaction(self.input, self.ctx.author)
 
                 # refresh our message content with the reactions added
-                self.output = await self.ctx.channel.fetch_message(self.output.id)
+                self.output = await self.destination.fetch_message(self.output.id)
 
                 self.input = await self._get_reaction_add()
 

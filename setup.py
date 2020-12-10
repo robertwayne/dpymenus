@@ -5,7 +5,7 @@ with open('README.md', 'r') as file:
 
 setuptools.setup(
         name='dpymenus',
-        version='1.2.2',
+        version='1.2.3',
         author='Rob Wagner',
         author_email='rob.wagner@outlook.com',
         license='MIT',

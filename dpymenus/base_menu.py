@@ -166,6 +166,9 @@ class BaseMenu(abc.ABC):
 
         if isinstance(self.output.channel, GuildChannel):
             return await self.output.edit(embed=safe_embed)
+            
+        else:
+            await self.output.delete()
 
         self.output = await self.destination.send(embed=safe_embed)
         return self.output

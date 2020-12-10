@@ -142,7 +142,7 @@ class PaginatedMenu(ButtonMenu):
             await self._add_buttons()
 
             # refresh our message content with the reactions added
-            self.output = await self.ctx.channel.fetch_message(self.output.id)
+            self.output = await self.destination.fetch_message(self.output.id)
 
             while self.active:
                 tasks = [asyncio.create_task(self._get_reaction_add()), asyncio.create_task(self._get_reaction_remove())]
@@ -259,10 +259,8 @@ class PaginatedMenu(ButtonMenu):
 
     def _check_reaction_defaults(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
-        return (event.member is not None
-                and event.user_id == self.ctx.author.id
+        return (event.user_id == self.ctx.author.id
                 and event.message_id == self.output.id
-                and event.member.bot is False
                 and any(event.emoji.name == btn for btn in self.buttons_list))
 
     def _validate_buttons(self):

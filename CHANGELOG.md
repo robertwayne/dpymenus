@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.3] - 2020-12-10
+
+### Added
+- New example showing how to reload data without executing a page transition.
+
+### Changed
+- Fixed a bug where PaginatedMenu & ButtonMenu types were not having their output set correctly when using `set_destination`. This
+  would raise a NotFound error in DM channels. (#27)
+- Fixed a bug where the reaction check predicates were incorrectly assuming Member-type instead of User-type. This would cause raw reaction
+  events to not be read in DM channels. (#27)
+- ButtonMenu types now clean up their output on page transition in DM's.
+
 ## [1.2.2] - 2020-10-08
 
 ### Added

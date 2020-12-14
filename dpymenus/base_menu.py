@@ -43,8 +43,7 @@ class BaseMenu(abc.ABC):
 
     @abc.abstractmethod
     async def open(self):
-        """The entry point to a new TextMenu instance; starts the main menu loop.
-        Manages gathering user input, basic validation, sending messages, and cancellation requests."""
+        """The entry point to a new menu instance; starts the main menu loop. This must be overridden by the subclass."""
         pass
 
     @property

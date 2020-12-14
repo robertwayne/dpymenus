@@ -7,8 +7,7 @@ from discord import Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent,
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus import ButtonMenu, Page
-from dpymenus.base_menu import sessions
+from dpymenus import ButtonMenu, Page, sessions
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
 

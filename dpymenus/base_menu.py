@@ -1,22 +1,15 @@
 import abc
 import asyncio
-import logging
-from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
+from typing import Dict, List, Optional, TypeVar, Union
 
 from discord import Embed, Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
+from dpymenus import Page, sessions
 from dpymenus.exceptions import PagesError, SessionError
-from dpymenus.page import Page
 
 PageType = TypeVar('PageType', Embed, Page, Dict)
-
-sessions: Dict[Tuple[int, int], Any]
-sessions = dict()
-
-logger = logging.getLogger('dpymenus')
-logger.addHandler(logging.NullHandler())
 
 
 class BaseMenu(abc.ABC):
@@ -165,7 +158,7 @@ class BaseMenu(abc.ABC):
 
         if isinstance(self.output.channel, GuildChannel):
             return await self.output.edit(embed=safe_embed)
-            
+
         else:
             await self.output.delete()
 

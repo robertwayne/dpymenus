@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "dpymenus"
+version = "2.0.0"
+description = "Simplified menus for discord.py developers."
+authors = ["Rob Wagner <13954303+robertwayne@users.noreply.github.com>"]
+license = "MIT"
+readme = 'README.md'
+homepage = 'https://github.com/robertwayne/dpymenus'
+repository = 'https://github.com/robertwayne/dpymenus'
+keywords = ['discord.py', 'discord bot', 'menus', 'reaction buttons']
+classifiers= [
+    'Operating System :: OS Independent',
+    'Typing :: Typed',
+    'Topic :: Communications :: Chat',
+    'Intended Audience :: Developers',
+    'Development Status :: 5 - Production/Stable',
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+"discord.py" = "^1.5.1"
+emoji = "^0.6.0"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.790"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

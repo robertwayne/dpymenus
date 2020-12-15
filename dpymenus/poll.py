@@ -7,7 +7,8 @@ from discord import RawReactionActionEvent, User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu
-from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError
+from dpymenus.exceptions import (ButtonsError, EventError, PagesError,
+                                 SessionError)
 
 
 class Poll(ButtonMenu):

@@ -3,7 +3,8 @@ import logging
 from typing import Dict, List, Optional, TypeVar
 
 import emoji
-from discord import Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction
+from discord import (Embed, Emoji, Message, PartialEmoji,
+                     RawReactionActionEvent, Reaction)
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -144,7 +145,10 @@ class PaginatedMenu(ButtonMenu):
             self.output = await self.destination.fetch_message(self.output.id)
 
             while self.active:
-                tasks = [asyncio.create_task(self._get_reaction_add()), asyncio.create_task(self._get_reaction_remove())]
+                tasks = [
+                    asyncio.create_task(self._get_reaction_add()), 
+                    asyncio.create_task(self._get_reaction_remove())
+                    ]
 
                 if not self.prevent_multisessions:
                     tasks.append(asyncio.create_task(self._shortcircuit()))

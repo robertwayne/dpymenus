@@ -1,3 +1,5 @@
+from random import randint
+
 from discord.ext import commands
 
 from dpymenus import Page, ButtonMenu

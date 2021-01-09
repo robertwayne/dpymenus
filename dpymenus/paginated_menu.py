@@ -268,23 +268,7 @@ class PaginatedMenu(ButtonMenu):
             if len(self.buttons_list) != 3 and len(self.buttons_list) != 5:
                 raise ButtonsError(f'Buttons length mismatch. Expected 3 or 5, found {len(self.buttons_list)}')
 
-            for button in self.buttons_list:
-                if isinstance(button, (Emoji, PartialEmoji)):
-                    continue
-
-                if isinstance(button, str):
-                    # split the str and test if the value between ':' is in the bot list
-                    _test = button.split(':')
-                    if len(_test) > 1:
-                        if _test[1] in [e.name for e in self.ctx.bot.emojis]:
-                            continue
-
-                    # check by key; faster than iterating over the list w/ for loop
-                    _test = emoji.UNICODE_EMOJI_ALIAS.get(button, None)
-                    if _test:
-                        continue
-
-                raise ButtonsError(f'Invalid Emoji or unicode string: {button}')
+            self._check_buttons(self.buttons_list)
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""

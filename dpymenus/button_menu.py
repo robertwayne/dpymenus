@@ -31,7 +31,7 @@ class ButtonMenu(BaseMenu):
         return getattr(self, '_data', {})
 
     def set_data(self, data: Dict) -> 'ButtonMenu':
-        """Sets a dictionary up for persistant state data. Returns itself for fluent-style chaining."""
+        """Sets a dictionary up for persistent state data. Returns itself for fluent-style chaining."""
         self._data = data
 
         return self

@@ -91,8 +91,8 @@ class PaginatedMenu(ButtonMenu):
         return getattr(self, '_buttons_list', [])
 
     def buttons(self, buttons: List[Button]) -> 'PaginatedMenu':
-        """Replaces the default butttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
-        0 and 5 are only shown if `enable_skip_buttons` is set, otherwisee 2, 3, and 4 will be shown. You can pass in
+        """Replaces the default buttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
+        0 and 5 are only shown if `enable_skip_buttons` is set, otherwise 2, 3, and 4 will be shown. You can pass in
         `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
          will be filled in as the defaults for you. If you enable the skip buttons without having values set, it will
          use those defaults."""
@@ -186,7 +186,7 @@ class PaginatedMenu(ButtonMenu):
         return await self.output.edit(embed=embed)
 
     def add_pages(self, pages: List[PageType]) -> 'PaginatedMenu':
-        """Helper method to convert embeds into Pagees and add them to a menu."""
+        """Helper method to convert embeds into Pages and add them to a menu."""
         for i, page in enumerate(pages):
             if isinstance(page, dict):
                 page = Page.from_dict(page)

@@ -166,7 +166,7 @@ class BaseMenu(abc.ABC):
 
         if isinstance(self.output.channel, GuildChannel):
             return await self.output.edit(embed=safe_embed)
-            
+
         else:
             await self.output.delete()
 
@@ -260,9 +260,9 @@ class BaseMenu(abc.ABC):
                 and self.output.channel == m.channel)
 
     def _validate_pages(self):
-        """Checks that the Menu contains at least two pages."""
-        if len(self.pages) <= 1:
-            raise PagesError(f'There must be more than one page in a menu. Expected at least 2, found {len(self.pages)}.')
+        """Checks that the Menu contains at least one pages."""
+        if len(self.pages) == 0:
+            raise PagesError(f'There must be at least one page in a menu. Expected at least 1, found {len(self.pages)}.')
 
     def _start_session(self):
         """Starts a new user session in the sessions storage. Raises a SessionError if the key already exists."""

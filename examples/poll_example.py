@@ -1,5 +1,3 @@
-# Visit https://dpymenus.com for detailed tutorials on getting started.
-
 from discord.ext import commands
 
 from dpymenus import Page, Poll

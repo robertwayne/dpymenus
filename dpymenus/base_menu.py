@@ -9,7 +9,7 @@ from discord.ext.commands import Context
 from dpymenus import Page, sessions
 from dpymenus.exceptions import PagesError, SessionError
 
-PageType = TypeVar('PageType', Embed, Page, Dict)
+PageType = TypeVar("PageType", Embed, Page, Dict)
 
 
 class BaseMenu(abc.ABC):
@@ -41,9 +41,9 @@ class BaseMenu(abc.ABC):
 
     @property
     def timeout(self) -> int:
-        return getattr(self, '_timeout', 300)
+        return getattr(self, "_timeout", 300)
 
-    def set_timeout(self, timeout: int) -> 'BaseMenu':
+    def set_timeout(self, timeout: int) -> "BaseMenu":
         """Sets the timeout duration (in seconds) for the menu. Returns itself for fluent-style chaining."""
         self._timeout = timeout
 
@@ -51,9 +51,9 @@ class BaseMenu(abc.ABC):
 
     @property
     def destination(self) -> Union[Context, User, TextChannel]:
-        return getattr(self, '_destination', self.ctx)
+        return getattr(self, "_destination", self.ctx)
 
-    def set_destination(self, dest: Union[User, TextChannel]) -> 'BaseMenu':
+    def set_destination(self, dest: Union[User, TextChannel]) -> "BaseMenu":
         """Sets the message destination for the menu. Returns itself for fluent-style chaining."""
         self._destination = dest
 
@@ -61,9 +61,9 @@ class BaseMenu(abc.ABC):
 
     @property
     def command_message(self) -> bool:
-        return getattr(self, '_command_message', False)
+        return getattr(self, "_command_message", False)
 
-    def show_command_message(self) -> 'BaseMenu':
+    def show_command_message(self) -> "BaseMenu":
         """Persists user command invocation messages in the chat instead of deleting them after execution."""
         self._command_message = True
 
@@ -71,9 +71,9 @@ class BaseMenu(abc.ABC):
 
     @property
     def persist(self) -> bool:
-        return getattr(self, '_persist', False)
+        return getattr(self, "_persist", False)
 
-    def persist_on_close(self) -> 'BaseMenu':
+    def persist_on_close(self) -> "BaseMenu":
         """Prevents message cleanup from running when a menu closes."""
         self._persist = True
 
@@ -135,7 +135,7 @@ class BaseMenu(abc.ABC):
         """Returns the last visited pages index."""
         return self.history[-2] if len(self.history) > 1 else 0
 
-    def add_pages(self, pages: List[PageType]) -> 'BaseMenu':
+    def add_pages(self, pages: List[PageType]) -> "BaseMenu":
         """Adds a list of pages to a menu, setting their index based on the position in the list."""
         self._validate_pages(pages)
 
@@ -187,7 +187,7 @@ class BaseMenu(abc.ABC):
 
     async def _post_next(self):
         """Sends a message after the `next` method is called. Closes the session if there is no callback on the next page."""
-        if self.__class__.__name__ != 'PaginatedMenu':
+        if self.__class__.__name__ != "PaginatedMenu":
             if self.page.on_next_event is None:
                 await self.close_session()
                 self.active = False
@@ -229,7 +229,7 @@ class BaseMenu(abc.ABC):
         if self.page.on_timeout_event:
             return await self.page.on_timeout_event()
 
-        embed = Embed(title='Timed Out', description='You timed out at menu selection.')
+        embed = Embed(title="Timed Out", description="You timed out at menu selection.")
         await self.send_message(embed)
 
         await self.close_session()
@@ -238,7 +238,9 @@ class BaseMenu(abc.ABC):
     async def _get_input(self) -> Message:
         """Collects user input and places it into the input attribute."""
         try:
-            message = await self.ctx.bot.wait_for('message', timeout=self.timeout, check=self._check_message)
+            message = await self.ctx.bot.wait_for(
+                "message", timeout=self.timeout, check=self._check_message
+            )
 
         except asyncio.TimeoutError:
             if self.page.on_timeout_event:
@@ -252,19 +254,22 @@ class BaseMenu(abc.ABC):
 
     def _check_message(self, m: Message) -> bool:
         """Returns true if the author is the person who responded and the channel is the same."""
-        return (m.author == self.ctx.author
-                and self.output.channel == m.channel)
+        return m.author == self.ctx.author and self.output.channel == m.channel
 
     @staticmethod
     def _validate_pages(pages):
         """Checks that the Menu contains at least one pages."""
         if len(pages) == 0:
-            raise PagesError(f'There must be at least one page in a menu. Expected at least 1, found {len(pages)}.')
+            raise PagesError(
+                f"There must be at least one page in a menu. Expected at least 1, found {len(pages)}."
+            )
 
     def _start_session(self):
         """Starts a new user session in the sessions storage. Raises a SessionError if the key already exists."""
         if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
-            raise SessionError(f'Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}].')
+            raise SessionError(
+                f"Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}]."
+            )
         else:
             sessions.update({(self.ctx.author.id, self.ctx.channel.id): self})
             return True

@@ -10,7 +10,7 @@ from discord.ext.commands import Context
 from dpymenus import BaseMenu
 from dpymenus.exceptions import ButtonsError, EventError, SessionError
 
-Button = TypeVar('Button', Emoji, PartialEmoji, str)
+Button = TypeVar("Button", Emoji, PartialEmoji, str)
 
 
 class ButtonMenu(BaseMenu):
@@ -24,13 +24,13 @@ class ButtonMenu(BaseMenu):
         super().__init__(ctx)
 
     def __repr__(self):
-        return f'ButtonMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, data={self.data})'
+        return f"ButtonMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, data={self.data})"
 
     @property
     def data(self) -> Dict:
-        return getattr(self, '_data', {})
+        return getattr(self, "_data", {})
 
-    def set_data(self, data: Dict) -> 'ButtonMenu':
+    def set_data(self, data: Dict) -> "ButtonMenu":
         """Sets a dictionary up for persistent state data. Returns itself for fluent-style chaining."""
         self._data = data
 
@@ -86,7 +86,9 @@ class ButtonMenu(BaseMenu):
     async def _get_reaction_add(self) -> Optional[Button]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         try:
-            reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction)
+            reaction_event = await self.ctx.bot.wait_for(
+                "raw_reaction_add", check=self._check_reaction
+            )
 
         except asyncio.TimeoutError:
             await self._execute_timeout()
@@ -99,7 +101,7 @@ class ButtonMenu(BaseMenu):
 
                 elif isinstance(btn, str):
                     # split the str and test if the value between ':' is the same as the PartialEmoji name
-                    _test = btn.split(':')
+                    _test = btn.split(":")
                     if len(_test) > 1:
                         if _test[1] == reaction_event.emoji.name:
                             return btn
@@ -119,12 +121,23 @@ class ButtonMenu(BaseMenu):
     def _check_reaction(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the pages buttons."""
         # cursed code, not sure how else to cover all cases though; watch for performance issues
-        return (event.user_id == self.ctx.author.id
-                and event.message_id == self.output.id
-                and any(event.emoji.name == btn
-                        for btn in [(reaction.emoji.name if isinstance(reaction.emoji, Emoji) else reaction.emoji)
-                                    if isinstance(reaction, Reaction) else reaction
-                                    for reaction in self.output.reactions]))
+        return (
+            event.user_id == self.ctx.author.id
+            and event.message_id == self.output.id
+            and any(
+                event.emoji.name == btn
+                for btn in [
+                    (
+                        reaction.emoji.name
+                        if isinstance(reaction.emoji, Emoji)
+                        else reaction.emoji
+                    )
+                    if isinstance(reaction, Reaction)
+                    else reaction
+                    for reaction in self.output.reactions
+                ]
+            )
+        )
 
     def _validate_buttons(self):
         """Ensures that a menu was passed the appropriate amount of buttons."""
@@ -137,19 +150,25 @@ class ButtonMenu(BaseMenu):
                 _cb_count += 1
 
             if len(page.buttons_list) < 1:
-                raise ButtonsError('Any page with an `on_next` event capture must have at least one button.\n'
-                                   f'{page} {page.title} only has {len(page.buttons_list)} buttons.')
+                raise ButtonsError(
+                    "Any page with an `on_next` event capture must have at least one button.\n"
+                    f"{page} {page.title} only has {len(page.buttons_list)} buttons."
+                )
 
             if len(page.buttons_list) > 5:
-                logging.warning('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
+                logging.warning(
+                    "Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client."
+                )
 
             self._check_buttons(page.buttons_list)
 
         if self.page.on_fail_event:
-            raise EventError('A ButtonMenu can not capture an `on_fail` event.')
+            raise EventError("A ButtonMenu can not capture an `on_fail` event.")
 
         if _cb_count < len(self.pages) - 1:
-            raise EventError(f'ButtonMenu missing `on_next` captures. Expected {len(self.pages) - 1}, found {_cb_count}.')
+            raise EventError(
+                f"ButtonMenu missing `on_next` captures. Expected {len(self.pages) - 1}, found {_cb_count}."
+            )
 
     def _check_buttons(self, buttons_list):
         for button in buttons_list:
@@ -158,7 +177,7 @@ class ButtonMenu(BaseMenu):
 
             if isinstance(button, str):
                 # split the str and test if the value between ':' is in the bot list
-                _test = button.split(':')
+                _test = button.split(":")
                 if len(_test) > 1:
                     if _test[1] in [e.name for e in self.ctx.bot.emojis]:
                         continue
@@ -168,4 +187,4 @@ class ButtonMenu(BaseMenu):
                 if _test:
                     continue
 
-            raise ButtonsError(f'Invalid Emoji or unicode string: {button}')
+            raise ButtonsError(f"Invalid Emoji or unicode string: {button}")

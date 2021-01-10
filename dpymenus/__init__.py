@@ -4,7 +4,7 @@ import logging
 sessions: Dict[Tuple[int, int], Any]
 sessions = dict()
 
-logger = logging.getLogger('dpymenus')
+logger = logging.getLogger("dpymenus")
 logger.addHandler(logging.NullHandler())
 
 from dpymenus.page import Page

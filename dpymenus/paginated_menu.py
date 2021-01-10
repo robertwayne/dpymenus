@@ -2,9 +2,7 @@ import asyncio
 import logging
 from typing import Dict, List, Optional, TypeVar
 
-import emoji
-from discord import (Embed, Emoji, Message, PartialEmoji,
-                     RawReactionActionEvent, Reaction)
+from discord import (Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction, )
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -12,8 +10,8 @@ from dpymenus import ButtonMenu, Page, sessions
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
 
-Button = TypeVar('Button', Emoji, PartialEmoji, str)
-PageType = TypeVar('PageType', Embed, Page, Dict)
+Button = TypeVar("Button", Emoji, PartialEmoji, str)
+PageType = TypeVar("PageType", Embed, Page, Dict)
 
 
 class PaginatedMenu(ButtonMenu):
@@ -27,15 +25,17 @@ class PaginatedMenu(ButtonMenu):
         super().__init__(ctx)
 
     def __repr__(self):
-        return f'PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, ' \
-               f'skip_buttons={self.skip_buttons} page_numbers={self.page_numbers}, cancel_page={self.cancel_page}, ' \
-               f'timeout_page={self.timeout_page})'
+        return (
+            f"PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, "
+            f"skip_buttons={self.skip_buttons} page_numbers={self.page_numbers}, cancel_page={self.cancel_page}, "
+            f"timeout_page={self.timeout_page})"
+        )
 
     @property
     def cancel_page(self) -> Optional[Embed]:
-        return getattr(self, '_cancel_page', None)
+        return getattr(self, "_cancel_page", None)
 
-    def set_cancel_page(self, embed: Embed) -> 'PaginatedMenu':
+    def set_cancel_page(self, embed: Embed) -> "PaginatedMenu":
         """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
         self._cancel_page = embed
 
@@ -43,9 +43,9 @@ class PaginatedMenu(ButtonMenu):
 
     @property
     def timeout_page(self) -> Optional[Embed]:
-        return getattr(self, '_timeout_page', None)
+        return getattr(self, "_timeout_page", None)
 
-    def set_timeout_page(self, embed: Embed) -> 'PaginatedMenu':
+    def set_timeout_page(self, embed: Embed) -> "PaginatedMenu":
         """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
         self._timeout_page = embed
 
@@ -53,24 +53,24 @@ class PaginatedMenu(ButtonMenu):
 
     @property
     def page_numbers(self) -> bool:
-        return getattr(self, '_page_numbers', False)
+        return getattr(self, "_page_numbers", False)
 
-    def show_page_numbers(self) -> 'PaginatedMenu':
+    def show_page_numbers(self) -> "PaginatedMenu":
         """Adds page numbers to each embeds by overwriting the footer. Returns itself for fluent-style chaining."""
         self._page_numbers = True
 
         # check if pages were set prior to calling this method; if so, we reset footers
         if self.pages:
             for i, page in enumerate(self.pages):
-                page.set_footer(text=f'{i + 1}/{len(self.pages)}')
+                page.set_footer(text=f"{i + 1}/{len(self.pages)}")
 
         return self
 
     @property
     def skip_buttons(self) -> bool:
-        return getattr(self, '_skip_buttons', False)
+        return getattr(self, "_skip_buttons", False)
 
-    def show_skip_buttons(self) -> 'PaginatedMenu':
+    def show_skip_buttons(self) -> "PaginatedMenu":
         """Adds two extra buttons for jumping to the first and last page. Returns itself for fluent-style chaining."""
         self._skip_buttons = True
 
@@ -78,9 +78,9 @@ class PaginatedMenu(ButtonMenu):
 
     @property
     def cancel_button(self) -> bool:
-        return getattr(self, '_cancel_button', True)
+        return getattr(self, "_cancel_button", True)
 
-    def hide_cancel_button(self) -> 'PaginatedMenu':
+    def hide_cancel_button(self) -> "PaginatedMenu":
         """Sets whether to show the cancel button or not. Returns itself for fluent-style chaining."""
         self._cancel_button = False
 
@@ -88,9 +88,9 @@ class PaginatedMenu(ButtonMenu):
 
     @property
     def buttons_list(self) -> List:
-        return getattr(self, '_buttons_list', [])
+        return getattr(self, "_buttons_list", [])
 
-    def buttons(self, buttons: List[Button]) -> 'PaginatedMenu':
+    def buttons(self, buttons: List[Button]) -> "PaginatedMenu":
         """Replaces the default buttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
         0 and 5 are only shown if `enable_skip_buttons` is set, otherwise 2, 3, and 4 will be shown. You can pass in
         `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
@@ -106,7 +106,7 @@ class PaginatedMenu(ButtonMenu):
 
     @property
     def prevent_multisessions(self) -> bool:
-        return getattr(self, '_prevent_multisessions', True)
+        return getattr(self, "_prevent_multisessions", True)
 
     def allow_multisession(self):
         """Sets whether or not a user can open a new menu when one is already open. This will close the old menu.
@@ -120,7 +120,9 @@ class PaginatedMenu(ButtonMenu):
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         if not self.prevent_multisessions:
             if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
-                session: 'PaginatedMenu' = sessions.get((self.ctx.author.id, self.ctx.channel.id))
+                session: "PaginatedMenu" = sessions.get(
+                    (self.ctx.author.id, self.ctx.channel.id)
+                )
                 await session._cleanup_reactions()
                 await session.close_session()
 
@@ -147,13 +149,15 @@ class PaginatedMenu(ButtonMenu):
             while self.active:
                 tasks = [
                     asyncio.create_task(self._get_reaction_add()),
-                    asyncio.create_task(self._get_reaction_remove())
-                    ]
+                    asyncio.create_task(self._get_reaction_remove()),
+                ]
 
                 if not self.prevent_multisessions:
                     tasks.append(asyncio.create_task(self._shortcircuit()))
 
-                done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout)
+                done, pending = await asyncio.wait(
+                    tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout
+                )
 
                 # if all tasks are still pending, we force a timeout by manually calling cleanup methods
                 if len(pending) == len(tasks):
@@ -188,7 +192,7 @@ class PaginatedMenu(ButtonMenu):
         """
         return await self.output.edit(embed=embed)
 
-    def add_pages(self, pages: List[PageType]) -> 'PaginatedMenu':
+    def add_pages(self, pages: List[PageType]) -> "PaginatedMenu":
         """Helper method to convert embeds into Pages and add them to a menu."""
         self._validate_pages(pages)
 
@@ -201,7 +205,7 @@ class PaginatedMenu(ButtonMenu):
                 page = Page.from_dict(page.to_dict())
 
             if self.page_numbers:
-                page.set_footer(text=f'{i + 1}/{len(pages)}')
+                page.set_footer(text=f"{i + 1}/{len(pages)}")
 
             page.index = i
             self.pages.append(page)
@@ -213,7 +217,7 @@ class PaginatedMenu(ButtonMenu):
     # Internal Methods
     async def _execute_cancel(self):
         """Sends a cancellation message. Deletes the menu message if no page was set."""
-        cancel_page = getattr(self, 'cancel_page', None)
+        cancel_page = getattr(self, "cancel_page", None)
 
         if cancel_page:
             await self.output.edit(embed=cancel_page)
@@ -231,7 +235,7 @@ class PaginatedMenu(ButtonMenu):
         except KeyError:
             return
 
-        timeout_page = getattr(self, 'timeout_page')
+        timeout_page = getattr(self, "timeout_page")
 
         if timeout_page:
             await self.output.edit(embed=timeout_page)
@@ -252,26 +256,40 @@ class PaginatedMenu(ButtonMenu):
 
     async def _get_reaction_add(self) -> Button:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
-        reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=self._check_reaction if self.buttons_list != GENERIC_BUTTONS else self._check_reaction_defaults)
+        reaction_event = await self.ctx.bot.wait_for(
+            "raw_reaction_add",
+            check=self._check_reaction
+            if self.buttons_list != GENERIC_BUTTONS
+            else self._check_reaction_defaults,
+        )
 
         return reaction_event.emoji
 
     async def _get_reaction_remove(self) -> Button:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
-        reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', check=self._check_reaction if self.buttons_list != GENERIC_BUTTONS else self._check_reaction_defaults)
+        reaction_event = await self.ctx.bot.wait_for(
+            "raw_reaction_remove",
+            check=self._check_reaction
+            if self.buttons_list != GENERIC_BUTTONS
+            else self._check_reaction_defaults,
+        )
 
         return reaction_event.emoji
 
     def _check_reaction_defaults(self, event: RawReactionActionEvent) -> bool:
         """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
-        return (event.user_id == self.ctx.author.id
-                and event.message_id == self.output.id
-                and any(event.emoji.name == btn for btn in self.buttons_list))
+        return (
+            event.user_id == self.ctx.author.id
+            and event.message_id == self.output.id
+            and any(event.emoji.name == btn for btn in self.buttons_list)
+        )
 
     def _validate_buttons(self):
         if self.buttons_list != GENERIC_BUTTONS:
             if len(self.buttons_list) != 3 and len(self.buttons_list) != 5:
-                raise ButtonsError(f'Buttons length mismatch. Expected 3 or 5, found {len(self.buttons_list)}')
+                raise ButtonsError(
+                    f"Buttons length mismatch. Expected 3 or 5, found {len(self.buttons_list)}"
+                )
 
             self._check_buttons(self.buttons_list)
 
@@ -296,7 +314,13 @@ class PaginatedMenu(ButtonMenu):
 
     async def _handle_transition(self):
         """Dictionary mapping of reactions to methods to be called when handling user input on a button."""
-        transitions = [self.to_first, self.previous, self.close, self.next, self.to_last]
+        transitions = [
+            self.to_first,
+            self.previous,
+            self.close,
+            self.next,
+            self.to_last,
+        ]
 
         if not self.cancel_button:
             transitions.remove(self.close)
@@ -305,9 +329,12 @@ class PaginatedMenu(ButtonMenu):
             transitions.remove(self.to_first)
             transitions.remove(self.to_last)
 
-        # cursed code, not sure how else to cover all cases though; watch for performance issues
-        transition_map = {(button.emoji.name if isinstance(button.emoji, Emoji) else button.emoji)
-                          if isinstance(button, Reaction) else button: transition
-                          for button, transition in zip(self.output.reactions, transitions)}
+        # cursed code
+        transition_map = {
+            (button.emoji.name if isinstance(button.emoji, Emoji) else button.emoji)
+            if isinstance(button, Reaction)
+            else button: transition
+            for button, transition in zip(self.output.reactions, transitions)
+        }
 
         await transition_map[self.input.name]()

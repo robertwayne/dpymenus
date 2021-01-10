@@ -3,9 +3,9 @@ from discord.ext import commands
 
 from dpymenus import ButtonMenu, Page
 
-forward = '⏩'
-reverse = '⏪'
-stop = '⏹️'
+forward = "⏩"
+reverse = "⏪"
+stop = "⏹️"
 
 
 class MyButtonMenu(commands.Cog):
@@ -14,16 +14,18 @@ class MyButtonMenu(commands.Cog):
 
     @commands.command()
     async def buttons(self, ctx):
-        page1 = Page(title='Button Menu', description='Follow the arrows!')
-        page1.add_field(name='Example A', value='Example B')
+        page1 = Page(title="Button Menu", description="Follow the arrows!")
+        page1.add_field(name="Example A", value="Example B")
         page1.buttons([forward, stop]).on_next(self.first)
 
-        page2 = Page(title='Button Menu', description='So many buttons! What do they do?')
-        page2.add_field(name='Example C', value='Example D')
+        page2 = Page(
+            title="Button Menu", description="So many buttons! What do they do?"
+        )
+        page2.add_field(name="Example C", value="Example D")
         page2.buttons([reverse, stop, forward]).on_next(self.second)
 
-        page3 = Embed(title='Button Menu', description='We reached the end!')
-        page3.add_field(name='Example E', value='Example F')
+        page3 = Embed(title="Button Menu", description="We reached the end!")
+        page3.add_field(name="Example E", value="Example F")
 
         menu = ButtonMenu(ctx).add_pages([page1, page2, page3])
         await menu.open()
@@ -39,7 +41,7 @@ class MyButtonMenu(commands.Cog):
     @staticmethod
     async def second(menu):
         if menu.button_pressed(reverse):
-            await menu.go_to('first')
+            await menu.go_to("first")
 
         elif menu.button_pressed(forward):
             await menu.next()

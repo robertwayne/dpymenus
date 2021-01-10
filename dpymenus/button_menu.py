@@ -41,7 +41,7 @@ class ButtonMenu(BaseMenu):
         return button == self.input
 
     async def open(self):
-        """The entry point to a new TextMenu instance; starts the main menu loop.
+        """The entry point to a new ButtonMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         try:
             self._validate_buttons()

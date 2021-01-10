@@ -115,7 +115,7 @@ class PaginatedMenu(ButtonMenu):
         return self
 
     async def open(self):
-        """The entry point to a new TextMenu instance; starts the main menu loop.
+        """The entry point to a new PaginatedMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         if not self.prevent_multisessions:
             if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():

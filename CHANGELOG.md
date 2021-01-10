@@ -5,14 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.3.0] - 2021-01-08
+## [1.3.0] - 2021-01-09
 
 ### Changed
 - Menus now only require a single page to successfully build. *The original reasoning behind having this restriction was 
   based on the fact that a menu is generally going to consist of many pages. However, there have bene several use-cases
   such as reloadable pages and dynamically generated menus, that may result in just a single page.*
 - Fixed `reloadable_data_example.py` having a missing import.
-- Updated `reloadable_data_examplee.py` to reflect the page validation change and remove the workaround requiring
+- Updated `reloadable_data_example.py` to reflect the page validation change and remove the workaround requiring
 an empty blank page.
 - Updated dependency on `discord.py` to `1.6`.
 

@@ -186,6 +186,8 @@ class PaginatedMenu(ButtonMenu):
 
     def add_pages(self, pages: List[PageType]) -> 'PaginatedMenu':
         """Helper method to convert embeds into Pages and add them to a menu."""
+        self._validate_pages(pages)
+
         for i, page in enumerate(pages):
             if isinstance(page, dict):
                 page = Page.from_dict(page)

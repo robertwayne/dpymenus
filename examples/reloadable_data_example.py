@@ -32,11 +32,8 @@ class MyButtonMenu(commands.Cog):
         page1.on_next(update_data)
         page1.buttons([reload, close])
 
-        # workaround: we add an empty page since a menu requires 2+ pages
-        quit_page = Page()
-
         menu = ButtonMenu(ctx)
-        menu.add_pages([page1, quit_page])
+        menu.add_pages([page1])
         await menu.open()
 
 

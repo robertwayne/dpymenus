@@ -204,6 +204,7 @@ class PaginatedMenu(ButtonMenu):
 
         return self
 
+    # Internal Methods
     async def _execute_cancel(self):
         """Sends a cancellation message. Deletes the menu message if no page was set."""
         cancel_page = getattr(self, 'cancel_page', None)
@@ -216,7 +217,6 @@ class PaginatedMenu(ButtonMenu):
 
         await self.close_session()
 
-    # Internal Methods
     async def _execute_timeout(self):
         """Sends a timeout message. Deletes the menu message if no page was set."""
         try:

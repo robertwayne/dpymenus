@@ -2,7 +2,6 @@ import asyncio
 import logging
 from typing import Dict, List, Optional, TypeVar
 
-import emoji
 from discord import Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
@@ -91,8 +90,8 @@ class PaginatedMenu(ButtonMenu):
         return getattr(self, '_buttons_list', [])
 
     def buttons(self, buttons: List[Button]) -> 'PaginatedMenu':
-        """Replaces the default butttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
-        0 and 5 are only shown if `enable_skip_buttons` is set, otherwisee 2, 3, and 4 will be shown. You can pass in
+        """Replaces the default buttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
+        0 and 5 are only shown if `enable_skip_buttons` is set, otherwise 2, 3, and 4 will be shown. You can pass in
         `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
          will be filled in as the defaults for you. If you enable the skip buttons without having values set, it will
          use those defaults."""
@@ -116,7 +115,7 @@ class PaginatedMenu(ButtonMenu):
         return self
 
     async def open(self):
-        """The entry point to a new TextMenu instance; starts the main menu loop.
+        """The entry point to a new PaginatedMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         if not self.prevent_multisessions:
             if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
@@ -186,7 +185,9 @@ class PaginatedMenu(ButtonMenu):
         return await self.output.edit(embed=embed)
 
     def add_pages(self, pages: List[PageType]) -> 'PaginatedMenu':
-        """Helper method to convert embeds into Pagees and add them to a menu."""
+        """Helper method to convert embeds into Pages and add them to a menu."""
+        self._validate_pages(pages)
+
         for i, page in enumerate(pages):
             if isinstance(page, dict):
                 page = Page.from_dict(page)
@@ -205,6 +206,7 @@ class PaginatedMenu(ButtonMenu):
 
         return self
 
+    # Internal Methods
     async def _execute_cancel(self):
         """Sends a cancellation message. Deletes the menu message if no page was set."""
         cancel_page = getattr(self, 'cancel_page', None)
@@ -217,7 +219,6 @@ class PaginatedMenu(ButtonMenu):
 
         await self.close_session()
 
-    # Internal Methods
     async def _execute_timeout(self):
         """Sends a timeout message. Deletes the menu message if no page was set."""
         try:
@@ -268,23 +269,7 @@ class PaginatedMenu(ButtonMenu):
             if len(self.buttons_list) != 3 and len(self.buttons_list) != 5:
                 raise ButtonsError(f'Buttons length mismatch. Expected 3 or 5, found {len(self.buttons_list)}')
 
-            for button in self.buttons_list:
-                if isinstance(button, (Emoji, PartialEmoji)):
-                    continue
-
-                if isinstance(button, str):
-                    # split the str and test if the value between ':' is in the bot list
-                    _test = button.split(':')
-                    if len(_test) > 1:
-                        if _test[1] in [e.name for e in self.ctx.bot.emojis]:
-                            continue
-
-                    # check by key; faster than iterating over the list w/ for loop
-                    _test = emoji.UNICODE_EMOJI_ALIAS.get(button, None)
-                    if _test:
-                        continue
-
-                raise ButtonsError(f'Invalid Emoji or unicode string: {button}')
+            self._check_buttons(self.buttons_list)
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""

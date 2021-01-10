@@ -27,7 +27,7 @@ class TextMenu(BaseMenu):
         return getattr(self, '_delay', 0.250)
 
     def set_delay(self, delay: float) -> 'TextMenu':
-        """Sets the delay on when a users message will be deleted in guild channeels. Returns itself for fluent-style chaining."""
+        """Sets the delay on when a users message will be deleted in guild channels. Returns itself for fluent-style chaining."""
         self._delay = delay
 
         return self
@@ -37,7 +37,7 @@ class TextMenu(BaseMenu):
         return getattr(self, '_data', {})
 
     def set_data(self, data: Dict) -> 'TextMenu':
-        """Sets a dictionary up for persistant state data. Returns itself for fluent-style chaining."""
+        """Sets a dictionary up for persistent state data. Returns itself for fluent-style chaining."""
         self._data = data
 
         return self

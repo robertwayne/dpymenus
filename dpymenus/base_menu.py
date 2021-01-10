@@ -43,7 +43,7 @@ class BaseMenu(abc.ABC):
 
     @abc.abstractmethod
     async def open(self):
-        """The entry point to a new TextMenu instance; starts the main menu loop.
+        """The entry point to a new Menu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         pass
 
@@ -144,7 +144,9 @@ class BaseMenu(abc.ABC):
         return self.history[-2] if len(self.history) > 1 else 0
 
     def add_pages(self, pages: List[PageType]) -> 'BaseMenu':
-        """Adds a list of pages to a menu, setting their index based on the position in the list.."""
+        """Adds a list of pages to a menu, setting their index based on the position in the list."""
+        self._validate_pages(pages)
+
         for i, page in enumerate(pages):
             if type(page) == Embed:
                 page = Page.from_dict(page.to_dict())
@@ -166,7 +168,7 @@ class BaseMenu(abc.ABC):
 
         if isinstance(self.output.channel, GuildChannel):
             return await self.output.edit(embed=safe_embed)
-            
+
         else:
             await self.output.delete()
 
@@ -180,7 +182,9 @@ class BaseMenu(abc.ABC):
 
     # Internal Methods
     async def _open(self):
-        self._validate_pages()
+        if not self.pages:
+            return
+
         self._start_session()
 
         self.output = await self.destination.send(embed=self.page.as_safe_embed())
@@ -259,10 +263,11 @@ class BaseMenu(abc.ABC):
         return (m.author == self.ctx.author
                 and self.output.channel == m.channel)
 
-    def _validate_pages(self):
-        """Checks that the Menu contains at least two pages."""
-        if len(self.pages) <= 1:
-            raise PagesError(f'There must be more than one page in a menu. Expected at least 2, found {len(self.pages)}.')
+    @staticmethod
+    def _validate_pages(pages):
+        """Checks that the Menu contains at least one pages."""
+        if len(pages) == 0:
+            raise PagesError(f'There must be at least one page in a menu. Expected at least 1, found {len(pages)}.')
 
     def _start_session(self):
         """Starts a new user session in the sessions storage. Raises a SessionError if the key already exists."""

@@ -5,7 +5,7 @@ with open('README.md', 'r') as file:
 
 setuptools.setup(
         name='dpymenus',
-        version='1.2.3',
+        version='1.3.0',
         author='Rob Wagner',
         author_email='rob.wagner@outlook.com',
         license='MIT',
@@ -27,7 +27,7 @@ setuptools.setup(
         ],
         python_requires='>=3.7',
         install_requires=[
-            'discord.py>=1.5',
+            'discord.py>=1.6.0',
             'emoji==0.6.0'
         ]
 )

@@ -182,6 +182,9 @@ class BaseMenu(abc.ABC):
 
     # Internal Methods
     async def _open(self):
+        if not self.pages:
+            return
+
         self._start_session()
 
         self.output = await self.destination.send(embed=self.page.as_safe_embed())

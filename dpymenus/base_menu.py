@@ -144,7 +144,7 @@ class BaseMenu(abc.ABC):
         return self.history[-2] if len(self.history) > 1 else 0
 
     def add_pages(self, pages: List[PageType]) -> 'BaseMenu':
-        """Adds a list of pages to a menu, setting their index based on the position in the list.."""
+        """Adds a list of pages to a menu, setting their index based on the position in the list."""
         for i, page in enumerate(pages):
             if type(page) == Embed:
                 page = Page.from_dict(page.to_dict())

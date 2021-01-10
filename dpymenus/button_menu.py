@@ -31,7 +31,7 @@ class ButtonMenu(BaseMenu):
         return getattr(self, '_data', {})
 
     def set_data(self, data: Dict) -> 'ButtonMenu':
-        """Sets a dictionary up for persistant state data. Returns itself for fluent-style chaining."""
+        """Sets a dictionary up for persistent state data. Returns itself for fluent-style chaining."""
         self._data = data
 
         return self
@@ -143,26 +143,29 @@ class ButtonMenu(BaseMenu):
             if len(page.buttons_list) > 5:
                 logging.warning('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
 
-            for button in page.buttons_list:
-                if isinstance(button, (Emoji, PartialEmoji)):
-                    continue
-
-                if isinstance(button, str):
-                    # split the str and test if the value between ':' is in the bot list
-                    _test = button.split(':')
-                    if len(_test) > 1:
-                        if _test[1] in [e.name for e in self.ctx.bot.emojis]:
-                            continue
-
-                    # check by key; faster than iterating over the list w/ for loop
-                    _test = emoji.UNICODE_EMOJI_ALIAS.get(button, None)
-                    if _test:
-                        continue
-
-                raise ButtonsError(f'Invalid Emoji or unicode string: {button}')
+            self._check_buttons(page.buttons_list)
 
         if self.page.on_fail_event:
             raise EventError('A ButtonMenu can not capture an `on_fail` event.')
 
         if _cb_count < len(self.pages) - 1:
             raise EventError(f'ButtonMenu missing `on_next` captures. Expected {len(self.pages) - 1}, found {_cb_count}.')
+
+    def _check_buttons(self, buttons_list):
+        for button in buttons_list:
+            if isinstance(button, (Emoji, PartialEmoji)):
+                continue
+
+            if isinstance(button, str):
+                # split the str and test if the value between ':' is in the bot list
+                _test = button.split(':')
+                if len(_test) > 1:
+                    if _test[1] in [e.name for e in self.ctx.bot.emojis]:
+                        continue
+
+                # check by key; faster than iterating over the list w/ for loop
+                _test = emoji.UNICODE_EMOJI_ALIAS.get(button, None)
+                if _test:
+                    continue
+
+            raise ButtonsError(f'Invalid Emoji or unicode string: {button}')

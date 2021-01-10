@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.0] - 2021-01-09
+
+### Changed
+- Menus now only require a single page to successfully build. *The original reasoning behind having this restriction was 
+  based on the fact that a menu is generally going to consist of many pages. However, there have bene several use-cases
+  such as reloadable pages and dynamically generated menus, that may result in just a single page.*
+- Fixed `reloadable_data_example.py` having a missing import.
+- Updated `reloadable_data_example.py` to reflect the page validation change and remove the workaround requiring
+an empty blank page.
+- Updated dependency on `discord.py` to `1.6`.
+
 ## [1.2.3] - 2020-12-10
 
 ### Added
@@ -15,7 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   would raise a NotFound error in DM channels. (#27)
 - Fixed a bug where the reaction check predicates were incorrectly assuming Member-type instead of User-type. This would cause raw reaction
   events to not be read in DM channels. (#27)
-- ButtonMenu types now clean up their output on page transition in DM's.
+- ButtonMenu types now clean up their output on page transition in DMs.
 
 ## [1.2.2] - 2020-10-08
 
@@ -131,13 +142,13 @@ safe handling and display.
 ## [0.3.5] - 2020-08-12
 
 ### Added
-- Menus now accept a `destination` paramater, which takes a User or Channel object.
+- Menus now accept a `destination` parameter, which takes a User or Channel object.
 This will open the menu in that channel as opposed to in the current channel.
 
 ### Changed
 - **Breaking:** Broke the `next` method out into two methods: `next` and `go_to`. `next` no longer
 takes any parameters (previously took `name`) to jump to a different page. `go_to` acts
-the same as the old `next` code, but takes a `name_or_index` parameter to accureately 
+the same as the old `next` code, but takes a `name_or_index` parameter to accurately 
 reflect the change in *0.2.8* where you could jump to indexes as well. The reason behind this
 was to simplify the branching code and user readability.
 - The default cancelled embed now has the title *'Cancelled'* instead of the last pages title.
@@ -145,7 +156,7 @@ was to simplify the branching code and user readability.
 - Rewrote the README; removed the old usage sections for a simplified *'Getting Started'* section. Added in information
 about new features, such as `destinations`.
 - Updated to the latest discord.py version: 1.4.1
-- Simplified some of the examples by removing 'fluff' code.
+- Simplified some examples by removing 'fluff' code.
 
 ## [0.3.4] - 2020-07-25
 
@@ -199,7 +210,7 @@ last pages' name.
 ### Fixed
 - Users can now have multiple menu sessions cross-channel and guild.
 - Fixed a timeout error in a `TextMenu` where it did not break after the
-exception occured..
+exception occurred.
 - Fixed a timeout error in all menus where it attempted to remove null data
 from the session list.
 - Fixed an issue where other menu buttons would call your own menu

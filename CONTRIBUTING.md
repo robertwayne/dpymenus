@@ -3,10 +3,7 @@ I'm open to all input and help! Please open an issue to discuss any changes to t
 bugs, general refactoring, performance changes, documentation updates, new examples, etc.
 
 ## Pull Requests
-1. Fork the repo and create your branch from `master`.
-2. If any API's have been modified, update the README section appropriately.
-3. Code should respect PEP8.
-4. Open your PR!
+Please base your code on the `next` branch.
 
 ## Report bugs using Github's [issues](https://github.com/robertwayne/dpymenus/issues)
 Please include, when you can:
@@ -16,9 +13,9 @@ Please include, when you can:
 - What actually happens
 
 ## Use a Consistent Coding Style
-* Single quotes over double-quotes for strings, except if it would require escaping.
 * Use whitespace to break up dense code (if/else, try/catch).
 * All library code should be type annotated. Examples should not.
+* All code will be formatted by `black` when merged.
 
 ## License
 By contributing, you agree that your contributions will be licensed under the MIT License.

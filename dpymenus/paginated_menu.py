@@ -2,7 +2,14 @@ import asyncio
 import logging
 from typing import Dict, List, Optional, TypeVar
 
-from discord import (Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction, )
+from discord import (
+    Embed,
+    Emoji,
+    Message,
+    PartialEmoji,
+    RawReactionActionEvent,
+    Reaction,
+)
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 

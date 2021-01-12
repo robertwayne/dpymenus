@@ -2,6 +2,8 @@ from typing import Callable, List
 
 from discord import Embed
 
+from dpymenus.template import Template
+
 
 class Page(Embed):
     """Represents a single page inside a menu."""
@@ -90,3 +92,7 @@ class Page(Embed):
         """Returns a page stripped of Callables and Page-specific properties so we can send it as a standard Embed."""
         safe_embed = self.to_dict()
         return Embed.from_dict(safe_embed)
+
+    @staticmethod
+    def apply_template(**kwargs) -> 'Page':
+        return Page(**kwargs)

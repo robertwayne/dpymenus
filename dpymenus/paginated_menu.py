@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Dict, List, Optional, TypeVar
+from typing import Any, Dict, List, Optional, TypeVar
 
 from discord import (
     Embed,
@@ -122,6 +122,16 @@ class PaginatedMenu(ButtonMenu):
 
         return self
 
+    @property
+    def template(self):
+        return getattr(self, '_template', {})
+
+    def set_template(self, template: Dict[str, Any]):
+        """Sets a Menu template which is used to construct pages at a base level. Returns itself for fluent-style chaining."""
+        self._template = template
+
+        return self
+
     async def open(self):
         """The entry point to a new PaginatedMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
@@ -204,6 +214,8 @@ class PaginatedMenu(ButtonMenu):
         self._validate_pages(pages)
 
         for i, page in enumerate(pages):
+            # _Page = Page.apply_template(**self._template)
+
             if isinstance(page, dict):
                 page = Page.from_dict(page)
 
@@ -215,6 +227,10 @@ class PaginatedMenu(ButtonMenu):
                 page.set_footer(text=f"{i + 1}/{len(pages)}")
 
             page.index = i
+
+            # very naive impl -- need to allow overrides // just a test
+            page.apply_template(**self.template)
+
             self.pages.append(page)
 
         self.page = self.pages[0]

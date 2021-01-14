@@ -2,7 +2,14 @@ import asyncio
 import logging
 from typing import Any, Dict, List, Optional, TypeVar
 
-from discord import (Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction, )
+from discord import (
+    Embed,
+    Emoji,
+    Message,
+    PartialEmoji,
+    RawReactionActionEvent,
+    Reaction,
+)
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -117,7 +124,7 @@ class PaginatedMenu(ButtonMenu):
 
     @property
     def template(self):
-        return getattr(self, '_template', {})
+        return getattr(self, "_template", {})
 
     def set_template(self, template: Dict[str, Any]):
         """Sets a Menu template which is used to construct pages at a base level. Returns itself for fluent-style chaining."""

@@ -1,6 +1,6 @@
 import abc
 import asyncio
-from typing import Dict, List, Optional, TypeVar, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, TypeVar, Union
 
 from discord import Embed, Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
@@ -8,6 +8,9 @@ from discord.ext.commands import Context
 
 from dpymenus import Page, sessions
 from dpymenus.exceptions import PagesError, SessionError
+
+if TYPE_CHECKING:
+    from dpymenus.template import Template
 
 PageType = TypeVar("PageType", Embed, Page, Dict)
 
@@ -135,13 +138,16 @@ class BaseMenu(abc.ABC):
         """Returns the last visited pages index."""
         return self.history[-2] if len(self.history) > 1 else 0
 
-    def add_pages(self, pages: List[PageType]) -> "BaseMenu":
+    def add_pages(self, pages: List[PageType], template: "Template") -> "BaseMenu":
         """Adds a list of pages to a menu, setting their index based on the position in the list."""
         self._validate_pages(pages)
 
         for i, page in enumerate(pages):
             if not isinstance(page, Page):
                 page = Page.convert_from(page)
+
+            if template:
+                page.apply_template()
 
             page.index = i
             self.pages.append(page)

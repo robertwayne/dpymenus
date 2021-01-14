@@ -92,7 +92,7 @@ class Page(Embed):
         return Embed.from_dict(safe_embed)
 
     @staticmethod
-    def convert_from(other: Union[Dict[str, Any], Embed]) -> 'Page':
+    def convert_from(other: Union[Dict[str, Any], Embed]) -> "Page":
         """Returns a Page object from an Embed object or valid dictionary."""
         if type(other) == Embed:
             return Page.from_dict(other.to_dict())
@@ -100,5 +100,5 @@ class Page(Embed):
             return Page.from_dict(other)
 
     @staticmethod
-    def apply_template(**kwargs) -> 'Page':
+    def apply_template(**kwargs) -> "Page":
         return Page(**kwargs)

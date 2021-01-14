@@ -9,8 +9,5 @@ class Template:
     def __init__(self, options: Dict[str, Any]):
         self.options = options
 
-    def to_page(self) -> "Page":
-        return Page.convert_from(self.options.get("embed", None))
-
-    def apply(self, page: "Page"):
-        pass
+    def set(self, key: str) -> Any:
+        return self.options.get(key, None)

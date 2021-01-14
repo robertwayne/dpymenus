@@ -1,6 +1,9 @@
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, List, Union, TYPE_CHECKING
 
 from discord import Embed
+
+if TYPE_CHECKING:
+    from dpymenus.template import Template
 
 
 class Page(Embed):
@@ -99,6 +102,15 @@ class Page(Embed):
         else:
             return Page.from_dict(other)
 
-    @staticmethod
-    def apply_template(**kwargs) -> "Page":
-        return Page(**kwargs)
+    def apply_template(self, template: "Template"):
+        for k, v in vars(self.__slots__.__dict__.items()):
+            print(k, v)
+        # if self.title is None:
+        #     self.title = template.set('title')
+        #
+        # if self.color is None:
+        #     self.color = template.set('color')
+
+    # @staticmethod
+    # def apply_template(template: "Template") -> "Page":
+    #     return Page.convert_from(template.options.get('embed', None))

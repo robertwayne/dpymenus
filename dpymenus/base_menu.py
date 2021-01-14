@@ -147,7 +147,8 @@ class BaseMenu(abc.ABC):
                 page = Page.convert_from(page)
 
             if template:
-                page.apply_template()
+                print('applying template')
+                page = page.apply_template(template)
 
             page.index = i
             self.pages.append(page)

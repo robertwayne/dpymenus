@@ -8,6 +8,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
+from dpymenus.config import HIDE_WARNINGS
 from dpymenus.exceptions import ButtonsError, EventError, SessionError
 
 Button = TypeVar("Button", Emoji, PartialEmoji, str)
@@ -155,7 +156,7 @@ class ButtonMenu(BaseMenu):
                     f"{page} {page.title} only has {len(page.buttons_list)} buttons."
                 )
 
-            if len(page.buttons_list) > 5:
+            if len(page.buttons_list) > 5 and HIDE_WARNINGS is False:
                 logging.warning(
                     "Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client."
                 )

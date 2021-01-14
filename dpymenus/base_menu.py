@@ -7,6 +7,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import Page, sessions
+from dpymenus.config import HISTORY_CACHE_LIMIT
 from dpymenus.exceptions import PagesError, SessionError
 
 if TYPE_CHECKING:
@@ -188,7 +189,7 @@ class BaseMenu(abc.ABC):
 
         self.output = await self.destination.send(embed=self.page.as_safe_embed())
         self.input = self.ctx.message
-        self.history.append(self.page.index)
+        self.update_history()
 
         await self._cleanup_input()
 
@@ -199,7 +200,7 @@ class BaseMenu(abc.ABC):
                 await self.close_session()
                 self.active = False
 
-        self.history.append(self.page.index)
+        self.update_history()
         await self.send_message(self.page)
 
     async def _execute_cancel(self):
@@ -241,6 +242,14 @@ class BaseMenu(abc.ABC):
 
         await self.close_session()
         self.active = False
+
+    def update_history(self):
+        """Adds the most recent page index to the menus history cache. If the history is longer than
+        the cache limit, defined globally, then the oldest item is popped before updating the history."""
+        if len(self.history) >= HISTORY_CACHE_LIMIT:
+            self.history.pop(0)
+
+        self.history.append(self.page.index)
 
     async def _get_input(self) -> Message:
         """Collects user input and places it into the input attribute."""

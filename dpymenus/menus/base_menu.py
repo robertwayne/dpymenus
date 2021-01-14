@@ -11,7 +11,7 @@ from dpymenus.config import HISTORY_CACHE_LIMIT
 from dpymenus.exceptions import PagesError, SessionError
 
 if TYPE_CHECKING:
-    from dpymenus.template import Template
+    from dpymenus.pages.template import Template
 
 PageType = TypeVar("PageType", Embed, Page, Dict)
 

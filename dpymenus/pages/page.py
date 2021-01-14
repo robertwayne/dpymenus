@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, List, Union, TYPE_CHECKING
 from discord import Embed
 
 if TYPE_CHECKING:
-    from dpymenus.template import Template
+    from dpymenus.pages.template import Template
 
 
 class Page(Embed):

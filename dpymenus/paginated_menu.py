@@ -2,14 +2,7 @@ import asyncio
 import logging
 from typing import Any, Dict, List, Optional, TypeVar
 
-from discord import (
-    Embed,
-    Emoji,
-    Message,
-    PartialEmoji,
-    RawReactionActionEvent,
-    Reaction,
-)
+from discord import (Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction, )
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -214,17 +207,8 @@ class PaginatedMenu(ButtonMenu):
         self._validate_pages(pages)
 
         for i, page in enumerate(pages):
-            # _Page = Page.apply_template(**self._template)
-
-            if isinstance(page, dict):
-                page = Page.from_dict(page)
-
-            # explicit type check here because Pages are instances of Embeds
-            elif type(page) == Embed:
-                page = Page.from_dict(page.to_dict())
-
-            if self.page_numbers:
-                page.set_footer(text=f"{i + 1}/{len(pages)}")
+            if not isinstance(page, Page):
+                page = Page.convert_from(page)
 
             page.index = i
 

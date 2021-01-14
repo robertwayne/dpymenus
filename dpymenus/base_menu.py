@@ -140,8 +140,8 @@ class BaseMenu(abc.ABC):
         self._validate_pages(pages)
 
         for i, page in enumerate(pages):
-            if type(page) == Embed:
-                page = Page.from_dict(page.to_dict())
+            if not isinstance(page, Page):
+                page = Page.convert_from(page)
 
             page.index = i
             self.pages.append(page)

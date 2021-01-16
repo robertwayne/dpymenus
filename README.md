@@ -28,6 +28,7 @@ by clicking the buttons">
 ### Table of Contents
 
 **[Documentation](https://dpymenus.readthedocs.io/en/latest/?badge=latest)**
+**[Examples](https://github.com/robertwayne/dpymenus/tree/master/examples)**
 
 - [Table of Contents](#table-of-contents)
 - [Getting Started](#getting-started)

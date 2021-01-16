@@ -108,7 +108,3 @@ class Page(Embed):
 
         if self.color is None:
             self.color = template.set('color')
-
-    # @staticmethod
-    # def apply_template(template: "Template") -> "Page":
-    #     return Page.convert_from(template.options.get('embed', None))

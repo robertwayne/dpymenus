@@ -1,15 +1,25 @@
-from typing import Dict, Tuple, Any
+"""
+dpymenus -- Simplified menus for discord.py developers.
+"""
+
+__title__ = 'dpymenus'
+__author__ = 'Rob Wagner'
+__license__ = 'MIT'
+__copyright__ = 'Copyright 2020-2021 Rob Wagner'
+__version__ = '2.0.0'
+
 import logging
 
-sessions: Dict[Tuple[int, int], Any]
-sessions = dict()
+from .session import Session
+from .session_store import sessions
+from .page import Page
+from .template import Template
+from .base_menu import BaseMenu
+from .text_menu import TextMenu
+from .button_menu import ButtonMenu
+from .paginated_menu import PaginatedMenu
+from .poll import Poll
+
 
 logger = logging.getLogger("dpymenus")
 logger.addHandler(logging.NullHandler())
-
-from dpymenus.pages.page import Page
-from dpymenus.menus.base_menu import BaseMenu
-from dpymenus.menus.text_menu import TextMenu
-from dpymenus.menus.button_menu import ButtonMenu
-from dpymenus.menus.paginated_menu import PaginatedMenu
-from dpymenus.menus.poll import Poll

@@ -103,13 +103,11 @@ class Page(Embed):
             return Page.from_dict(other)
 
     def apply_template(self, template: "Template"):
-        for k, v in vars(self.__slots__.__dict__.items()):
-            print(k, v)
-        # if self.title is None:
-        #     self.title = template.set('title')
-        #
-        # if self.color is None:
-        #     self.color = template.set('color')
+        if self.title is None:
+            self.title = template.set('title')
+
+        if self.color is None:
+            self.color = template.set('color')
 
     # @staticmethod
     # def apply_template(template: "Template") -> "Page":

@@ -116,16 +116,6 @@ class PaginatedMenu(ButtonMenu):
 
         return self
 
-    @property
-    def template(self):
-        return getattr(self, "_template", {})
-
-    def set_template(self, template: Dict[str, Any]):
-        """Sets a Menu template which is used to construct pages at a base level. Returns itself for fluent-style chaining."""
-        self._template = template
-
-        return self
-
     async def open(self):
         """The entry point to a new PaginatedMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
@@ -210,7 +200,7 @@ class PaginatedMenu(ButtonMenu):
             page.index = i
 
             # very naive impl -- need to allow overrides // just a test
-            page.apply_template(**self.template)
+            page.apply_template(template)
 
             self.pages.append(page)
 

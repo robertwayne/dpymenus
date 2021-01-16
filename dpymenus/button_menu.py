@@ -93,24 +93,38 @@ class ButtonMenu(BaseMenu):
             await self._execute_timeout()
 
         else:
-            for btn in self.page.buttons_list:
-                if isinstance(btn, Emoji):
-                    if btn == reaction_event.emoji:
+            return await self._parse_event(reaction_event)
+
+    async def _get_reaction_remove(self) -> Optional[Button]:
+        """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
+        try:
+            reaction_event = await self.ctx.bot.wait_for("raw_reaction_remove", check=self._check_reaction)
+
+        except asyncio.TimeoutError:
+            await self._execute_timeout()
+
+        else:
+            return await self._parse_event(reaction_event)
+
+    async def _parse_event(self, reaction_event: RawReactionActionEvent) -> Button:
+        for btn in self.page.buttons_list:
+            if isinstance(btn, Emoji):
+                if btn == reaction_event.emoji:
+                    return btn
+
+            elif isinstance(btn, str):
+                # split the str and test if the value between ':' is the same as the PartialEmoji name
+                _test = btn.split(":")
+                if len(_test) > 1:
+                    if _test[1] == reaction_event.emoji.name:
                         return btn
 
-                elif isinstance(btn, str):
-                    # split the str and test if the value between ':' is the same as the PartialEmoji name
-                    _test = btn.split(":")
-                    if len(_test) > 1:
-                        if _test[1] == reaction_event.emoji.name:
-                            return btn
-
-                    else:
-                        if btn == reaction_event.emoji.name:
-                            return btn
-
                 else:
-                    return reaction_event.emoji
+                    if btn == reaction_event.emoji.name:
+                        return btn
+
+            else:
+                return reaction_event.emoji
 
     async def _cleanup_reactions(self):
         """Removes all reactions from the output message object."""

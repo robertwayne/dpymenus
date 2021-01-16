@@ -8,7 +8,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
-from dpymenus.config import HIDE_WARNINGS
+from dpymenus.settings import HIDE_WARNINGS
 from dpymenus.exceptions import ButtonsError, EventError, SessionError
 
 Button = TypeVar("Button", Emoji, PartialEmoji, str)

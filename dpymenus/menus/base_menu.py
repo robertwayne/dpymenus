@@ -7,8 +7,8 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import Page, sessions
-from dpymenus.config import HISTORY_CACHE_LIMIT
 from dpymenus.exceptions import PagesError, SessionError
+from dpymenus.settings import HISTORY_CACHE_LIMIT
 
 if TYPE_CHECKING:
     from dpymenus.pages.template import Template
@@ -120,8 +120,8 @@ class BaseMenu(abc.ABC):
     async def go_to(self, page: Optional[Union[str, int]] = None):
         """Sets a specific :class:`~dpymenus.Page` to go to and calls the :func:`~send_message()` method to display the embed.
 
-        :param page: The name of the `on_next` function for a particular page or its page number. If this is not set, the next
-        page in the list will be called.
+        :param page: The name of the `on_next` function for a particular page or its page number. If this is not set,
+        the next page in the list will be called.
         """
         if isinstance(page, int):
             self.page = self.pages[page]
@@ -139,7 +139,7 @@ class BaseMenu(abc.ABC):
         """Returns the last visited pages index."""
         return self.history[-2] if len(self.history) > 1 else 0
 
-    def add_pages(self, pages: List[PageType], template: "Template") -> "BaseMenu":
+    def add_pages(self, pages: List[PageType], template: "Template" = None) -> "BaseMenu":
         """Adds a list of pages to a menu, setting their index based on the position in the list."""
         self._validate_pages(pages)
 

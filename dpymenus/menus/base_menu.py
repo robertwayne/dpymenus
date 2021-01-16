@@ -272,7 +272,7 @@ class BaseMenu(abc.ABC):
 
     @staticmethod
     def _validate_pages(pages):
-        """Checks that the Menu contains at least one pages."""
+        """Checks that the Menu contains at least one page."""
         if len(pages) == 0:
             raise PagesError(f"There must be at least one page in a menu. Expected at least 1, found {len(pages)}.")
 

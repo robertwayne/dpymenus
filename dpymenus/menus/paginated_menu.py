@@ -2,20 +2,14 @@ import asyncio
 import logging
 from typing import Any, Dict, List, Optional, TypeVar
 
-from discord import (
-    Embed,
-    Emoji,
-    Message,
-    PartialEmoji,
-    RawReactionActionEvent,
-    Reaction,
-)
+from discord import (Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction, )
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, Page, sessions
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
+from dpymenus.pages.template import Template
 
 Button = TypeVar("Button", Emoji, PartialEmoji, str)
 PageType = TypeVar("PageType", Embed, Page, Dict)
@@ -205,7 +199,7 @@ class PaginatedMenu(ButtonMenu):
         """
         return await self.output.edit(embed=embed)
 
-    def add_pages(self, pages: List[PageType]) -> "PaginatedMenu":
+    def add_pages(self, pages: List[PageType], template: "Template" = None) -> "PaginatedMenu":
         """Helper method to convert embeds into Pages and add them to a menu."""
         self._validate_pages(pages)
 

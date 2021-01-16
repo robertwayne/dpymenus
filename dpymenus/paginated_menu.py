@@ -1,15 +1,16 @@
 import asyncio
 import logging
-from typing import Any, Dict, List, Optional, TypeVar
+from typing import Dict, List, Optional, TYPE_CHECKING, TypeVar
 
 from discord import (Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction, )
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus import ButtonMenu, Page, sessions
+from dpymenus import ButtonMenu, Page
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
-from dpymenus.pages.template import Template
+from dpymenus.template import Template
+from dpymenus.session_store import sessions
 
 Button = TypeVar("Button", Emoji, PartialEmoji, str)
 PageType = TypeVar("PageType", Embed, Page, Dict)
@@ -121,7 +122,7 @@ class PaginatedMenu(ButtonMenu):
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         if not self.prevent_multisessions:
             if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
-                session: "PaginatedMenu" = sessions.get((self.ctx.author.id, self.ctx.channel.id))
+                session: "PaginatedMenu" = sessions.get((self.ctx.author.id, self.ctx.channel.id)).instance
                 await session._cleanup_reactions()
                 await session.close_session()
 

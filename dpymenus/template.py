@@ -1,7 +1,5 @@
 from typing import Any, Dict
 
-from dpymenus import Page
-
 
 class Template:
     """Represents a Menu-style template used when constructing pages."""

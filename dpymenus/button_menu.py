@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Dict, Optional, TypeVar
+from typing import Dict, Optional, TYPE_CHECKING, TypeVar
 
 import emoji
 from discord import Emoji, PartialEmoji, RawReactionActionEvent, Reaction
@@ -8,8 +8,8 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu
-from dpymenus.settings import HIDE_WARNINGS
 from dpymenus.exceptions import ButtonsError, EventError, SessionError
+from dpymenus.settings import HIDE_WARNINGS
 
 Button = TypeVar("Button", Emoji, PartialEmoji, str)
 
@@ -37,7 +37,7 @@ class ButtonMenu(BaseMenu):
 
         return self
 
-    def button_pressed(self, button: Button) -> bool:
+    def button_pressed(self, button: "Button") -> bool:
         """Helper method which checks if the button the user pressed is the button passed in."""
         return button == self.input
 

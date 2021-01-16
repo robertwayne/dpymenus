@@ -4,7 +4,7 @@ from typing import Dict, List, Union
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus import BaseMenu
+from dpymenus.base_menu import BaseMenu
 from dpymenus.constants import QUIT
 from dpymenus.exceptions import SessionError
 

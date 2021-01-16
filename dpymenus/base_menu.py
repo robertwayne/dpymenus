@@ -6,12 +6,13 @@ from discord import Embed, Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus import Page, sessions
+from dpymenus import Page
+from dpymenus.session_store import sessions
 from dpymenus.exceptions import PagesError, SessionError
 from dpymenus.settings import HISTORY_CACHE_LIMIT
 
 if TYPE_CHECKING:
-    from dpymenus.pages.template import Template
+    from dpymenus import Template
 
 PageType = TypeVar("PageType", Embed, Page, Dict)
 

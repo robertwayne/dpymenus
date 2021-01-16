@@ -1,9 +1,9 @@
-from typing import Any, Callable, Dict, List, Union, TYPE_CHECKING
+from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
 
 from discord import Embed
 
 if TYPE_CHECKING:
-    from dpymenus.pages.template import Template
+    from dpymenus import Template
 
 
 class Page(Embed):

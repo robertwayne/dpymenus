@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Dict, Optional, TYPE_CHECKING, TypeVar
+from typing import Dict, Optional, TypeVar
 
 import emoji
 from discord import Emoji, PartialEmoji, RawReactionActionEvent, Reaction

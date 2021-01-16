@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Dict, List, Optional, TYPE_CHECKING, TypeVar
+from typing import Dict, List, Optional, TypeVar
 
 from discord import (Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction, )
 from discord.abc import GuildChannel
@@ -9,8 +9,8 @@ from discord.ext.commands import Context
 from dpymenus import ButtonMenu, Page
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
+from dpymenus.sessions import sessions
 from dpymenus.template import Template
-from dpymenus.session_store import sessions
 
 Button = TypeVar("Button", Emoji, PartialEmoji, str)
 PageType = TypeVar("PageType", Embed, Page, Dict)

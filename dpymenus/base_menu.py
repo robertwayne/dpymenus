@@ -7,8 +7,8 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import Page
-from dpymenus.session_store import sessions
 from dpymenus.exceptions import PagesError, SessionError
+from dpymenus.sessions import sessions
 from dpymenus.settings import HISTORY_CACHE_LIMIT
 
 if TYPE_CHECKING:

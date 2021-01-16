@@ -18,9 +18,7 @@ class MyButtonMenu(commands.Cog):
         page1.add_field(name="Example A", value="Example B")
         page1.buttons([forward, stop]).on_next(self.first)
 
-        page2 = Page(
-            title="Button Menu", description="So many buttons! What do they do?"
-        )
+        page2 = Page(title="Button Menu", description="So many buttons! What do they do?")
         page2.add_field(name="Example C", value="Example D")
         page2.buttons([reverse, stop, forward]).on_next(self.second)
 

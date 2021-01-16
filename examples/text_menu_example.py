@@ -15,9 +15,7 @@ class MyTextMenu(commands.Cog):
             title="Ping Menu",
             description="Are you absolutely sure you want to send a ping command?",
         )
-        page1.set_footer(
-            text="Type `yes` if you are sure.\nType `quit` to cancel this menu."
-        )
+        page1.set_footer(text="Type `yes` if you are sure.\nType `quit` to cancel this menu.")
         page1.on_next(self.confirm)
 
         page2 = Page(title="Ping Menu", description="Pong!")

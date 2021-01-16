@@ -137,9 +137,7 @@ class PaginatedMenu(ButtonMenu):
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         if not self.prevent_multisessions:
             if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
-                session: "PaginatedMenu" = sessions.get(
-                    (self.ctx.author.id, self.ctx.channel.id)
-                )
+                session: "PaginatedMenu" = sessions.get((self.ctx.author.id, self.ctx.channel.id))
                 await session._cleanup_reactions()
                 await session.close_session()
 
@@ -172,9 +170,7 @@ class PaginatedMenu(ButtonMenu):
                 if not self.prevent_multisessions:
                     tasks.append(asyncio.create_task(self._shortcircuit()))
 
-                done, pending = await asyncio.wait(
-                    tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout
-                )
+                done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout)
 
                 # if all tasks are still pending, we force a timeout by manually calling cleanup methods
                 if len(pending) == len(tasks):
@@ -272,9 +268,7 @@ class PaginatedMenu(ButtonMenu):
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction_event = await self.ctx.bot.wait_for(
             "raw_reaction_add",
-            check=self._check_reaction
-            if self.buttons_list != GENERIC_BUTTONS
-            else self._check_reaction_defaults,
+            check=self._check_reaction if self.buttons_list != GENERIC_BUTTONS else self._check_reaction_defaults,
         )
 
         return reaction_event.emoji
@@ -283,9 +277,7 @@ class PaginatedMenu(ButtonMenu):
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction_event = await self.ctx.bot.wait_for(
             "raw_reaction_remove",
-            check=self._check_reaction
-            if self.buttons_list != GENERIC_BUTTONS
-            else self._check_reaction_defaults,
+            check=self._check_reaction if self.buttons_list != GENERIC_BUTTONS else self._check_reaction_defaults,
         )
 
         return reaction_event.emoji
@@ -301,9 +293,7 @@ class PaginatedMenu(ButtonMenu):
     def _validate_buttons(self):
         if self.buttons_list != GENERIC_BUTTONS:
             if len(self.buttons_list) != 3 and len(self.buttons_list) != 5:
-                raise ButtonsError(
-                    f"Buttons length mismatch. Expected 3 or 5, found {len(self.buttons_list)}"
-                )
+                raise ButtonsError(f"Buttons length mismatch. Expected 3 or 5, found {len(self.buttons_list)}")
 
             self._check_buttons(self.buttons_list)
 

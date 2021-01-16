@@ -22,9 +22,7 @@ class MyButtonMenu(commands.Cog):
                 response = await make_request()
 
                 p = Page(title="Awesome Data", description="We can reload this data.")
-                p.add_field(
-                    name="Random Updating Integer", value=response.get("random_data")
-                )
+                p.add_field(name="Random Updating Integer", value=response.get("random_data"))
                 await menu.output.edit(embed=p.as_safe_embed())
 
             elif menu.button_pressed(close):

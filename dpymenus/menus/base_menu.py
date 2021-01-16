@@ -148,7 +148,7 @@ class BaseMenu(abc.ABC):
                 page = Page.convert_from(page)
 
             if template:
-                print('applying template')
+                print("applying template")
                 page = page.apply_template(template)
 
             page.index = i
@@ -254,9 +254,7 @@ class BaseMenu(abc.ABC):
     async def _get_input(self) -> Message:
         """Collects user input and places it into the input attribute."""
         try:
-            message = await self.ctx.bot.wait_for(
-                "message", timeout=self.timeout, check=self._check_message
-            )
+            message = await self.ctx.bot.wait_for("message", timeout=self.timeout, check=self._check_message)
 
         except asyncio.TimeoutError:
             if self.page.on_timeout_event:
@@ -276,16 +274,12 @@ class BaseMenu(abc.ABC):
     def _validate_pages(pages):
         """Checks that the Menu contains at least one pages."""
         if len(pages) == 0:
-            raise PagesError(
-                f"There must be at least one page in a menu. Expected at least 1, found {len(pages)}."
-            )
+            raise PagesError(f"There must be at least one page in a menu. Expected at least 1, found {len(pages)}.")
 
     def _start_session(self):
         """Starts a new user session in the sessions storage. Raises a SessionError if the key already exists."""
         if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
-            raise SessionError(
-                f"Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}]."
-            )
+            raise SessionError(f"Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}].")
         else:
             sessions.update({(self.ctx.author.id, self.ctx.channel.id): self})
             return True

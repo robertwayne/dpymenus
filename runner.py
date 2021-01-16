@@ -1,0 +1,46 @@
+# This is a testing module which interfaces with the documentation examples. You will need to
+# have an environment variable called "DPYMENUS_BOT_TOKEN" set in order for this to run. This
+# module must live in the root directory.
+#
+# You can run this file directly or with `poetry run examples`.
+
+import asyncio
+import logging
+import os
+
+from cogwatch import watch
+from discord.ext import commands
+from dotenv import load_dotenv
+
+logging.basicConfig(level=logging.INFO)
+
+load_dotenv()
+
+
+class ExampleBot(commands.Bot):
+    def __init__(self):
+        super().__init__(command_prefix="!")
+
+    @watch(cogs_path="examples", debug=False, preload=True)
+    async def on_ready(self):
+        print("Bot ready.")
+
+    async def on_message(self, message):
+        logging.info(message)
+        if message.author.bot:
+            return
+
+        await self.process_commands(message)
+
+
+async def main():
+    client = ExampleBot()
+    await client.start(os.getenv("DPYMENUS_BOT_TOKEN"))
+
+
+def __poetry_run():
+    asyncio.run(main())
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

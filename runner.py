@@ -27,16 +27,17 @@ if sys.platform in {"linux", "macos"}:
 load_dotenv()
 
 
-class ExampleBot(commands.Bot):
+class ExampleRunner(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix="!")
+        super().__init__(command_prefix=".")
 
     @watch(cogs_path="examples", debug=False, preload=True)
     async def on_ready(self):
-        print("Bot ready.")
+        logging.info("Bot ready.")
 
     async def on_message(self, message):
         logging.info(message)
+
         if message.author.bot:
             return
 
@@ -44,7 +45,7 @@ class ExampleBot(commands.Bot):
 
 
 async def main():
-    client = ExampleBot()
+    client = ExampleRunner()
     await client.start(os.getenv("DPYMENUS_BOT_TOKEN"))
 
 

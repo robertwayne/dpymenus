@@ -28,6 +28,7 @@ emoji = '^0.6.0'
 cogwatch = '^1.1.8'
 black = '^20.8b1'
 python-dotenv = '^0.15.0'
+uvloop = "^0.14.0"
 
 [tool.black]
 line-length = 120

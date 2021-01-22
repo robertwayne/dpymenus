@@ -207,36 +207,6 @@ class PaginatedMenu(ButtonMenu):
         return self
 
     # Internal Methods
-    async def _execute_cancel(self):
-        """Sends a cancellation message. Deletes the menu message if no page was set."""
-        cancel_page = getattr(self, 'cancel_page', None)
-
-        if cancel_page:
-            await self.output.edit(embed=cancel_page)
-
-        else:
-            await self._cleanup_output()
-
-        await self.close_session()
-
-    async def _execute_timeout(self):
-        """Sends a timeout message. Deletes the menu message if no page was set."""
-        try:
-            await self.close_session()
-
-        except KeyError:
-            return
-
-        timeout_page = getattr(self, 'timeout_page')
-
-        if timeout_page:
-            await self.output.edit(embed=timeout_page)
-
-        else:
-            await self._cleanup_output()
-
-        self.active = False
-
     async def _shortcircuit(self):
         """Runs a background loop to poll the menus `active` state. Returns when False. Allows for short-circuiting the main
         loop when it is waiting for user reaction events from discord.py."""

@@ -209,9 +209,15 @@ class BaseMenu(abc.ABC):
         if self.page.on_cancel_event:
             return await self.page.on_cancel_event()
 
-        await self._cleanup_output()
+        cancel_page = getattr(self, 'cancel_page', None)
+
+        if cancel_page:
+            await self.output.edit(embed=cancel_page)
+
+        else:
+            await self._cleanup_output()
+
         await self.close_session()
-        self.active = False
 
     async def close_session(self):
         """Remove the user from the active users list."""
@@ -226,21 +232,33 @@ class BaseMenu(abc.ABC):
 
     async def _cleanup_output(self):
         """Deletes the Discord client bot message."""
+        self.output: Message
+
+        await self.output.clear_reactions()
+
         if not self.persist:
-            self.output: Message
             await self.output.delete()
             self.output = None
 
     async def _execute_timeout(self):
         """Sends a timeout message."""
-        # we check if the page has a callback
         if self.page.on_timeout_event:
             return await self.page.on_timeout_event()
 
-        embed = Embed(title='Timed Out', description='You timed out at menu selection.')
-        await self.send_message(embed)
+        try:
+            await self.close_session()
 
-        await self.close_session()
+        except KeyError:
+            return
+
+        timeout_page = getattr(self, 'timeout_page', None)
+
+        if timeout_page:
+            await self.output.edit(embed=timeout_page)
+
+        else:
+            await self._cleanup_output()
+
         self.active = False
 
     async def _get_input(self) -> Message:

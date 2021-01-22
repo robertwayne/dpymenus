@@ -282,7 +282,7 @@ class BaseMenu(abc.ABC):
                 and self.output.channel == m.channel)
 
     @staticmethod
-    def _validate_pages(pages):
+    def _validate_pages(pages: List[Any]):
         """Checks that the Menu contains at least one pages."""
         if len(pages) == 0:
             raise PagesError(f'There must be at least one page in a menu. Expected at least 1, found {len(pages)}.')

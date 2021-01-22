@@ -204,14 +204,20 @@ class BaseMenu(abc.ABC):
         await self.send_message(self.page)
 
     async def _execute_cancel(self):
-        """Sends a cancellation message."""
+        """Sends a cancellation message if set and closes the menu."""
         # we check if the page has a callback
         if self.page.on_cancel_event:
             return await self.page.on_cancel_event()
 
-        await self._cleanup_output()
+        cancel_page = getattr(self, 'cancel_page', None)
+
+        if cancel_page:
+            await self.output.edit(embed=cancel_page)
+
+        else:
+            await self._cleanup_output()
+
         await self.close_session()
-        self.active = False
 
     async def close_session(self):
         """Remove the user from the active users list."""
@@ -226,21 +232,33 @@ class BaseMenu(abc.ABC):
 
     async def _cleanup_output(self):
         """Deletes the Discord client bot message."""
+        self.output: Message
+
+        await self.output.clear_reactions()
+
         if not self.persist:
-            self.output: Message
             await self.output.delete()
             self.output = None
 
     async def _execute_timeout(self):
-        """Sends a timeout message."""
-        # we check if the page has a callback
+        """Sends a timeout message if set and closes the menu."""
         if self.page.on_timeout_event:
             return await self.page.on_timeout_event()
 
-        embed = Embed(title='Timed Out', description='You timed out at menu selection.')
-        await self.send_message(embed)
+        try:
+            await self.close_session()
 
-        await self.close_session()
+        except KeyError:
+            return
+
+        timeout_page = getattr(self, 'timeout_page', None)
+
+        if timeout_page:
+            await self.output.edit(embed=timeout_page)
+
+        else:
+            await self._cleanup_output()
+
         self.active = False
 
     async def _get_input(self) -> Message:
@@ -264,7 +282,7 @@ class BaseMenu(abc.ABC):
                 and self.output.channel == m.channel)
 
     @staticmethod
-    def _validate_pages(pages):
+    def _validate_pages(pages: List[Any]):
         """Checks that the Menu contains at least one pages."""
         if len(pages) == 0:
             raise PagesError(f'There must be at least one page in a menu. Expected at least 1, found {len(pages)}.')

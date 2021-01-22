@@ -204,7 +204,7 @@ class BaseMenu(abc.ABC):
         await self.send_message(self.page)
 
     async def _execute_cancel(self):
-        """Sends a cancellation message."""
+        """Sends a cancellation message if set and closes the menu."""
         # we check if the page has a callback
         if self.page.on_cancel_event:
             return await self.page.on_cancel_event()
@@ -241,7 +241,7 @@ class BaseMenu(abc.ABC):
             self.output = None
 
     async def _execute_timeout(self):
-        """Sends a timeout message."""
+        """Sends a timeout message if set and closes the menu."""
         if self.page.on_timeout_event:
             return await self.page.on_timeout_event()
 

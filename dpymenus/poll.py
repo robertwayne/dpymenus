@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Dict, Set
+from typing import Any, Dict, List, Set
 from warnings import warn
 
 from discord import RawReactionActionEvent, User
@@ -27,6 +27,7 @@ class Poll(ButtonMenu):
         """The entry point to a new Poll instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         try:
+            self._validate_callbacks()
             await super()._open()
         except SessionError as exc:
             logging.info(exc.message)
@@ -153,16 +154,18 @@ class Poll(ButtonMenu):
                 f"A Poll primary page must have at least two buttons. Expected at least 2, found {len(self.page.buttons_list)}."
             )
 
-    def _validate_pages(self):
-        """Checks that the Menu contains at least one Page."""
-        if len(self.pages) != 2:
-            raise PagesError(f"A Poll can only have two pages. Expected 2, found {len(self.pages)}.")
+        if len(self.page.buttons_list) > 5:
+            warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
 
+    @staticmethod
+    def _validate_pages(pages: List[Any]):
+        """Checks that the Menu contains at least one Page."""
+        if len(pages) != 2:
+            raise PagesError(f'A Poll can only have two pages. Expected 2, found {len(pages)}.')
+
+    def _validate_callbacks(self):
         if self.page.on_cancel_event or self.page.on_fail_event or self.page.on_timeout_event:
             raise EventError("A Poll can not capture a `cancel`, `fail`, or `timeout` event.")
-
-        if len(self.page.buttons_list) > 5:
-            warn("Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.")
 
     @staticmethod
     async def get_voters(users: Set[User]) -> Set[User]:

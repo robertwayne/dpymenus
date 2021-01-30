@@ -139,7 +139,7 @@ class BaseMenu(abc.ABC):
         """Returns the last visited pages index."""
         return self.history[-2] if len(self.history) > 1 else 0
 
-    def add_pages(self, pages: List[PageType], template: "Template" = None) -> "BaseMenu":
+    def add_pages(self, pages: List["PageType"], template: "Template" = None) -> "BaseMenu":
         """Adds a list of pages to a menu, setting their index based on the position in the list."""
         self._validate_pages(pages)
 
@@ -158,7 +158,7 @@ class BaseMenu(abc.ABC):
 
         return self
 
-    async def send_message(self, page: PageType) -> Message:
+    async def send_message(self, page: "PageType") -> Message:
         """
         Edits a message if the channel is in a Guild, otherwise sends it to the current channel.
 

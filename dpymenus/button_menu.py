@@ -85,7 +85,7 @@ class ButtonMenu(BaseMenu):
         for button in self.page.buttons_list:
             await self.output.add_reaction(button)
 
-    async def _get_reaction_add(self) -> Optional[Button]:
+    async def _get_reaction_add(self) -> Optional["Button"]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         try:
             reaction_event = await self.ctx.bot.wait_for(
@@ -98,7 +98,7 @@ class ButtonMenu(BaseMenu):
         else:
             return await self._parse_event(reaction_event)
 
-    async def _get_reaction_remove(self) -> Optional[Button]:
+    async def _get_reaction_remove(self) -> Optional["Button"]:
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         try:
             reaction_event = await self.ctx.bot.wait_for("raw_reaction_remove", check=self._check_reaction)
@@ -109,7 +109,7 @@ class ButtonMenu(BaseMenu):
         else:
             return await self._parse_event(reaction_event)
 
-    async def _parse_event(self, reaction_event: RawReactionActionEvent) -> Button:
+    async def _parse_event(self, reaction_event: RawReactionActionEvent) -> "Button":
         for btn in self.page.buttons_list:
             if isinstance(btn, Emoji):
                 if btn == reaction_event.emoji:

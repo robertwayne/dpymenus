@@ -104,7 +104,7 @@ class Page(Embed):
 
     def apply_template(self, template: "Template"):
         if self.title is None:
-            self.title = template.set('title')
+            self.title = template.set("title")
 
         if self.color is None:
-            self.color = template.set('color')
+            self.color = template.set("color")

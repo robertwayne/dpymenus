@@ -1,7 +1,8 @@
-from typing import Dict, TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from dpymenus import Session
+    from dpymenus.types import SessionKey
 
-sessions: Dict[Tuple[int, int], "Session"]
-sessions = dict()
+
+sessions: ["SessionKey", "Session"] = dict()

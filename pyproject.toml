@@ -2,7 +2,7 @@
 name = 'dpymenus'
 version = '2.0.0'
 description = 'Simplified menus for discord.py developers.'
-authors = ['Rob Wagner <13954303+robertwayne@users.noreply.github.com>']
+authors = ['Rob Wagner <rob@robwagner.dev>']
 license = 'MIT'
 readme = 'README.md'
 homepage = 'https://github.com/robertwayne/dpymenus'
@@ -22,10 +22,10 @@ examples = 'runner:__poetry_run'
 [tool.poetry.dependencies]
 python = '^3.7'
 'discord.py' = '^1.6.0'
-emoji = '^0.6.0'
+emoji = '1.2.0'
 
 [tool.poetry.dev-dependencies]
-cogwatch = '^1.1.8'
+cogwatch = '2.0.0'
 black = '^20.8b1'
 python-dotenv = '^0.15.0'
 uvloop = "^0.14.0"

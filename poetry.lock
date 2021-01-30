@@ -87,7 +87,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "cogwatch"
-version = "1.1.8"
+version = "2.0.0"
 description = "Automatic hot-reloading for your discord.py command files."
 category = "dev"
 optional = false
@@ -95,7 +95,7 @@ python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
 "discord.py" = ">=1.5,<2.0"
-watchgod = "0.6"
+watchgod = "0.7"
 
 [[package]]
 name = "discord.py"
@@ -114,7 +114,7 @@ voice = ["PyNaCl (>=1.3.0,<1.5)"]
 
 [[package]]
 name = "emoji"
-version = "0.6.0"
+version = "1.2.0"
 description = "Emoji for Python"
 category = "main"
 optional = false
@@ -208,7 +208,7 @@ python-versions = "*"
 
 [[package]]
 name = "watchgod"
-version = "0.6"
+version = "0.7"
 description = "Simple, modern file watching and code reload in python."
 category = "dev"
 optional = false
@@ -230,7 +230,7 @@ typing-extensions = {version = ">=3.7.4", markers = "python_version < \"3.8\""}
 [metadata]
 lock-version = "1.1"
 python-versions = '^3.7'
-content-hash = "8f6ccf80991a357985f9e92c532ead522a1f1a36e003619482eb7962a2eb67b6"
+content-hash = "36ad9abaf314b9a5c8ea237d3271ff30954b39c0f82b9dfd2a0476e5004e9827"
 
 [metadata.files]
 aiohttp = [
@@ -296,15 +296,16 @@ click = [
     {file = "click-7.1.2.tar.gz", hash = "sha256:d2b5255c7c6349bc1bd1e59e08cd12acbbd63ce649f2588755783aa94dfb6b1a"},
 ]
 cogwatch = [
-    {file = "cogwatch-1.1.8-py3-none-any.whl", hash = "sha256:3bcb92023daa17c5a803e90f01fa9c41be9db121ce25cd3b9c27ee74b2f63bf6"},
-    {file = "cogwatch-1.1.8.tar.gz", hash = "sha256:bfc9b82b4b547de9a4bf7ab957d399106a66be18ee378323bb44935475662985"},
+    {file = "cogwatch-2.0.0-py3-none-any.whl", hash = "sha256:bb275f8c19ae20bbefb6069e0218697e3e3110519886ba54cf79d5d200f7548f"},
+    {file = "cogwatch-2.0.0.tar.gz", hash = "sha256:529bea7c0cbe293cc5605a4a41afb8795182385db3b3e391fd70a5cc7b162fda"},
 ]
 "discord.py" = [
     {file = "discord.py-1.6.0-py3-none-any.whl", hash = "sha256:3df148daf6fbcc7ab5b11042368a3cd5f7b730b62f09fb5d3cbceff59bcfbb12"},
     {file = "discord.py-1.6.0.tar.gz", hash = "sha256:ba8be99ff1b8c616f7b6dcb700460d0222b29d4c11048e74366954c465fdd05f"},
 ]
 emoji = [
-    {file = "emoji-0.6.0.tar.gz", hash = "sha256:e42da4f8d648f8ef10691bc246f682a1ec6b18373abfd9be10ec0b398823bd11"},
+    {file = "emoji-1.2.0-py3-none-any.whl", hash = "sha256:6b19b65da8d6f30551eead1705539cc0eadcd9e33a6ecbc421a29b87f96287eb"},
+    {file = "emoji-1.2.0.tar.gz", hash = "sha256:496f432058567985838c13d67dde84ca081614a8286c0b9cdc7d63dfa89d51a3"},
 ]
 idna = [
     {file = "idna-3.1-py3-none-any.whl", hash = "sha256:5205d03e7bcbb919cc9c19885f9920d622ca52448306f2377daede5cf3faac16"},
@@ -457,8 +458,8 @@ uvloop = [
     {file = "uvloop-0.14.0.tar.gz", hash = "sha256:123ac9c0c7dd71464f58f1b4ee0bbd81285d96cdda8bc3519281b8973e3a461e"},
 ]
 watchgod = [
-    {file = "watchgod-0.6-py35.py36.py37-none-any.whl", hash = "sha256:59700dab7445aa8e6067a5b94f37bae90fc367554549b1ed2e9d0f4f38a90d2a"},
-    {file = "watchgod-0.6.tar.gz", hash = "sha256:e9cca0ab9c63f17fc85df9fd8bd18156ff00aff04ebe5976cee473f4968c6858"},
+    {file = "watchgod-0.7-py3-none-any.whl", hash = "sha256:d6c1ea21df37847ac0537ca0d6c2f4cdf513562e95f77bb93abbcf05573407b7"},
+    {file = "watchgod-0.7.tar.gz", hash = "sha256:48140d62b0ebe9dd9cf8381337f06351e1f2e70b2203fa9c6eff4e572ca84f29"},
 ]
 yarl = [
     {file = "yarl-1.6.3-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:0355a701b3998dcd832d0dc47cc5dedf3874f966ac7f870e0f3a6788d802d434"},

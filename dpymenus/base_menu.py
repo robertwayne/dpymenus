@@ -1,8 +1,8 @@
 import abc
 import asyncio
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, TypeVar, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
-from discord import Embed, Message, Reaction, TextChannel, User
+from discord import Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -13,8 +13,7 @@ from dpymenus.settings import HISTORY_CACHE_LIMIT, PREVENT_MULTISESSIONS
 
 if TYPE_CHECKING:
     from dpymenus import Template
-
-PageType = TypeVar("PageType", Embed, Page, Dict)
+    from dpymenus.types import PageType
 
 
 class BaseMenu(abc.ABC):

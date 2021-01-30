@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Dict, Optional, TypeVar
+from typing import Dict, Optional, TYPE_CHECKING
 
 import emoji
 from discord import Emoji, PartialEmoji, RawReactionActionEvent, Reaction
@@ -11,7 +11,8 @@ from dpymenus import BaseMenu
 from dpymenus.exceptions import ButtonsError, EventError, SessionError
 from dpymenus.settings import HIDE_WARNINGS
 
-Button = TypeVar("Button", Emoji, PartialEmoji, str)
+if TYPE_CHECKING:
+    from dpymenus.types import Button
 
 
 class ButtonMenu(BaseMenu):

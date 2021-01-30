@@ -155,13 +155,13 @@ class Poll(ButtonMenu):
             )
 
         if len(self.page.buttons_list) > 5:
-            warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
+            warn("Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.")
 
     @staticmethod
     def _validate_pages(pages: List[Any]):
         """Checks that the Menu contains at least one Page."""
         if len(pages) != 2:
-            raise PagesError(f'A Poll can only have two pages. Expected 2, found {len(pages)}.')
+            raise PagesError(f"A Poll can only have two pages. Expected 2, found {len(pages)}.")
 
     def _validate_callbacks(self):
         if self.page.on_cancel_event or self.page.on_fail_event or self.page.on_timeout_event:

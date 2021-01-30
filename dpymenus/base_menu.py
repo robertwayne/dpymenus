@@ -210,7 +210,7 @@ class BaseMenu(abc.ABC):
         if self.page.on_cancel_event:
             return await self.page.on_cancel_event()
 
-        cancel_page = getattr(self, 'cancel_page', None)
+        cancel_page = getattr(self, "cancel_page", None)
 
         if cancel_page:
             await self.output.edit(embed=cancel_page)
@@ -252,7 +252,7 @@ class BaseMenu(abc.ABC):
         except KeyError:
             return
 
-        timeout_page = getattr(self, 'timeout_page', None)
+        timeout_page = getattr(self, "timeout_page", None)
 
         if timeout_page:
             await self.output.edit(embed=timeout_page)
@@ -299,7 +299,8 @@ class BaseMenu(abc.ABC):
         if PREVENT_MULTISESSIONS is True:
             if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
                 raise SessionError(
-                    f"Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}].")
+                    f"Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}]."
+                )
         else:
             session = sessions.get((self.ctx.author.id, self.ctx.channel.id)).instance
 

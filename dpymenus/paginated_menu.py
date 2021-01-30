@@ -9,7 +9,6 @@ from discord.ext.commands import Context
 from dpymenus import ButtonMenu, Page
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
-from dpymenus.sessions import sessions
 from dpymenus.template import Template
 
 Button = TypeVar("Button", Emoji, PartialEmoji, str)
@@ -120,12 +119,6 @@ class PaginatedMenu(ButtonMenu):
     async def open(self):
         """The entry point to a new PaginatedMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        if not self.prevent_multisessions:
-            if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
-                session: "PaginatedMenu" = sessions.get((self.ctx.author.id, self.ctx.channel.id)).instance
-                await session._cleanup_reactions()
-                await session.close_session()
-
         try:
             # we have to set these here so we can validate cleanly
             if len(self.buttons_list) == 0:

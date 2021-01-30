@@ -1,6 +1,6 @@
 import abc
 import asyncio
-from typing import Dict, List, Optional, TYPE_CHECKING, TypeVar, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, TypeVar, Union
 
 from discord import Embed, Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
@@ -9,7 +9,7 @@ from discord.ext.commands import Context
 from dpymenus import Page
 from dpymenus.exceptions import PagesError, SessionError
 from dpymenus.sessions import sessions
-from dpymenus.settings import HISTORY_CACHE_LIMIT
+from dpymenus.settings import HISTORY_CACHE_LIMIT, PREVENT_MULTISESSIONS
 
 if TYPE_CHECKING:
     from dpymenus import Template
@@ -186,7 +186,7 @@ class BaseMenu(abc.ABC):
         if not self.pages:
             return
 
-        self._start_session()
+        await self._start_session()
 
         self.output = await self.destination.send(embed=self.page.as_safe_embed())
         self.input = self.ctx.message
@@ -295,10 +295,17 @@ class BaseMenu(abc.ABC):
         if len(pages) == 0:
             raise PagesError(f"There must be at least one page in a menu. Expected at least 1, found {len(pages)}.")
 
-    def _start_session(self):
-        """Starts a new user session in the sessions storage. Raises a SessionError if the key already exists."""
-        if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
-            raise SessionError(f"Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}].")
+    async def _start_session(self):
+        if PREVENT_MULTISESSIONS is True:
+            if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
+                raise SessionError(
+                    f"Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}].")
         else:
-            sessions.update({(self.ctx.author.id, self.ctx.channel.id): self})
-            return True
+            session = sessions.get((self.ctx.author.id, self.ctx.channel.id)).instance
+
+            if session.output.reactions:
+                await session._cleanup_reactions()
+
+            await session.close_session()
+
+            sessions.update({(self.ctx.author.id, self.ctx.channel.id)})

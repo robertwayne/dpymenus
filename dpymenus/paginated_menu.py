@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 
 from discord import (
     Embed,
@@ -16,6 +16,9 @@ from dpymenus import ButtonMenu, Page
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
 from dpymenus.template import Template
+
+if TYPE_CHECKING:
+    from dpymenus.types import PageType, Button
 
 
 class PaginatedMenu(ButtonMenu):
@@ -94,7 +97,7 @@ class PaginatedMenu(ButtonMenu):
     def buttons_list(self) -> List:
         return getattr(self, "_buttons_list", [])
 
-    def buttons(self, buttons: List[Button]) -> "PaginatedMenu":
+    def buttons(self, buttons: List["Button"]) -> "PaginatedMenu":
         """Replaces the default buttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
         0 and 5 are only shown if `enable_skip_buttons` is set, otherwise 2, 3, and 4 will be shown. You can pass in
         `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
@@ -172,7 +175,7 @@ class PaginatedMenu(ButtonMenu):
         """
         return await self.output.edit(embed=embed)
 
-    def add_pages(self, pages: List[PageType], template: "Template" = None) -> "PaginatedMenu":
+    def add_pages(self, pages: List["PageType"], template: "Template" = None) -> "PaginatedMenu":
         """Helper method to convert embeds into Pages and add them to a menu."""
         self._validate_pages(pages)
 
@@ -201,7 +204,7 @@ class PaginatedMenu(ButtonMenu):
         else:
             return
 
-    async def _get_reaction_add(self) -> Button:
+    async def _get_reaction_add(self) -> "Button":
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction_event = await self.ctx.bot.wait_for(
             "raw_reaction_add",
@@ -210,7 +213,7 @@ class PaginatedMenu(ButtonMenu):
 
         return reaction_event.emoji
 
-    async def _get_reaction_remove(self) -> Button:
+    async def _get_reaction_remove(self) -> "Button":
         """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
         reaction_event = await self.ctx.bot.wait_for(
             "raw_reaction_remove",

@@ -6,14 +6,14 @@ from discord import Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus import Page
+from dpymenus import Page, Session
 from dpymenus.exceptions import PagesError, SessionError
 from dpymenus.sessions import sessions
 from dpymenus.settings import HISTORY_CACHE_LIMIT, PREVENT_MULTISESSIONS
 
 if TYPE_CHECKING:
     from dpymenus import Template
-    from dpymenus.types import PageType
+    from dpymenus.types import PageType, Menu
 
 
 class BaseMenu(abc.ABC):
@@ -301,11 +301,11 @@ class BaseMenu(abc.ABC):
                     f"Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}]."
                 )
         else:
-            session = sessions.get((self.ctx.author.id, self.ctx.channel.id)).instance
+            menu: "Menu" = sessions.get((self.ctx.author.id, self.ctx.channel.id)).instance
 
-            if session.output.reactions:
-                await session._cleanup_reactions()
+            if menu.output.reactions:
+                await menu._cleanup_reactions()
 
-            await session.close_session()
+            await menu.close_session()
 
-            sessions.update({(self.ctx.author.id, self.ctx.channel.id)})
+            Session(menu)  # creates a new session; we don't need to do anything with it

@@ -295,17 +295,18 @@ class BaseMenu(abc.ABC):
             raise PagesError(f"There must be at least one page in a menu. Expected at least 1, found {len(pages)}.")
 
     async def _start_session(self):
-        if PREVENT_MULTISESSIONS is True:
-            if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
+        print('SESSIONS: ', sessions)
+        if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
+            if PREVENT_MULTISESSIONS is True:
                 raise SessionError(
                     f"Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}]."
                 )
-        else:
-            menu: "Menu" = sessions.get((self.ctx.author.id, self.ctx.channel.id)).instance
+            else:
+                session: "Session" = sessions.get((self.ctx.author.id, self.ctx.channel.id))
 
-            if menu.output.reactions:
-                await menu._cleanup_reactions()
+                if session.instance.output.reactions:
+                    await session.instance._cleanup_reactions()
 
-            await menu.close_session()
+                session.kill()
 
-            Session(menu)  # creates a new session; we don't need to do anything with it
+        Session(self)  # creates a new session; we don't need to do anything with it

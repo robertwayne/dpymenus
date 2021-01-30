@@ -9,11 +9,14 @@ if TYPE_CHECKING:
 class Session:
     def __init__(self, instance: "Menu"):
         self.instance = instance
-        self.owner = instance.author
+        self.owner = instance.ctx.author.id
         self.active = True
 
-        sessions.update({(self.instance.ctx.author.id, self.instance.ctx.channel.id), instance})
+        sessions.update({(self.owner, self.instance.ctx.channel.id): self})
+
+    def __repr__(self):
+        return f'Session({self.instance})'
 
     def kill(self):
         self.active = False
-        del sessions[(self.instance.ctx.author.id, self.instance.ctx.channel.id)]
+        del sessions[(self.owner, self.instance.ctx.channel.id)]

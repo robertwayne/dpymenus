@@ -10,8 +10,8 @@ __version__ = "2.0.0"
 
 import logging
 
-from dpymenus.sessions.session import Session
-from dpymenus.sessions import sessions
+from .sessions import sessions
+from .sessions.session import Session
 from .page import Page
 from .template import Template
 from .base_menu import BaseMenu

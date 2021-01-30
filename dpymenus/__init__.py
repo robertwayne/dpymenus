@@ -19,6 +19,7 @@ from .text_menu import TextMenu
 from .button_menu import ButtonMenu
 from .paginated_menu import PaginatedMenu
 from .poll import Poll
+from .exceptions import PagesError, ButtonsError, EventError, SessionError
 
 
 logger = logging.getLogger("dpymenus")

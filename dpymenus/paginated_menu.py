@@ -2,7 +2,14 @@ import asyncio
 import logging
 from typing import Dict, List, Optional, TypeVar
 
-from discord import (Embed, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction, )
+from discord import (
+    Embed,
+    Emoji,
+    Message,
+    PartialEmoji,
+    RawReactionActionEvent,
+    Reaction,
+)
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -105,17 +112,6 @@ class PaginatedMenu(ButtonMenu):
 
         return self
 
-    @property
-    def prevent_multisessions(self) -> bool:
-        return getattr(self, "_prevent_multisessions", True)
-
-    def allow_multisession(self):
-        """Sets whether or not a user can open a new menu when one is already open. This will close the old menu.
-        Returns itself for fluent-style chaining."""
-        self._prevent_multisessions = False
-
-        return self
-
     async def open(self):
         """The entry point to a new PaginatedMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
@@ -141,12 +137,9 @@ class PaginatedMenu(ButtonMenu):
 
             while self.active:
                 tasks = [
-                    asyncio.create_task(self._get_reaction_add()),
-                    asyncio.create_task(self._get_reaction_remove()),
+                    asyncio.create_task(task())
+                    for task in [self._get_reaction_add, self._get_reaction_remove, self._shortcircuit]
                 ]
-
-                if not self.prevent_multisessions:
-                    tasks.append(asyncio.create_task(self._shortcircuit()))
 
                 done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout)
 
@@ -281,7 +274,6 @@ class PaginatedMenu(ButtonMenu):
             transitions.remove(self.to_first)
             transitions.remove(self.to_last)
 
-        # cursed code
         transition_map = {
             (button.emoji.name if isinstance(button.emoji, Emoji) else button.emoji)
             if isinstance(button, Reaction)

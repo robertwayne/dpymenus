@@ -74,7 +74,7 @@ class ButtonMenu(BaseMenu):
                     await self.page.on_next_event(self)
 
                     if self.last_visited_page() != self.page.index:
-                        await self._cleanup_reactions()
+                        await self._safe_clear_reactions()
 
                 _first_iter = False
 
@@ -122,7 +122,6 @@ class ButtonMenu(BaseMenu):
         try:
             event = await self.ctx.bot.wait_for(
                 "raw_reaction_add",
-                timeout=self.timeout,
                 check=self.custom_check if self.custom_check else self._check_reaction,
             )
 
@@ -192,7 +191,7 @@ class ButtonMenu(BaseMenu):
 
     # Validation Checks
     def _validate_buttons(self):
-        """Ensures that a menu was passed the appropriate amount of buttons."""
+        """Checks that the menu was passed the appropriate amount of buttons."""
         _cb_count = 0
         for page in self.pages:
             if not page.buttons_list:

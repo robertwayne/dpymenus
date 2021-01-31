@@ -6,8 +6,7 @@ from discord import Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus import Page, Session
-from dpymenus.exceptions import PagesError, SessionError
+from dpymenus import Page, PagesError, Session, SessionError
 from dpymenus.settings import HISTORY_CACHE_LIMIT
 
 if TYPE_CHECKING:
@@ -196,7 +195,7 @@ class BaseMenu(abc.ABC):
         """This method runs for ALL menus after their own open method. Session handling and initial setup is
         performed in here; it should NEVER be handled inside specific menus."""
         try:
-            Session.create(self)
+            await Session.create(self)
         except SessionError as exc:
             logging.info(exc.message)
         else:

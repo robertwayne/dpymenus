@@ -1,4 +1,4 @@
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from discord.ext.commands import Context
 
@@ -27,14 +27,14 @@ class Session:
         return sessions.get((ctx.author.id, ctx.channel.id), None)
 
     @classmethod
-    def create(cls, instance: "Menu") -> "Session":
+    async def create(cls, instance: "Menu") -> "Session":
         """Creates a new session based from a menu instance and adds it to the session store. Checks for
         existing sessions in the store and handles safe deletion."""
         session = Session.get(instance.ctx)
         if session and session.key in sessions.keys():
             if PREVENT_MULTISESSIONS is False:
                 session.kill()
-                await session.instance._safe_close()
+                await session.instance.close()
             else:
                 raise SessionError(
                     f"Duplicate session in channel [{instance.ctx.channel.id}] for user [{instance.ctx.author.id}]."
@@ -42,9 +42,9 @@ class Session:
 
         self = Session()
 
-        self.key = (instance.author.id, instance.channel.id)
+        self.key = (instance.ctx.author.id, instance.ctx.channel.id)
         self.instance = instance
-        self.owner = instance.author.id
+        self.owner = instance.ctx.author.id
 
         sessions.update({self.key: self})
 

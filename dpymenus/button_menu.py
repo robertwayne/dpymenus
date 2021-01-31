@@ -3,11 +3,11 @@ import logging
 from typing import Dict, Optional, TYPE_CHECKING
 
 import emoji
-from discord import Emoji, PartialEmoji, RawReactionActionEvent, Reaction
+from discord import Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus import BaseMenu, Session
+from dpymenus import BaseMenu
 from dpymenus.exceptions import ButtonsError, EventError, SessionError
 from dpymenus.settings import HIDE_WARNINGS
 
@@ -16,17 +16,15 @@ if TYPE_CHECKING:
 
 
 class ButtonMenu(BaseMenu):
-    """
-    Represents a button-based response menu.
+    """Represents a button-based response menu."""
 
-    :param ctx: A reference to the command context.
-    """
+    _data: Dict
 
     def __init__(self, ctx: Context):
         super().__init__(ctx)
 
     def __repr__(self):
-        return f"ButtonMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, data={self.data})"
+        return f"ButtonMenu({self.ctx})"
 
     @property
     def data(self) -> Dict:
@@ -39,12 +37,12 @@ class ButtonMenu(BaseMenu):
         return self
 
     def button_pressed(self, button: "Button") -> bool:
-        """Helper method which checks if the button the user pressed is the button passed in."""
+        """Checks if the reaction the user pressed is equal to the argument."""
         return button == self.input
 
     async def open(self):
-        """The entry point to a new ButtonMenu instance; starts the main menu loop.
-        Manages gathering user input, basic validation, sending messages, and cancellation requests."""
+        """The entry point to a new ButtonMenu instance; starts the main menu loop. Manages collecting user input,
+        validation, sending messages, and cancellation requests."""
         try:
             self._validate_buttons()
             await super()._open()
@@ -60,42 +58,47 @@ class ButtonMenu(BaseMenu):
             _first_iter = True
 
             while self.active:
-                if not _first_iter and self.last_visited_page() != self.page.index:
-                    await self._add_buttons()
+                if _first_iter is False:
+                    if self.last_visited_page() != self.page.index:
+                        await self._add_buttons()
+                    else:
+                        if isinstance(self.output.channel, GuildChannel):
+                            await self.output.remove_reaction(self.input, self.ctx.author)
 
-                elif not _first_iter and self.last_visited_page() == self.page.index:
-                    if isinstance(self.output.channel, GuildChannel):
-                        await self.output.remove_reaction(self.input, self.ctx.author)
-
-                # refresh our message content with the reactions added
+                # refresh our message content with the new reactions added; this is an API hit
                 self.output = await self.destination.fetch_message(self.output.id)
 
-                await self._handle_tasks()
-                await self.page.on_next_event(self)
+                self.input = await self._get_input()
 
-                if self.last_visited_page() != self.page.index:
-                    await self._cleanup_reactions()
+                if self.input:
+                    await self.page.on_next_event(self)
+
+                    if self.last_visited_page() != self.page.index:
+                        await self._cleanup_reactions()
 
                 _first_iter = False
 
     # Internal Methods
     async def _shortcircuit(self):
-        """Runs a background loop to poll the menus `active` state. Returns when False. Allows for short-circuiting the main
-        loop when it is waiting for user reaction events from discord.py."""
+        """Runs a background loop to poll the menus `active` state. Returns when False. Allows for short-circuiting
+        the main loop when it is waiting for user reaction events from discord.py."""
         while self.active:
             await asyncio.sleep(1)
         else:
             return
 
-    async def _handle_tasks(self):
-        tasks = [asyncio.create_task(task()) for task in
-            [self._get_reaction_add, self._get_reaction_remove, self._shortcircuit]]
+    async def _get_input(self) -> Optional[Message]:
+        """Waits for a user reaction input event and returns the message object."""
+        tasks = [
+            asyncio.create_task(task())
+            for task in [self._get_reaction_add, self._get_reaction_remove, self._shortcircuit]
+        ]
 
         done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout)
 
         # if all tasks are still pending, we force a timeout by manually calling cleanup methods
         if len(pending) == len(tasks):
-            await self._execute_timeout()
+            await self._timeout()
         else:
             # we need to cancel tasks first
             for task in pending:
@@ -115,30 +118,36 @@ class ButtonMenu(BaseMenu):
             await self.output.add_reaction(button)
 
     async def _get_reaction_add(self) -> Optional["Button"]:
-        """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
+        """Waits for a user reaction add event and returns the event object."""
         try:
-            reaction_event = await self.ctx.bot.wait_for(
-                "raw_reaction_add", timeout=self.timeout, check=self._check_reaction
+            event = await self.ctx.bot.wait_for(
+                "raw_reaction_add",
+                timeout=self.timeout,
+                check=self.custom_check if self.custom_check else self._check_reaction,
             )
 
         except asyncio.TimeoutError:
-            await self._execute_timeout()
+            await self._timeout()
 
         else:
-            return await self._parse_event(reaction_event)
+            return await self._get_emoji(event)
 
     async def _get_reaction_remove(self) -> Optional["Button"]:
-        """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
+        """Waits for a user reaction remove event and returns the event object."""
         try:
-            reaction_event = await self.ctx.bot.wait_for("raw_reaction_remove", check=self._check_reaction)
+            event = await self.ctx.bot.wait_for(
+                "raw_reaction_remove",
+                check=self.custom_check if self.custom_check else self._check_reaction,
+            )
 
         except asyncio.TimeoutError:
-            await self._execute_timeout()
+            await self._timeout()
 
         else:
-            return await self._parse_event(reaction_event)
+            return await self._get_emoji(event)
 
-    async def _parse_event(self, reaction_event: RawReactionActionEvent) -> "Button":
+    async def _get_emoji(self, reaction_event: RawReactionActionEvent) -> "Button":
+        """Returns an emoji object from a raw reaction event."""
         for btn in self.page.buttons_list:
             if isinstance(btn, Emoji):
                 if btn == reaction_event.emoji:
@@ -158,14 +167,15 @@ class ButtonMenu(BaseMenu):
             else:
                 return reaction_event.emoji
 
-    async def _cleanup_reactions(self):
-        """Removes all reactions from the output message object."""
+    async def _safe_clear_reactions(self):
+        """Removes all reactions from the output message object if the bot has permissions."""
         if self.output and isinstance(self.output.channel, GuildChannel):
             await self.output.clear_reactions()
 
     def _check_reaction(self, event: RawReactionActionEvent) -> bool:
-        """Returns true if the author is the person who reacted and the message ID's match. Checks the pages buttons."""
-        # cursed code, not sure how else to cover all cases though; watch for performance issues
+        """Returns true if the event author is the same as the initial value in the menu context. Additionally,
+        checks if the reaction is a valid button (and not a user added reaction)."""
+        # very cursed code...
         return (
             event.user_id == self.ctx.author.id
             and event.message_id == self.output.id
@@ -180,6 +190,7 @@ class ButtonMenu(BaseMenu):
             )
         )
 
+    # Validation Checks
     def _validate_buttons(self):
         """Ensures that a menu was passed the appropriate amount of buttons."""
         _cb_count = 0
@@ -212,20 +223,18 @@ class ButtonMenu(BaseMenu):
             )
 
     def _check_buttons(self, buttons_list):
+        """Checks the button list for valid emoji unicode or Discord emojis."""
         for button in buttons_list:
             if isinstance(button, (Emoji, PartialEmoji)):
                 continue
 
             if isinstance(button, str):
                 # split the str and test if the value between ':' is in the bot list
-                _test = button.split(":")
-                if len(_test) > 1:
-                    if _test[1] in [e.name for e in self.ctx.bot.emojis]:
+                if _test := button.split(":"):
+                    if len(_test) > 1 and _test[1] in [e.name for e in self.ctx.bot.emojis]:
                         continue
 
-                # check by key; faster than iterating over the list w/ for loop
-                _test = emoji.UNICODE_EMOJI_ALIAS.get(button, None)
-                if _test:
+                if _test := emoji.UNICODE_EMOJI_ALIAS_ENGLISH.get(button, None) is not None:
                     continue
 
             raise ButtonsError(f"Invalid Emoji or unicode string: {button}")

@@ -5,6 +5,7 @@ from discord import Message
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
+from dpymenus import SessionError
 from dpymenus.base_menu import BaseMenu
 from dpymenus.constants import QUIT
 
@@ -73,15 +74,11 @@ class TextMenu(BaseMenu):
         """The entry point to a new TextMenu instance; starts the main menu loop. Manages gathering user input,
         basic validation, sending messages, and cancellation requests."""
         await super()._open()
-
         first_iter = True
 
         while self.active:
             if first_iter is False and self.page.on_fail_event:
                 return await self.page.on_fail_event()
-
-            if first_iter is True:
-                first_iter = False
 
             self.input = await self._get_input()
 
@@ -93,6 +90,8 @@ class TextMenu(BaseMenu):
                     return await self._cancel()
 
                 await self.page.on_next_event(self)
+
+            first_iter = False
 
     # Internal Methods
     async def _get_input(self) -> Message:

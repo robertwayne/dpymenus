@@ -70,8 +70,7 @@ class ButtonMenu(BaseMenu):
                 # refresh our message content with the reactions added
                 self.output = await self.destination.fetch_message(self.output.id)
 
-                self.input = await self._get_reaction_add()
-
+                await self._handle_tasks()
                 await self.page.on_next_event(self)
 
                 if self.last_visited_page() != self.page.index:
@@ -80,6 +79,36 @@ class ButtonMenu(BaseMenu):
                 _first_iter = False
 
     # Internal Methods
+    async def _shortcircuit(self):
+        """Runs a background loop to poll the menus `active` state. Returns when False. Allows for short-circuiting the main
+        loop when it is waiting for user reaction events from discord.py."""
+        while self.active:
+            await asyncio.sleep(1)
+        else:
+            return
+
+    async def _handle_tasks(self):
+        tasks = [asyncio.create_task(task()) for task in
+            [self._get_reaction_add, self._get_reaction_remove, self._shortcircuit]]
+
+        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout)
+
+        # if all tasks are still pending, we force a timeout by manually calling cleanup methods
+        if len(pending) == len(tasks):
+            await self._execute_timeout()
+        else:
+            # we need to cancel tasks first
+            for task in pending:
+                task.cancel()
+
+            for future in done:
+                result = future.result()
+                if result:
+                    self.input = result
+                    break
+                else:
+                    return
+
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""
         for button in self.page.buttons_list:

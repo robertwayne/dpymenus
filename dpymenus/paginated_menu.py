@@ -1,8 +1,14 @@
 import asyncio
 import logging
-from typing import List, Optional, TYPE_CHECKING
+from typing import Callable, List, Optional, TYPE_CHECKING
 
-from discord import (Embed, Emoji, Message, RawReactionActionEvent, Reaction, )
+from discord import (
+    Embed,
+    Emoji,
+    Message,
+    RawReactionActionEvent,
+    Reaction,
+)
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -16,54 +22,38 @@ if TYPE_CHECKING:
 
 
 class PaginatedMenu(ButtonMenu):
-    """
-    Represents an paginated, button-based response menu.
+    """Represents an paginated, button-based response menu."""
 
-    :param ctx: A reference to the command context.
-    """
+    _cancel_page: Optional["PageType"]
+    _timeout_page: Optional["PageType"]
+    _skip_buttons: bool
+    _cancel_button: bool
+    _buttons_list: List
 
     def __init__(self, ctx: Context):
         super().__init__(ctx)
 
     def __repr__(self):
-        return (
-            f"PaginatedMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, "
-            f"skip_buttons={self.skip_buttons} page_numbers={self.page_numbers}, cancel_page={self.cancel_page}, "
-            f"timeout_page={self.timeout_page})"
-        )
+        return f"PaginatedMenu({self.ctx})"
 
     @property
-    def cancel_page(self) -> Optional[Embed]:
+    def cancel_page(self) -> Optional["PageType"]:
         return getattr(self, "_cancel_page", None)
 
     def set_cancel_page(self, embed: Embed) -> "PaginatedMenu":
-        """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
+        """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style
+        chaining."""
         self._cancel_page = embed
 
         return self
 
     @property
-    def timeout_page(self) -> Optional[Embed]:
+    def timeout_page(self) -> Optional["PageType"]:
         return getattr(self, "_timeout_page", None)
 
     def set_timeout_page(self, embed: Embed) -> "PaginatedMenu":
-        """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
-        self._timeout_page = embed
-
-        return self
-
-    @property
-    def page_numbers(self) -> bool:
-        return getattr(self, "_page_numbers", False)
-
-    def show_page_numbers(self) -> "PaginatedMenu":
-        """Adds page numbers to each embeds by overwriting the footer. Returns itself for fluent-style chaining."""
-        self._page_numbers = True
-
-        # check if pages were set prior to calling this method; if so, we reset footers
-        if self.pages:
-            for i, page in enumerate(self.pages):
-                page.set_footer(text=f"{i + 1}/{len(self.pages)}")
+        """Sets the function that will be called when a menu is cancelled. Returns itself for fluent-style chaining."""
+        setattr(self, "_timeout_page", embed)
 
         return self
 
@@ -73,7 +63,7 @@ class PaginatedMenu(ButtonMenu):
 
     def show_skip_buttons(self) -> "PaginatedMenu":
         """Adds two extra buttons for jumping to the first and last page. Returns itself for fluent-style chaining."""
-        self._skip_buttons = True
+        setattr(self, "_skip_buttons", True)
 
         return self
 
@@ -83,7 +73,7 @@ class PaginatedMenu(ButtonMenu):
 
     def hide_cancel_button(self) -> "PaginatedMenu":
         """Sets whether to show the cancel button or not. Returns itself for fluent-style chaining."""
-        self._cancel_button = False
+        setattr(self, "_cancel_button", True)
 
         return self
 
@@ -93,15 +83,20 @@ class PaginatedMenu(ButtonMenu):
 
     def buttons(self, buttons: List["Button"]) -> "PaginatedMenu":
         """Replaces the default buttons. You must include 3 or 5 emoji/strings in the order they would be displayed.
-        0 and 5 are only shown if `enable_skip_buttons` is set, otherwise 2, 3, and 4 will be shown. You can pass in
-        `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
-         will be filled in as the defaults for you. If you enable the skip buttons without having values set, it will
-         use those defaults."""
-        self._buttons_list = buttons
+        0 and 5 are only shown if `enable_skip_buttons` is set, otherwise 2, 3, and 4 will be shown.
 
-        if len(buttons) == 3:
-            self.buttons_list.insert(0, GENERIC_BUTTONS[0])
-            self.buttons_list.insert(4, GENERIC_BUTTONS[4])
+        You can pass in `None` or an empty string for 0 and 5 if you do not intend on using them. If you only pass in 3 values, they
+        will be filled in as the defaults for you. If you enable the skip buttons without having values set, it will
+        use those defaults.
+
+        Returns itself for fluent-style chaining."""
+        _buttons = buttons
+
+        if len(_buttons) > 3:
+            _buttons.insert(0, GENERIC_BUTTONS[0])
+            _buttons.insert(4, GENERIC_BUTTONS[4])
+
+        setattr(self, "_buttons_list", _buttons)
 
         return self
 
@@ -109,7 +104,6 @@ class PaginatedMenu(ButtonMenu):
         """The entry point to a new PaginatedMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         try:
-            # we have to set these here so we can validate cleanly
             if len(self.buttons_list) == 0:
                 self.buttons(GENERIC_BUTTONS)
 
@@ -129,63 +123,49 @@ class PaginatedMenu(ButtonMenu):
             self.output = await self.destination.fetch_message(self.output.id)
 
             while self.active:
-                await self._handle_tasks()
+                self.input = await self._get_input()
                 await self._handle_transition()
 
                 if isinstance(self.output.channel, GuildChannel):
                     await self.output.remove_reaction(self.input, self.ctx.author)
 
-            await self._cleanup_reactions()
+            await self._safe_clear_reactions()
 
-    async def send_message(self, embed: Embed) -> Message:
-        """
-        Edits the menu output message. We override the :class:`~dpymenus.BaseMenu` implementation because
-        we always want to edit, even in a DM channel type.
+    async def send_message(self, page: "PageType"):
+        """Updates the output message. We override the base implementation because we always want to edit,
+        even in a DM  channel type."""
+        safe_embed = page.as_safe_embed() if type(page) == Page else page
 
-        :param embed: A Discord :py:class:`~discord.Embed` object.
-        """
-        return await self.output.edit(embed=embed)
-
-    def add_pages(self, pages: List["PageType"], template: "Template" = None) -> "PaginatedMenu":
-        """Helper method to convert embeds into Pages and add them to a menu."""
-        self._validate_pages(pages)
-
-        for i, page in enumerate(pages):
-            if not isinstance(page, Page):
-                page = Page.convert_from(page)
-
-            page.index = i
-
-            # very naive impl -- need to allow overrides // just a test
-            page.apply_template(template)
-
-            self.pages.append(page)
-
-        self.page = self.pages[0]
-
-        return self
+        await self.output.edit(embed=safe_embed)
 
     # Internal Methods
+    def _get_check(self) -> Callable:
+        check = self._check_reaction_defaults
+
+        if self.custom_check:
+            check = self.custom_check
+        elif self.buttons_list != GENERIC_BUTTONS:
+            check = self._check
+
+        return check
+
     async def _get_reaction_add(self) -> "Button":
-        """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
-        reaction_event = await self.ctx.bot.wait_for(
-            "raw_reaction_add",
-            check=self._check_reaction if self.buttons_list != GENERIC_BUTTONS else self._check_reaction_defaults,
-        )
+        """Waits for a user reaction add event and returns the event object."""
+        check = self._get_check()
+        reaction_event = await self.ctx.bot.wait_for("raw_reaction_add", check=check)
 
         return reaction_event.emoji
 
     async def _get_reaction_remove(self) -> "Button":
-        """Collects a user reaction and places it into the input attribute. Returns a :py:class:`discord.Emoji` or string."""
-        reaction_event = await self.ctx.bot.wait_for(
-            "raw_reaction_remove",
-            check=self._check_reaction if self.buttons_list != GENERIC_BUTTONS else self._check_reaction_defaults,
-        )
+        """Waits for a user reaction remove event and returns the event object."""
+        check = self._get_check()
+        reaction_event = await self.ctx.bot.wait_for("raw_reaction_remove", check=check)
 
         return reaction_event.emoji
 
     def _check_reaction_defaults(self, event: RawReactionActionEvent) -> bool:
-        """Returns true if the author is the person who reacted and the message ID's match. Checks the generic buttons."""
+        """Returns true if the event author is the same as the initial value in the menu context. This function
+        specifically checks against the default button list (GENERIC_BUTTONS)."""
         return (
             event.user_id == self.ctx.author.id
             and event.message_id == self.output.id
@@ -193,6 +173,7 @@ class PaginatedMenu(ButtonMenu):
         )
 
     def _validate_buttons(self):
+        """Checks that the menu was passed the appropriate amount of buttons."""
         if self.buttons_list != GENERIC_BUTTONS:
             if len(self.buttons_list) != 3 and len(self.buttons_list) != 5:
                 raise ButtonsError(f"Buttons length mismatch. Expected 3 or 5, found {len(self.buttons_list)}")
@@ -200,7 +181,8 @@ class PaginatedMenu(ButtonMenu):
             self._check_buttons(self.buttons_list)
 
     async def _add_buttons(self):
-        """Adds reactions to the message object based on what was passed into the page buttons."""
+        """Adds reactions to the message object based on what was passed into the page buttons. Handles the cancel
+        and skip button settings."""
         if not self.cancel_button:
             self.buttons_list[2] = None
 

@@ -31,7 +31,7 @@ class ExampleRunner(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=".")
 
-    @watch(cogs_path="examples", debug=False, preload=True)
+    @watch(path="examples", debug=False, preload=True)
     async def on_ready(self):
         logging.info("Bot ready.")
 

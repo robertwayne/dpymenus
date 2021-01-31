@@ -1,33 +1,34 @@
-import logging
+import asyncio
 from typing import Dict, List, Union
 
+from discord import Message
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus.base_menu import BaseMenu
 from dpymenus.constants import QUIT
-from dpymenus.exceptions import SessionError
 
 
 class TextMenu(BaseMenu):
-    """
-    Represents a text-based response menu.
+    """Represents a text-based response menu."""
 
-    :param ctx: A reference to the command context.
-    """
+    _delay: float
+    _data: Dict
+    _normalized: bool
 
     def __init__(self, ctx: Context):
         super().__init__(ctx)
 
     def __repr__(self):
-        return f"TextMenu(pages={[p.__str__() for p in self.pages]}, page={self.page}, timeout={self.timeout}, data={self.data})"
+        return f"TextMenu({self.ctx})"
 
     @property
     def delay(self) -> float:
         return getattr(self, "_delay", 0.250)
 
     def set_delay(self, delay: float) -> "TextMenu":
-        """Sets the delay on when a users message will be deleted in guild channels. Returns itself for fluent-style chaining."""
+        """Sets the delay on when a users message will be deleted in guild channels. Returns itself for fluent-style
+        chaining."""
         self._delay = delay
 
         return self
@@ -47,7 +48,8 @@ class TextMenu(BaseMenu):
         return getattr(self, "_normalized", False)
 
     def normalize_responses(self) -> "TextMenu":
-        """Strips all input data and ignores case when comparing strings with `response_is`. Returns itself for fluent-style chaining."""
+        """Strips all input data and ignores case when comparing strings with `response_is`. Returns itself for
+        fluent-style chaining."""
         self._normalized = True
 
         return self
@@ -68,38 +70,39 @@ class TextMenu(BaseMenu):
     response_in = response_is
 
     async def open(self):
-        """The entry point to a new TextMenu instance; starts the main menu loop.
-        Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        try:
-            await super()._open()
-        except SessionError as exc:
-            logging.info(exc.message)
-        else:
-            first_iter = True
-            while self.active:
-                if not first_iter and self.page.on_fail_event:
-                    return await self.page.on_fail_event()
+        """The entry point to a new TextMenu instance; starts the main menu loop. Manages gathering user input,
+        basic validation, sending messages, and cancellation requests."""
+        await super()._open()
 
+        first_iter = True
+
+        while self.active:
+            if first_iter is False and self.page.on_fail_event:
+                return await self.page.on_fail_event()
+
+            if first_iter is True:
                 first_iter = False
 
-                self.input = await self._get_input()
+            self.input = await self._get_input()
 
-                if self.input:
-                    await self._cleanup_input()
+            if self.input:
+                if isinstance(self.output.channel, GuildChannel) and self.delay != 0:
+                    await self.input.delete(delay=self.delay)
 
-                    if self._is_cancelled():
-                        return await self._execute_cancel()
+                if self.response_in(QUIT):
+                    return await self._cancel()
 
-                    await self.page.on_next_event(self)
+                await self.page.on_next_event(self)
 
     # Internal Methods
-    async def _cleanup_input(self):
-        """Deletes a Discord client user message."""
-        if isinstance(self.output.channel, GuildChannel):
-            await self.input.delete(delay=self.delay)
-
-    def _is_cancelled(self) -> bool:
-        """Checks input for a cancellation string. If there is a match, it calls the ``menu.cancel()`` method and returns True."""
-        if self.response_in(QUIT):
-            return True
-        return False
+    async def _get_input(self) -> Message:
+        """Waits for user text input and returns the message object."""
+        try:
+            message = await self.ctx.bot.wait_for("message", timeout=self.timeout, check=self._check)
+        except asyncio.TimeoutError:
+            if self.page.on_timeout_event:
+                await self.page.on_timeout_event()
+            else:
+                await self._timeout()
+        else:
+            return message

@@ -1,21 +1,18 @@
-import asyncio
 import logging
 from typing import Callable, List, Optional, TYPE_CHECKING
 
 from discord import (
     Embed,
     Emoji,
-    Message,
     RawReactionActionEvent,
     Reaction,
 )
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus import ButtonMenu, Page, Session
+from dpymenus import ButtonMenu, Page
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
-from dpymenus.template import Template
 
 if TYPE_CHECKING:
     from dpymenus.types import PageType, Button

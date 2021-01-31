@@ -7,8 +7,7 @@ from discord import Emoji, Message, PartialEmoji, RawReactionActionEvent, Reacti
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus import BaseMenu
-from dpymenus.exceptions import ButtonsError, EventError, SessionError
+from dpymenus import BaseMenu, ButtonsError, EventError, SessionError
 from dpymenus.settings import HIDE_WARNINGS
 
 if TYPE_CHECKING:

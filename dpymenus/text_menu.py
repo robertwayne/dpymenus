@@ -5,7 +5,6 @@ from discord import Message
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus import SessionError
 from dpymenus.base_menu import BaseMenu
 from dpymenus.constants import QUIT
 

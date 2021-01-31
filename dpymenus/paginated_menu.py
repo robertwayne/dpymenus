@@ -10,9 +10,8 @@ from discord import (
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus import ButtonMenu, Page
+from dpymenus import ButtonMenu, ButtonsError, Page, PagesError, SessionError
 from dpymenus.constants import GENERIC_BUTTONS
-from dpymenus.exceptions import ButtonsError, PagesError, SessionError
 
 if TYPE_CHECKING:
     from dpymenus.types import PageType, Button

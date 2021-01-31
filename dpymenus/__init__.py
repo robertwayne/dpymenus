@@ -10,6 +10,7 @@ __version__ = "2.0.0"
 
 import logging
 
+from .exceptions import PagesError, ButtonsError, EventError, SessionError
 from .sessions import sessions
 from .sessions.session import Session
 from .page import Page
@@ -19,7 +20,6 @@ from .text_menu import TextMenu
 from .button_menu import ButtonMenu
 from .paginated_menu import PaginatedMenu
 from .poll import Poll
-from .exceptions import PagesError, ButtonsError, EventError, SessionError
 
 
 logger = logging.getLogger("dpymenus")

@@ -13,7 +13,7 @@ from dpymenus.settings import HISTORY_CACHE_LIMIT, PREVENT_MULTISESSIONS
 
 if TYPE_CHECKING:
     from dpymenus import Template
-    from dpymenus.types import PageType, Menu
+    from dpymenus.types import PageType
 
 
 class BaseMenu(abc.ABC):
@@ -125,7 +125,6 @@ class BaseMenu(abc.ABC):
         """
         if isinstance(page, int):
             self.page = self.pages[page]
-
         elif isinstance(page, str):
             # get a page index from its on_next callback function name and assign it
             for p in self.pages:
@@ -168,7 +167,6 @@ class BaseMenu(abc.ABC):
 
         if isinstance(self.output.channel, GuildChannel):
             return await self.output.edit(embed=safe_embed)
-
         else:
             await self.output.delete()
 
@@ -197,8 +195,7 @@ class BaseMenu(abc.ABC):
         """Sends a message after the `next` method is called. Closes the session if there is no callback on the next page."""
         if self.__class__.__name__ != "PaginatedMenu":
             if self.page.on_next_event is None:
-                await self.close_session()
-                self.active = False
+                Session.from_context(self.ctx).kill()
 
         self.update_history()
         await self.send_message(self.page)
@@ -213,16 +210,10 @@ class BaseMenu(abc.ABC):
 
         if cancel_page:
             await self.output.edit(embed=cancel_page)
-
         else:
             await self._cleanup_output()
 
-        await self.close_session()
-
-    async def close_session(self):
-        """Remove the user from the active users list."""
-        del sessions[(self.ctx.author.id, self.ctx.channel.id)]
-        self.active = False
+        Session.from_context(self.ctx).kill()
 
     async def _cleanup_input(self):
         """Deletes a Discord client user message."""
@@ -232,8 +223,6 @@ class BaseMenu(abc.ABC):
 
     async def _cleanup_output(self):
         """Deletes the Discord client bot message."""
-        self.output: Message
-
         await self.output.clear_reactions()
 
         if not self.persist:
@@ -245,21 +234,14 @@ class BaseMenu(abc.ABC):
         if self.page.on_timeout_event:
             return await self.page.on_timeout_event()
 
-        try:
-            await self.close_session()
-
-        except KeyError:
-            return
-
         timeout_page = getattr(self, "timeout_page", None)
 
         if timeout_page:
             await self.output.edit(embed=timeout_page)
-
         else:
             await self._cleanup_output()
 
-        self.active = False
+        Session.from_context(self.ctx).kill()
 
     def update_history(self):
         """Adds the most recent page index to the menus history cache. If the history is longer than
@@ -273,14 +255,11 @@ class BaseMenu(abc.ABC):
         """Collects user input and places it into the input attribute."""
         try:
             message = await self.ctx.bot.wait_for("message", timeout=self.timeout, check=self._check_message)
-
         except asyncio.TimeoutError:
             if self.page.on_timeout_event:
                 await self.page.on_timeout_event()
-
             else:
                 await self._execute_timeout()
-
         else:
             return message
 
@@ -295,18 +274,14 @@ class BaseMenu(abc.ABC):
             raise PagesError(f"There must be at least one page in a menu. Expected at least 1, found {len(pages)}.")
 
     async def _start_session(self):
-        print('SESSIONS: ', sessions)
         if (self.ctx.author.id, self.ctx.channel.id) in sessions.keys():
             if PREVENT_MULTISESSIONS is True:
                 raise SessionError(
                     f"Duplicate session in channel [{self.ctx.channel.id}] for user [{self.ctx.author.id}]."
                 )
             else:
-                session: "Session" = sessions.get((self.ctx.author.id, self.ctx.channel.id))
-
-                if session.instance.output.reactions:
-                    await session.instance._cleanup_reactions()
-
+                session = Session.from_context(self.ctx)
+                await session.instance._cleanup_output()
                 session.kill()
 
         Session(self)  # creates a new session; we don't need to do anything with it

@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
+
+from discord.ext.commands import Context
 
 from dpymenus import sessions
 
@@ -10,7 +12,6 @@ class Session:
     def __init__(self, instance: "Menu"):
         self.instance = instance
         self.owner = instance.ctx.author.id
-        self.active = True
 
         sessions.update({(self.owner, self.instance.ctx.channel.id): self})
 
@@ -18,5 +19,14 @@ class Session:
         return f'Session({self.instance})'
 
     def kill(self):
-        self.active = False
-        del sessions[(self.owner, self.instance.ctx.channel.id)]
+        """Removes a session object from the sessions store & sets it as inactive."""
+        try:
+            del sessions[(self.owner, self.instance.ctx.channel.id)]
+            self.instance.active = False
+        except KeyError:
+            return
+
+    @staticmethod
+    def from_context(ctx: Context) -> "Session":
+        """Gets an existing session object from the sessions store."""
+        return sessions.get((ctx.author.id, ctx.channel.id))

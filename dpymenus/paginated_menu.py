@@ -2,17 +2,11 @@ import asyncio
 import logging
 from typing import List, Optional, TYPE_CHECKING
 
-from discord import (
-    Embed,
-    Emoji,
-    Message,
-    RawReactionActionEvent,
-    Reaction,
-)
+from discord import (Embed, Emoji, Message, RawReactionActionEvent, Reaction, )
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
-from dpymenus import ButtonMenu, Page
+from dpymenus import ButtonMenu, Page, Session
 from dpymenus.constants import GENERIC_BUTTONS
 from dpymenus.exceptions import ButtonsError, PagesError, SessionError
 from dpymenus.template import Template
@@ -145,14 +139,16 @@ class PaginatedMenu(ButtonMenu):
                 # if all tasks are still pending, we force a timeout by manually calling cleanup methods
                 if len(pending) == len(tasks):
                     await self._execute_timeout()
-
                 else:
+                    # we need to cancel tasks first
+                    for task in pending:
+                        task.cancel()
+
                     for future in done:
                         result = future.result()
                         if result:
                             self.input = result
                             break
-
                         else:
                             return
 
@@ -161,8 +157,7 @@ class PaginatedMenu(ButtonMenu):
 
                     await self._handle_transition()
 
-                for task in pending:
-                    task.cancel()
+
 
             await self._cleanup_reactions()
 
@@ -200,7 +195,6 @@ class PaginatedMenu(ButtonMenu):
         loop when it is waiting for user reaction events from discord.py."""
         while self.active:
             await asyncio.sleep(1)
-
         else:
             return
 
@@ -246,9 +240,7 @@ class PaginatedMenu(ButtonMenu):
             for button in self.buttons_list:
                 if button is None:
                     continue
-
                 await self.output.add_reaction(button)
-
         else:
             for button in self.buttons_list[1:4]:
                 if button is None:

@@ -135,8 +135,6 @@ user set footers.
 
 `.hide_cancel_button()` -- removes the cancel button from the menu.
 
-`.allow_multisession()` -- disables the one menu per user+channel session limit. Old menus are closed when a new one is opened.
-
 ### Helper Methods
 
 `.next()`, `.previous()` -- goes forward or backward one page.

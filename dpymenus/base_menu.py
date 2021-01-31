@@ -180,7 +180,7 @@ class BaseMenu(abc.ABC):
 
         return self
 
-    async def send_message(self, page: "PageType") -> Message:
+    async def send_message(self, page: "PageType"):
         """Updates the output message if it can be edited, otherwise sends a new message."""
         safe_embed = page.as_safe_embed() if type(page) == Page else page
 
@@ -190,7 +190,6 @@ class BaseMenu(abc.ABC):
             await self.output.delete()
 
         self.output = await self.destination.send(embed=safe_embed)
-        return self.output
 
     # Internal Methods
     async def _open(self):

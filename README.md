@@ -20,6 +20,10 @@
 
 <br>
 
+<p style="font-size: 24pt; font-weight: bold" align="center">
+<a href="https://dpymenus.readthedocs.io/en/latest/?badge=latest">API Docs</a> | <a href="https://github.com/robertwayne/dpymenus/tree/master/examples">Examples</a>
+</p>
+
 ---
 
 <img align="right" src="assets/demo.gif" alt="user creates an embed, reaction buttons are added, and user navigates the menu
@@ -27,10 +31,6 @@ by clicking the buttons">
 
 ### Table of Contents
 
-**[Documentation](https://dpymenus.readthedocs.io/en/latest/?badge=latest)** <br>
-**[Examples](https://github.com/robertwayne/dpymenus/tree/master/examples)**
-
-- [Table of Contents](#table-of-contents)
 - [Getting Started](#getting-started)
 - [Menu Options](#menu-options)
   - [All Menu Types](#all-menu-types)

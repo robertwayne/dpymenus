@@ -100,7 +100,7 @@ class PaginatedMenu(ButtonMenu):
         """The entry point to a new PaginatedMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
         try:
-            if len(self.buttons_list) == 0:
+            if self.buttons_list is None:
                 self.buttons(GENERIC_BUTTONS)
 
             self._validate_buttons()
@@ -179,7 +179,7 @@ class PaginatedMenu(ButtonMenu):
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons. Handles the cancel
         and skip button settings."""
-        if not self.cancel_button:
+        if self.cancel_button is False:
             self.buttons_list[2] = None
 
         if self.skip_buttons:

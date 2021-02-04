@@ -30,7 +30,6 @@ by clicking the buttons">
 **[Documentation](https://dpymenus.readthedocs.io/en/latest/?badge=latest)** <br>
 **[Examples](https://github.com/robertwayne/dpymenus/tree/master/examples)**
 
-- [Table of Contents](#table-of-contents)
 - [Getting Started](#getting-started)
 - [Menu Options](#menu-options)
   - [All Menu Types](#all-menu-types)

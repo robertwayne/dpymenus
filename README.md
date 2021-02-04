@@ -20,7 +20,7 @@
 
 <br>
 
-<p style="font-size: 24pt; font-weight: bold" align="center">
+<p style="font-size: 36px; font-weight: bold" align="center">
 <a href="https://dpymenus.readthedocs.io/en/latest/?badge=latest">API Docs</a> | <a href="https://github.com/robertwayne/dpymenus/tree/master/examples">Examples</a>
 </p>
 

@@ -20,7 +20,7 @@ class Poll(ButtonMenu):
         self.voted: Set[User] = set()
 
     def __repr__(self):
-        return f"Poll(pages={[p.__str__() for p in self.pages]}, page={self.page.index}, timeout={self.timeout}, data={self.data})"
+        return f'Poll(pages={[p.__str__() for p in self.pages]}, page={self.page.index}, timeout={self.timeout}, data={self.data})'
 
     async def open(self):
         """The entry point to a new Poll instance; starts the main menu loop.
@@ -73,10 +73,10 @@ class Poll(ButtonMenu):
         winning_key = {choice for choice, voters in self.data.items() if voters == highest_value}
 
         if len(highest_value) == 0:
-            next_page.description = " ".join([next_page.description, f"It's a draw!"])
+            next_page.description = ' '.join([next_page.description, f'It\'s a draw!'])
 
         else:
-            next_page.description = " ".join([next_page.description, f"{str(next(iter(winning_key)))} wins!"])
+            next_page.description = ' '.join([next_page.description, f'{str(next(iter(winning_key)))} wins!'])
 
     # Internal Methods
     async def _get_vote_add(self):
@@ -84,7 +84,7 @@ class Poll(ButtonMenu):
         while True:
             try:
                 reaction_event = await self.ctx.bot.wait_for(
-                    "raw_reaction_add", timeout=self.timeout, check=self._check_reaction
+                    'raw_reaction_add', timeout=self.timeout, check=self._check_reaction
                 )
 
             except asyncio.TimeoutError:
@@ -99,7 +99,7 @@ class Poll(ButtonMenu):
         while True:
             try:
                 reaction_event = await self.ctx.bot.wait_for(
-                    "raw_reaction_remove",
+                    'raw_reaction_remove',
                     timeout=self.timeout,
                     check=self._check_reaction,
                 )
@@ -150,21 +150,21 @@ class Poll(ButtonMenu):
         """Checks that Poll objects always have more than two buttons."""
         if len(self.page.buttons_list) < 2:
             raise ButtonsError(
-                f"A Poll primary page must have at least two buttons. Expected at least 2, found {len(self.page.buttons_list)}."
+                f'A Poll primary page must have at least two buttons. Expected at least 2, found {len(self.page.buttons_list)}.'
             )
 
         if len(self.page.buttons_list) > 5:
-            warn("Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.")
+            warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')
 
     @staticmethod
     def _validate_pages(pages: List[Any]):
         """Checks that the Menu contains at least one Page."""
         if len(pages) != 2:
-            raise PagesError(f"A Poll can only have two pages. Expected 2, found {len(pages)}.")
+            raise PagesError(f'A Poll can only have two pages. Expected 2, found {len(pages)}.')
 
     def _validate_callbacks(self):
         if self.page.on_cancel_event or self.page.on_fail_event or self.page.on_timeout_event:
-            raise EventError("A Poll can not capture a `cancel`, `fail`, or `timeout` event.")
+            raise EventError('A Poll can not capture a `cancel`, `fail`, or `timeout` event.')
 
     @staticmethod
     async def get_voters(users: Set[User]) -> Set[User]:

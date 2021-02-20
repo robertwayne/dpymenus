@@ -39,29 +39,29 @@ class BaseMenu(abc.ABC):
 
     @property
     def timeout(self) -> int:
-        return getattr(self, "_timeout", 300)
+        return getattr(self, '_timeout', 300)
 
-    def set_timeout(self, duration: int) -> "BaseMenu":
+    def set_timeout(self, duration: int) -> 'BaseMenu':
         """Sets the timeout on a menu. Returns itself for fluent-style chaining."""
-        setattr(self, "_timeout", duration)
+        setattr(self, '_timeout', duration)
 
         return self
 
     @property
     def destination(self) -> Union[Context, User, TextChannel]:
-        return getattr(self, "_destination", self.ctx)
+        return getattr(self, '_destination', self.ctx)
 
-    def set_destination(self, dest: Union[User, TextChannel]) -> "BaseMenu":
+    def set_destination(self, dest: Union[User, TextChannel]) -> 'BaseMenu':
         """Sets the message destination for the menu. Returns itself for fluent-style chaining."""
-        setattr(self, "_destination", dest)
+        setattr(self, '_destination', dest)
 
         return self
 
     @property
     def command_message(self) -> bool:
-        return getattr(self, "_command_message", False)
+        return getattr(self, '_command_message', False)
 
-    def show_command_message(self) -> "BaseMenu":
+    def show_command_message(self) -> 'BaseMenu':
         """Persists user command invocation messages in the chat instead of deleting them after execution.
         Returns itself for fluent-style chaining."""
         self._command_message = True
@@ -70,9 +70,9 @@ class BaseMenu(abc.ABC):
 
     @property
     def persist(self) -> bool:
-        return getattr(self, "_persist", False)
+        return getattr(self, '_persist', False)
 
-    def persist_on_close(self) -> "BaseMenu":
+    def persist_on_close(self) -> 'BaseMenu':
         """Prevents message cleanup from running when a menu closes.
         Returns itself for fluent-style chaining."""
         self._persist = True
@@ -81,23 +81,23 @@ class BaseMenu(abc.ABC):
 
     @property
     def reply(self) -> bool:
-        return getattr(self, "_reply", True)
+        return getattr(self, '_reply', True)
 
-    def use_replies(self) -> "BaseMenu":
+    def use_replies(self) -> 'BaseMenu':
         """Uses the Discord reply feature on user commands.
         Returns itself for fluent-style chaining."""
-        setattr(self, "_reply", True)
+        setattr(self, '_reply', True)
 
         return self
 
     @property
     def custom_check(self) -> Optional[Callable]:
-        return getattr(self, "_custom_check", None)
+        return getattr(self, '_custom_check', None)
 
-    def set_custom_check(self, fn: Callable) -> "BaseMenu":
+    def set_custom_check(self, fn: Callable) -> 'BaseMenu':
         """Overrides the default check method for user responses.
         Returns itself for fluent-style chaining."""
-        setattr(self, "_custom_check", fn)
+        setattr(self, '_custom_check', fn)
 
         return self
 
@@ -160,7 +160,7 @@ class BaseMenu(abc.ABC):
         """Returns the last visited page index."""
         return self.history[-2] if len(self.history) > 1 else 0
 
-    def add_pages(self, pages: List["PageType"], template: "Template" = None) -> "BaseMenu":
+    def add_pages(self, pages: List['PageType'], template: 'Template' = None) -> 'BaseMenu':
         """Adds a list of pages to a menu, setting their index based on the position in the list.
         Returns itself for fluent-style chaining."""
         self._validate_pages(pages)
@@ -179,7 +179,7 @@ class BaseMenu(abc.ABC):
 
         return self
 
-    async def send_message(self, page: "PageType"):
+    async def send_message(self, page: 'PageType'):
         """Updates the output message if it can be edited, otherwise sends a new message."""
         safe_embed = page.as_safe_embed() if type(page) == Page else page
 
@@ -237,7 +237,7 @@ class BaseMenu(abc.ABC):
             await self.page.on_cancel_event()
             return
 
-        if cancel_page := getattr(self, "cancel_page", None):
+        if cancel_page := getattr(self, 'cancel_page', None):
             await self.output.edit(embed=cancel_page)
 
         await self.close()
@@ -250,7 +250,7 @@ class BaseMenu(abc.ABC):
             await self.page.on_timeout_event()
             return
 
-        if timeout_page := getattr(self, "timeout_page", None):
+        if timeout_page := getattr(self, 'timeout_page', None):
             await self.output.edit(embed=timeout_page)
 
         await self.close()
@@ -258,8 +258,10 @@ class BaseMenu(abc.ABC):
     async def _next(self):
         """Sends a message after the `next` method is called. Closes the menu instance if there is no callback for
         the on_next_event on the current page."""
-        if self.page.on_next_event is None:
-            await self.close()
+
+        if self.__class__.__name__ != 'PaginatedMenu':
+            if self.page.on_next_event is None:
+                await self.close()
 
         self._update_history()
         await self.send_message(self.page)
@@ -269,4 +271,4 @@ class BaseMenu(abc.ABC):
     def _validate_pages(pages: List[Any]):
         """Checks that the Menu contains at least one pages."""
         if len(pages) == 0:
-            raise PagesError(f"There must be at least one page in a menu. Expected at least 1, found {len(pages)}.")
+            raise PagesError(f'There must be at least one page in a menu. Expected at least 1, found {len(pages)}.')

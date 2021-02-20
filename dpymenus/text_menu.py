@@ -20,13 +20,13 @@ class TextMenu(BaseMenu):
         super().__init__(ctx)
 
     def __repr__(self):
-        return f"TextMenu({self.ctx})"
+        return f'TextMenu({self.ctx})'
 
     @property
     def delay(self) -> float:
-        return getattr(self, "_delay", 0.250)
+        return getattr(self, '_delay', 0.250)
 
-    def set_delay(self, delay: float) -> "TextMenu":
+    def set_delay(self, delay: float) -> 'TextMenu':
         """Sets the delay on when a users message will be deleted in guild channels. Returns itself for fluent-style
         chaining."""
         self._delay = delay
@@ -35,9 +35,9 @@ class TextMenu(BaseMenu):
 
     @property
     def data(self) -> Dict:
-        return getattr(self, "_data", {})
+        return getattr(self, '_data', {})
 
-    def set_data(self, data: Dict) -> "TextMenu":
+    def set_data(self, data: Dict) -> 'TextMenu':
         """Sets a dictionary up for persistent state data. Returns itself for fluent-style chaining."""
         self._data = data
 
@@ -45,9 +45,9 @@ class TextMenu(BaseMenu):
 
     @property
     def normalized(self) -> bool:
-        return getattr(self, "_normalized", False)
+        return getattr(self, '_normalized', False)
 
-    def normalize_responses(self) -> "TextMenu":
+    def normalize_responses(self) -> 'TextMenu':
         """Strips all input data and ignores case when comparing strings with `response_is`. Returns itself for
         fluent-style chaining."""
         self._normalized = True
@@ -58,7 +58,7 @@ class TextMenu(BaseMenu):
         """Helper method which checks if a users response is in the str or list of strings passed in."""
         response = self.input.content
         if self.normalized:
-            response = " ".join(response.lower().split())
+            response = ' '.join(response.lower().split())
 
         return (
             any(response == res for res in valid_response)
@@ -96,7 +96,7 @@ class TextMenu(BaseMenu):
     async def _get_input(self) -> Message:
         """Waits for user text input and returns the message object."""
         try:
-            message = await self.ctx.bot.wait_for("message", timeout=self.timeout, check=self._check)
+            message = await self.ctx.bot.wait_for('message', timeout=self.timeout, check=self._check)
         except asyncio.TimeoutError:
             if self.page.on_timeout_event:
                 await self.page.on_timeout_event()

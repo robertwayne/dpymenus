@@ -10,24 +10,24 @@ if TYPE_CHECKING:
 
 
 class Session:
-    key: "SessionKey"
-    instance: "Menu"
+    key: 'SessionKey'
+    instance: 'Menu'
     owner: int
 
     def __repr__(self):
-        return f"Session({self.instance})"
+        return f'Session({self.instance})'
 
     def kill(self):
         """Removes a session object from the sessions store."""
         del sessions[(self.owner, self.instance.ctx.channel.id)]
 
     @staticmethod
-    def get(ctx: Context) -> "Session":
+    def get(ctx: Context) -> 'Session':
         """Returns an existing session object from the sessions store."""
         return sessions.get((ctx.author.id, ctx.channel.id), None)
 
     @classmethod
-    async def create(cls, instance: "Menu") -> "Session":
+    async def create(cls, instance: 'Menu') -> 'Session':
         """Creates a new session based from a menu instance and adds it to the session store. Checks for
         existing sessions in the store and handles safe deletion."""
         session = Session.get(instance.ctx)
@@ -37,7 +37,7 @@ class Session:
                 await session.instance.close()
             else:
                 raise SessionError(
-                    f"Duplicate session in channel [{instance.ctx.channel.id}] for user [{instance.ctx.author.id}]."
+                    f'Duplicate session in channel [{instance.ctx.channel.id}] for user [{instance.ctx.author.id}].'
                 )
 
         self = Session()

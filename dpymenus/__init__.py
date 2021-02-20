@@ -2,11 +2,11 @@
 dpymenus -- Simplified menus for discord.py developers.
 """
 
-__title__ = "dpymenus"
-__author__ = "Rob Wagner <rob@robwagner.dev>"
-__license__ = "MIT"
-__copyright__ = "Copyright 2020-2021 Rob Wagner"
-__version__ = "2.0.0"
+__title__ = 'dpymenus'
+__author__ = 'Rob Wagner <rob@robwagner.dev>'
+__license__ = 'MIT'
+__copyright__ = 'Copyright 2020-2021 Rob Wagner'
+__version__ = '2.0.0'
 
 import logging
 
@@ -22,5 +22,5 @@ from .paginated_menu import PaginatedMenu
 from .poll import Poll
 
 
-logger = logging.getLogger("dpymenus")
+logger = logging.getLogger('dpymenus')
 logger.addHandler(logging.NullHandler())

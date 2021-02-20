@@ -7,6 +7,6 @@ if TYPE_CHECKING:
     from dpymenus import BaseMenu, TextMenu, ButtonMenu, PaginatedMenu, Poll
 
     SessionKey = Tuple[int, int]  # (session.owner.id, session.channel.id)
-    Menu = TypeVar("Menu", BaseMenu, TextMenu, ButtonMenu, PaginatedMenu, Poll)
-    Button = TypeVar("Button", Emoji, PartialEmoji, str)
-    PageType = TypeVar("PageType", Embed, Page, Dict)
+    Menu = TypeVar('Menu', BaseMenu, TextMenu, ButtonMenu, PaginatedMenu, Poll)
+    Button = TypeVar('Button', Emoji, PartialEmoji, str)
+    PageType = TypeVar('PageType', Embed, Page, Dict)

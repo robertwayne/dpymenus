@@ -12,13 +12,13 @@ class MyTextMenu(commands.Cog):
     async def ping(self, ctx) -> None:
 
         page1 = Page(
-            title="Ping Menu",
-            description="Are you absolutely sure you want to send a ping command?",
+            title='Ping Menu',
+            description='Are you absolutely sure you want to send a ping command?',
         )
-        page1.set_footer(text="Type `yes` if you are sure.\nType `quit` to cancel this menu.")
+        page1.set_footer(text='Type `yes` if you are sure.\nType `quit` to cancel this menu.')
         page1.on_next(self.confirm)
 
-        page2 = Page(title="Ping Menu", description="Pong!")
+        page2 = Page(title='Ping Menu', description='Pong!')
 
         menu = TextMenu(ctx)
         menu.add_pages([page1, page2])

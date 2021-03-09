@@ -99,16 +99,15 @@ class ButtonMenu(BaseMenu):
         if len(pending) == len(tasks):
             await self._timeout_menu()
         else:
-            # we need to cancel tasks first
-            for task in pending:
-                task.cancel()
-
             for future in done:
                 result = future.result()
                 if result:
                     return result
                 else:
                     return
+
+            for task in pending:
+                task.cancel()
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""

@@ -260,7 +260,6 @@ class BaseMenu(abc.ABC):
     async def _timeout_menu(self):
         """Closes the menu on an asyncio.TimeoutError event. If an on_timeout_event callback exists, that function
         will be run instead of the default behaviour."""
-
         if self.page.on_timeout_event:
             await self.page.on_timeout_event()
             return
@@ -273,10 +272,10 @@ class BaseMenu(abc.ABC):
     async def _next(self):
         """Sends a message after the `next` method is called. Closes the menu instance if there is no callback for
         the on_next_event on the current page."""
-
         if self.__class__.__name__ != 'PaginatedMenu':
             if self.page.on_next_event is None:
-                await self.close()
+                Session.get(self.ctx).kill()
+                self.active = False
 
         self._update_history()
         await self.send_message(self.page)

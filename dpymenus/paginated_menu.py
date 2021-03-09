@@ -122,10 +122,12 @@ class PaginatedMenu(ButtonMenu):
 
             while self.active:
                 self.input = await self._get_input()
-                await self._handle_transition()
 
                 if self.output and isinstance(self.output.channel, GuildChannel):
                     await self.output.remove_reaction(self.input, self.ctx.author)
+
+                # this must come after removing reactions to prevent duplicate actions on bot remove
+                await self._handle_transition()
 
             await self._safe_clear_reactions()
 

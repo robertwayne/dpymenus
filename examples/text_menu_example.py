@@ -9,7 +9,7 @@ class MyTextMenu(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def ping(self, ctx) -> None:
+    async def text(self, ctx) -> None:
 
         page1 = Page(
             title='Ping Menu',

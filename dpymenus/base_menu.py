@@ -231,7 +231,7 @@ class BaseMenu(abc.ABC):
         """Returns true if the event author and channel are the same as the initial values in the menu context."""
         return message.author == self.ctx.author and self.output.channel == message.channel
 
-    async def _cancel(self):
+    async def _cancel_menu(self):
         """Closes the menu as a user-defined 'cancel' event. Checks if an on_cancel_event callback exists first."""
         if self.page.on_cancel_event:
             await self.page.on_cancel_event()
@@ -242,7 +242,7 @@ class BaseMenu(abc.ABC):
 
         await self.close()
 
-    async def _timeout(self):
+    async def _timeout_menu(self):
         """Closes the menu on an asyncio.TimeoutError event. If an on_timeout_event callback exists, that function
         will be run instead of the default behaviour."""
 

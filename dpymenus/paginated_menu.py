@@ -148,18 +148,17 @@ class PaginatedMenu(ButtonMenu):
 
         # if all tasks are still pending, we force a timeout by manually calling cleanup methods
         if len(pending) == len(tasks):
-            await self._timeout()
+            await self._timeout_menu()
         else:
-            # we need to cancel tasks first
-            for task in pending:
-                task.cancel()
-
             for future in done:
                 result = future.result()
                 if result:
                     return result
                 else:
                     return
+
+        for task in pending:
+            task.cancel()
 
     def _get_check(self) -> Callable:
         check = self._check_reaction_defaults

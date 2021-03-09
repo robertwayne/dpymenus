@@ -97,7 +97,7 @@ class ButtonMenu(BaseMenu):
 
         # if all tasks are still pending, we force a timeout by manually calling cleanup methods
         if len(pending) == len(tasks):
-            await self._timeout()
+            await self._timeout_menu()
         else:
             # we need to cancel tasks first
             for task in pending:
@@ -124,7 +124,7 @@ class ButtonMenu(BaseMenu):
             )
 
         except asyncio.TimeoutError:
-            await self._timeout()
+            await self._timeout_menu()
 
         else:
             return await self._get_emoji(event)
@@ -138,7 +138,7 @@ class ButtonMenu(BaseMenu):
             )
 
         except asyncio.TimeoutError:
-            await self._timeout()
+            await self._timeout_menu()
 
         else:
             return await self._get_emoji(event)

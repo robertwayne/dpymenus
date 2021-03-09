@@ -109,6 +109,8 @@ the _examples/_ directory for various ways to compose and apply these options.
 
 `.persist_on_close()` -- prevents the menu from being deleted when closed. Clears reactions and remains on the last page.
 
+`.disable_replies()` -- simply sends menu messages instead of using the new Discord reply feature
+
 #### Text & Button Menus
 
 `.set_data(x)` -- takes a dictionary of arbitrary data that can be used across menu and page functions.

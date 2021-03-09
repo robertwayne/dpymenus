@@ -40,8 +40,8 @@ class ButtonMenu(BaseMenu):
         return button == self.input
 
     async def open(self):
-        """The entry point to a new ButtonMenu instance; starts the main menu loop. Manages collecting user input,
-        validation, sending messages, and cancellation requests."""
+        """The entry point to a new ButtonMenu instance; starts the main menu loop.
+        Manages collecting user input, validation, sending messages, and cancellation requests."""
         try:
             self._validate_buttons()
             await super()._open()
@@ -79,8 +79,8 @@ class ButtonMenu(BaseMenu):
 
     # Internal Methods
     async def _shortcircuit(self):
-        """Runs a background loop to poll the menus `active` state. Returns when False. Allows for short-circuiting
-        the main loop when it is waiting for user reaction events from discord.py."""
+        """Runs a background loop to poll the menus `active` state. Returns when False.
+        Allows for short-circuiting the main loop when it is waiting for user reaction events from discord.py."""
         while self.active:
             await asyncio.sleep(1)
         else:
@@ -170,8 +170,8 @@ class ButtonMenu(BaseMenu):
             await self.output.clear_reactions()
 
     def _check_reaction(self, event: RawReactionActionEvent) -> bool:
-        """Returns true if the event author is the same as the initial value in the menu context. Additionally,
-        checks if the reaction is a valid button (and not a user added reaction)."""
+        """Returns true if the event author is the same as the initial value in the menu context.
+        Additionally, checks if the reaction is a valid button (and not a user added reaction)."""
         # very cursed code...
         return (
             event.user_id == self.ctx.author.id
@@ -206,7 +206,8 @@ class ButtonMenu(BaseMenu):
 
             if len(page.buttons_list) > 5 and HIDE_WARNINGS is False:
                 logging.warning(
-                    'Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.'
+                    'Adding more than 5 buttons to a page at once may result in discord.py '
+                    'throttling the bot client.'
                 )
 
             self._check_buttons(page.buttons_list)

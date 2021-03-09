@@ -2,7 +2,6 @@ from typing import Dict, TYPE_CHECKING, Tuple, TypeVar
 
 from discord import Embed, Emoji, PartialEmoji
 
-
 if TYPE_CHECKING:
     from dpymenus import Page
     from dpymenus import BaseMenu, TextMenu, ButtonMenu, PaginatedMenu, Poll

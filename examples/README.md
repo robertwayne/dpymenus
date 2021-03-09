@@ -23,7 +23,8 @@
 ---
 
 This directory contains runnable examples of various menus. If you wish to run the test bot, you will need to supply a
-personal bot token -- otherwise it will not run.
+personal bot token -- otherwise it will not run. The `databases` directory contains examples showing how to use 
+menus with various databases.
 
 ### Run the test bot:
 
@@ -40,3 +41,7 @@ personal bot token -- otherwise it will not run.
 | poll_example.py | .poll | Shows a menu that counts votes for choices and tallies them up. |
 | reloadable_data_example.py | .reloadable | Shows a menu with a single page that has dynamic data updated on button presses. |
 | text_menu_example.py | .text | Shows a menu that reacts based on user text responses. |
+| menu_hooks_example.py | .hooks | Shows a menu utilizing user-defined @before and @after hooks. |
+| menu_chaining_example.py | .chain | Shows a button menu that chains into various other menu types based on input. |
+| cogwatch_integration_example.py | .cogwatch | Demonstrates how to use [cogwatch](https://github.com/robertwayne/cogwatch) with `dpymenus`. |
+

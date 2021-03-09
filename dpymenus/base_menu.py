@@ -23,6 +23,7 @@ class BaseMenu(abc.ABC):
     _persist: bool
     _reply: bool
     _custom_check: Optional[Callable]
+    _replies_disabled: bool
 
     def __init__(self, ctx: Context):
         self.ctx: Context = ctx
@@ -54,6 +55,16 @@ class BaseMenu(abc.ABC):
     def set_destination(self, dest: Union[User, TextChannel]) -> 'BaseMenu':
         """Sets the message destination for the menu. Returns itself for fluent-style chaining."""
         setattr(self, '_destination', dest)
+
+        return self
+
+    @property
+    def replies_disabled(self) -> bool:
+        return getattr(self, '_replies_disabled', False)
+
+    @property
+    def disable_replies(self) -> 'BaseMenu':
+        self._replies_disabled = True
 
         return self
 
@@ -199,7 +210,11 @@ class BaseMenu(abc.ABC):
         except SessionError as exc:
             logging.info(exc.message)
         else:
-            self.output = await self.destination.send(embed=self.page.as_safe_embed())
+            if not self.replies_disabled:
+                self.output = await self.destination.reply(embed=self.page.as_safe_embed())
+            else:
+                self.output = await self.destination.send(embed=self.page.as_safe_embed())
+
             self.input = self.ctx.message
             self._update_history()
 

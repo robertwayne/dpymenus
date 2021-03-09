@@ -11,7 +11,7 @@ class SecondPaginatedMenu(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def demo2(self, ctx):
+    async def paginated2(self, ctx):
         data = generate_list_of_random_strings()
         paginated = split_data(data, 10)  # paginate our data in chunks of 10
         pages = []
@@ -23,7 +23,7 @@ class SecondPaginatedMenu(commands.Cog):
             pages.append(page)
 
         menu = PaginatedMenu(ctx)
-        menu.add_pages(pages)
+        menu.show_command_message()
         await menu.open()
 
 

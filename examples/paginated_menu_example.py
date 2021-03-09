@@ -1,7 +1,6 @@
-from discord import Embed
 from discord.ext import commands
 
-from dpymenus import PaginatedMenu
+from dpymenus import Page, PaginatedMenu
 
 
 class MyPaginatedMenu(commands.Cog):
@@ -9,20 +8,20 @@ class MyPaginatedMenu(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def demo(self, ctx):
-        e1 = Embed(title='Page 1', description='First page test!')
+    async def paginated(self, ctx):
+        e1 = Page(title='Page 1', description='First page test!')
         e1.add_field(name='Example A', value='Example B')
 
-        e2 = Embed(title='Page 2', description='Second page test!')
+        e2 = Page(title='Page 2', description='Second page test!')
         e2.add_field(name='Example C', value='Example D')
 
-        e3 = Embed(title='Page 3', description='Third page test!')
+        e3 = Page(title='Page 3', description='Third page test!')
         e3.add_field(name='Example E', value='Example F')
 
-        cancel = Embed(title='Cancel Page', description='Cancel page test.')
+        cancel = Page(title='Cancel Page', description='Cancel page test.')
         cancel.add_field(name='Example E', value='Example F')
 
-        timeout = Embed(title='Timeout Page', description='Timeout page test.')
+        timeout = Page(title='Timeout Page', description='Timeout page test.')
         timeout.add_field(name='Example E', value='Example F')
 
         menu = PaginatedMenu(ctx)

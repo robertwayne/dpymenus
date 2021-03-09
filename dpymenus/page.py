@@ -54,7 +54,8 @@ class Page(Embed):
         return getattr(self, '_on_next_event', None)
 
     def on_next(self, func: Callable) -> 'Page':
-        """Sets the function that will be called when the `next` event runs. Returns itself for fluent-style chaining."""
+        """Sets the function that will be called when the `next` event runs.
+        Returns itself for fluent-style chaining."""
         self._on_next_event = func
 
         return self
@@ -64,7 +65,8 @@ class Page(Embed):
         return getattr(self, '_on_fail_event', None)
 
     def on_fail(self, func: Callable) -> 'Page':
-        """Sets the function that will be called when the `fail` event runs. Returns itself for fluent-style chaining."""
+        """Sets the function that will be called when the `fail` event runs.
+        Returns itself for fluent-style chaining."""
         self._on_fail_event = func
 
         return self
@@ -74,7 +76,8 @@ class Page(Embed):
         return getattr(self, '_on_cancel_event', None)
 
     def on_cancel(self, func: Callable) -> 'Page':
-        """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style chaining."""
+        """Sets the function that will be called when the `cancel` event runs.
+        Returns itself for fluent-style chaining."""
         self._on_cancel_event = func
 
         return self
@@ -84,7 +87,8 @@ class Page(Embed):
         return getattr(self, '_on_timeout_event', None)
 
     def on_timeout(self, func: Callable) -> 'Page':
-        """Sets the function that will be called when the `timeout` event runs. Returns itself for fluent-style chaining."""
+        """Sets the function that will be called when the `timeout` event runs.
+        Returns itself for fluent-style chaining."""
         self._on_timeout_event = func
 
         return self
@@ -102,9 +106,18 @@ class Page(Embed):
         else:
             return Page.from_dict(other)
 
-    def apply_template(self, template: 'Template'):
-        if self.title is None:
-            self.title = template.set('title')
+    def apply_template(self, template: 'Template') -> 'Page':
+        """Applies user-defined template options to a page."""
+        if not self.title:
+            self.title = template.title
 
-        if self.color is None:
-            self.color = template.set('color')
+        if not self.description:
+            self.description = template.description
+
+        if not self.color and not self.colour:
+            self.color = template.color
+
+        if not self.footer:
+            self.set_footer(text=template.footer)
+
+        return self

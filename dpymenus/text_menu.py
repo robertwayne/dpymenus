@@ -1,10 +1,12 @@
 import asyncio
+import logging
 from typing import Dict, List, Union
 
 from discord import Message
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
+from dpymenus import PagesError, SessionError
 from dpymenus.base_menu import BaseMenu
 from dpymenus.constants import QUIT
 
@@ -72,25 +74,34 @@ class TextMenu(BaseMenu):
     async def open(self):
         """The entry point to a new TextMenu instance; starts the main menu loop. Manages gathering user input,
         basic validation, sending messages, and cancellation requests."""
-        await super()._open()
-        first_iter = True
+        try:
+            await super()._open()
 
-        while self.active:
-            if first_iter is False and self.page.on_fail_event:
-                return await self.page.on_fail_event()
+        except PagesError as exc:
+            logging.error(exc.message)
 
-            self.input = await self._get_input()
+        except SessionError as exc:
+            logging.info(exc.message)
 
-            if self.input:
-                if isinstance(self.output.channel, GuildChannel) and self.delay != 0:
-                    await self.input.delete(delay=self.delay)
+        else:
+            first_iter = True
 
-                if self.response_in(QUIT):
-                    return await self._cancel_menu()
+            while self.active:
+                if not first_iter and self.page.on_fail_event:
+                    return await self.page.on_fail_event()
 
-                await self.page.on_next_event(self)
+                self.input = await self._get_input()
 
-            first_iter = False
+                if self.input:
+                    if self.output and isinstance(self.output.channel, GuildChannel) and self.delay != 0:
+                        await self.input.delete(delay=self.delay)
+
+                    if self.response_in(QUIT):
+                        return await self._cancel_menu()
+
+                    await self.page.on_next_event(self)
+
+                first_iter = False
 
     # Internal Methods
     async def _get_input(self) -> Message:

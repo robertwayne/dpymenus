@@ -86,7 +86,7 @@ class TextMenu(BaseMenu):
                     await self.input.delete(delay=self.delay)
 
                 if self.response_in(QUIT):
-                    return await self._cancel()
+                    return await self._cancel_menu()
 
                 await self.page.on_next_event(self)
 
@@ -101,6 +101,6 @@ class TextMenu(BaseMenu):
             if self.page.on_timeout_event:
                 await self.page.on_timeout_event()
             else:
-                await self._timeout()
+                await self._timeout_menu()
         else:
             return message

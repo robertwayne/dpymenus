@@ -201,8 +201,6 @@ class PaginatedMenu(ButtonMenu):
             if len(self.buttons_list) != 3 and len(self.buttons_list) != 5:
                 raise ButtonsError(f'Buttons length mismatch. Expected 3 or 5, found {len(self.buttons_list)}')
 
-            self._check_buttons(self.buttons_list)
-
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons. Handles the cancel
         and skip button settings."""

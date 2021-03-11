@@ -209,8 +209,6 @@ class ButtonMenu(BaseMenu):
                     'throttling the bot client.'
                 )
 
-            self._check_buttons(page.buttons_list)
-
         if self.page.on_fail_event:
             raise EventError('A ButtonMenu can not capture an `on_fail` event.')
 
@@ -219,6 +217,7 @@ class ButtonMenu(BaseMenu):
                 f'ButtonMenu missing `on_next` captures. Expected {len(self.pages) - 1}, found {_cb_count}.'
             )
 
+    # TODO: rewrite completely; busted comparisons? codepoint decode?
     def _check_buttons(self, buttons_list):
         """Checks the button list for valid emoji unicode or Discord emojis."""
         for button in buttons_list:
@@ -227,11 +226,15 @@ class ButtonMenu(BaseMenu):
 
             if isinstance(button, str):
                 # split the str and test if the value between ':' is in the bot list
-                if _test := button.split(':'):
-                    if len(_test) > 1 and _test[1] in [e.name for e in self.ctx.bot.emojis]:
+                _test = button.split(':')
+                if len(_test) > 1:
+                    if _test[1] in [e.name for e in self.ctx.bot.emojis]:
                         continue
 
-                if _test := emoji.UNICODE_EMOJI_ALIAS_ENGLISH.get(button, None) is not None:
+                # check by key; faster than iterating over the list w/ for loop
+                print(f'{button}')
+                _test = emoji.UNICODE_EMOJI_ALIAS_ENGLISH.get(button, None)
+                if _test:
                     continue
 
             raise ButtonsError(f'Invalid Emoji or unicode string: {button}')

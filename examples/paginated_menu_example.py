@@ -39,11 +39,6 @@ class MyPaginatedMenu(commands.Cog):
         #         .set_destination(ctx.author)
         #         )
         # await menu.open()
-        #
-        # ...or...
-        #
-        # menu = PaginatedMenu(ctx).add_pages([e1, e2, e3]).set_cancel_page(cancel).set_timeout_page(timeout).set_timeout(20)
-        # await menu.open()
 
 
 def setup(client):

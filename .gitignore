@@ -1,5 +1,6 @@
 # Project Specific
 TODO.md
+README_REF.md
 
 # JetBrains
 .idea/
@@ -131,3 +132,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+README_REF.md

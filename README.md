@@ -35,7 +35,7 @@ by clicking the buttons">
 - [Pages](#pages)
 - [Templates](#templates)
 - [Hooks](#hooks)
-- [Global Settings](#global-settings)
+- [Configuration](#configuration)
 - [Sessions](#sessions)
 - [Logging](#logging)
 - [Cogwatch Integration](#cogwatch-integration)

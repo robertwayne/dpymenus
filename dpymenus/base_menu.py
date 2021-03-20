@@ -7,7 +7,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import Page, PagesError, Session, SessionError
-from dpymenus.settings import HISTORY_CACHE_LIMIT
+from dpymenus.settings import HISTORY_CACHE_LIMIT, REPLY_AS_DEFAULT
 
 if TYPE_CHECKING:
     from dpymenus import Template
@@ -62,7 +62,6 @@ class BaseMenu(abc.ABC):
     def replies_disabled(self) -> bool:
         return getattr(self, '_replies_disabled', False)
 
-    @property
     def disable_replies(self) -> 'BaseMenu':
         self._replies_disabled = True
 
@@ -210,7 +209,7 @@ class BaseMenu(abc.ABC):
         except SessionError as exc:
             logging.info(exc.message)
         else:
-            if not self.replies_disabled:
+            if REPLY_AS_DEFAULT and self.replies_disabled is False:
                 self.output = await self.destination.reply(embed=self.page.as_safe_embed())
             else:
                 self.output = await self.destination.send(embed=self.page.as_safe_embed())

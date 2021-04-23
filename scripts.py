@@ -5,4 +5,4 @@ from subprocess import run
 
 def fmt():
     """Runs black on the project source directory. Uses the config defined in `pyproject.toml`."""
-    run(["black", "dpymenus/", "examples"])
+    run(['black', 'dpymenus/', 'examples'])

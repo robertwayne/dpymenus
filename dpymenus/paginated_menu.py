@@ -177,6 +177,10 @@ class PaginatedMenu(ButtonMenu):
             task.cancel()
 
     def _get_check(self) -> Callable:
+        """Returns a check predicate based on detected buttons. Using the standard button list uses a
+        simpler, and faster, predicate. Using custom buttons has to iterate over buttons to ensure they
+        are valid options, thus slower. Likely not large enough to notice in practice, but care should be
+        taken nonetheless."""
         check = self._check_reaction_defaults
 
         if self.custom_check:

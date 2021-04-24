@@ -31,6 +31,7 @@ class Session:
         """Creates a new session based from a menu instance and adds it to the session store. Checks for
         existing sessions in the store and handles safe deletion."""
         session = Session.get(instance.ctx)
+        
         if session and session.key in sessions.keys():
             if PREVENT_MULTISESSIONS is False:
                 session.kill()

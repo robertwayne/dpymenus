@@ -1,11 +1,21 @@
 import os
 from pathlib import Path
 import toml
+import logging
 
-with open(Path(os.getcwd()) / 'pyproject.toml', 'r') as file:
-    data = toml.load(file)
-    config = data.get('dpymenus', None)
 
+try:
+    with open(Path(os.getcwd()) / 'pyproject.toml', 'r') as file:
+        data = toml.load(file)
+        config = data.get('dpymenus', {})
+except FileNotFoundError:
+    logging.info(
+        '''
+        Could not find a pyproject.toml file with a valid [dpymenus] header. Using default settings.
+        See https://github.com/robertwayne/dpymenus#configuration on how to set configuration options.
+        '''
+    )
+finally:
     HISTORY_CACHE_LIMIT = config.get('history-cache-limit', 10)
     SESSION_PER_CHANNEL_LIMIT = config.get('sessions-per-channel', 1)
     SESSION_PER_GUILD_LIMIT = config.get('sessions-per-guild', 3)

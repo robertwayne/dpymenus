@@ -1,0 +1,6 @@
+{
+    "statusCode": "404",
+    "body": {
+        "text": "Nothing to return!"
+    }
+}

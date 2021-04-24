@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from discord import Embed
 
+
 @dataclass
 class Template:
     title: str = None

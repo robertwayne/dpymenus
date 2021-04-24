@@ -131,6 +131,10 @@ class Page(Embed):
             self.set_thumbnail(url=template.thumbnail)
 
         if not self.author and template.author:
-            self.set_author(name=template.author.get('name', ''), url=template.author.get('url', ''), icon_url=template.author.get('icon_url', ''))
+            self.set_author(
+                name=template.author.get('name', ''),
+                url=template.author.get('url', ''),
+                icon_url=template.author.get('icon_url', ''),
+            )
 
         return self

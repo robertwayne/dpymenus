@@ -49,6 +49,12 @@ by clicking the buttons">
 <br>
 
 ---
+<div align="center">
+  <h1>
+    You are viewing the active dev branch.
+    There are no stability or documentation guarentees on this branch.
+  </h1>
+</div>
 
 ### Features
 `dpymenus` is an unofficial add-on for the `discord.py` library that lets you quickly compose various styles of
@@ -94,33 +100,4 @@ def setup(client):
     client.add_cog(Demo(client))
 ```
 
-The __examples__ directory contains many fully-functional cogs showing off all the menu types, various integrations,
-and advanced features available in the library!
-
-
-### Logging
-
-If you just wish to have basic logging, you can enable it by placing this at the start of your code:
-
-```python
-import logging
-
-logging.basicConfig(level=logging.INFO)
-```
-
-If you are looking to customize the logger, you can use the example below for an idea on how to set it up.
-
-```python
-import logging
-import sys
-
-menus_logger = logging.getLogger('dpymenus')
-menus_logger.setLevel(logging.INFO)
-menus_handler = logging.StreamHandler(sys.stdout)
-menus_handler.setFormatter(logging.Formatter('[%(name)s] %(message)s'))
-menus_logger.addHandler(menus_handler)
-```
-
----
-
-Check out my other discord.py utility: **[cogwatch](https://github.com/robertwayne/cogwatch)** -- _Automatic hot-reloading for your discord.py command files._
+The __examples__ directory contains many fully-functional cogs showing off all the menu types, various integrations, and advanced features available in the library!

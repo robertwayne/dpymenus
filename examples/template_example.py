@@ -24,7 +24,7 @@ class TemplateExample(commands.Cog):
             title='Template Example Default Title',
             description='This is a default description!',
             color=discord.Color.blue(),
-            footer='A templated footer.',
+            footer={'text': 'This is a templated footer.'},
         )
 
         menu = PaginatedMenu(ctx)

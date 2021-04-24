@@ -108,16 +108,29 @@ class Page(Embed):
 
     def apply_template(self, template: 'Template') -> 'Page':
         """Applies user-defined template options to a page."""
-        if not self.title:
+
+        if not self.title and template.title:
             self.title = template.title
 
-        if not self.description:
+        if not self.description and template.description:
             self.description = template.description
 
-        if not self.color and not self.colour:
+        if not self.color and not self.colour and template.color:
             self.color = template.color
 
-        if not self.footer:
-            self.set_footer(text=template.footer)
+        if not self.footer and template.footer:
+            self.set_footer(text=template.footer.get('text', ''), icon_url=template.footer.get('icon_url', ''))
+
+        if not self.image and template.image:
+            self.set_image(url=template.image)
+
+        if not self.url and template.url:
+            self.url = template.url
+
+        if not self.thumbnail and template.thumbnail:
+            self.set_thumbnail(url=template.thumbnail)
+
+        if not self.author and template.author:
+            self.set_author(name=template.author.get('name', ''), url=template.author.get('url', ''), icon_url=template.author.get('icon_url', ''))
 
         return self

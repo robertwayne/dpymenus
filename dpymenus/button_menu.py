@@ -232,7 +232,6 @@ class ButtonMenu(BaseMenu):
                         continue
 
                 # check by key; faster than iterating over the list w/ for loop
-                print(f'{button}')
                 _test = emoji.UNICODE_EMOJI_ALIAS_ENGLISH.get(button, None)
                 if _test:
                     continue

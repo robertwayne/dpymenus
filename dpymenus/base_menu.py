@@ -114,7 +114,7 @@ class BaseMenu(abc.ABC):
     # Helper Methods
     async def close(self):
         """Gracefully exits out of the menu, performing necessary cleanup of sessions, reactions, and messages."""
-        Session.get(self.ctx).kill()
+        Session.get(self.ctx).freeze()
         self.active = False
 
         await self._safe_delete_output()
@@ -205,10 +205,13 @@ class BaseMenu(abc.ABC):
         """This method runs for ALL menus after their own open method. Session handling and initial setup is
         performed in here; it should NEVER be handled inside specific menus."""
         try:
-            await Session.create(self)
+            session = await Session.create(self)
         except SessionError as exc:
             logging.info(exc.message)
         else:
+            self.page = self.pages[session.index]
+            self.history = session.history
+
             if REPLY_AS_DEFAULT and self.replies_disabled is False:
                 self.output = await self.destination.reply(embed=self.page.as_safe_embed())
             else:

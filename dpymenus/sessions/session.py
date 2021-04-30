@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from discord.ext.commands import Context
 
@@ -12,10 +12,21 @@ if TYPE_CHECKING:
 class Session:
     key: 'SessionKey'
     instance: 'Menu'
+    index: int
+    history: List[int]
     owner: int
+    active: bool
 
     def __repr__(self):
-        return f'Session({self.instance})'
+        return f'key={self.key}, instance={self.instance}, owner={self.owner}, active={self.active}'
+
+    def freeze(self):
+        """Marks a session as inactive so it can be unfrozen or killed later."""
+        self.active = False
+
+    def unfreeze(self):
+        """Marks a previously frozen session as active so it can be reloaded via command."""
+        self.active = True
 
     def kill(self):
         """Removes a session object from the sessions store."""
@@ -33,19 +44,28 @@ class Session:
         session = Session.get(instance.ctx)
 
         if session and session.key in sessions.keys():
-            if PREVENT_MULTISESSIONS is False:
+            if PREVENT_MULTISESSIONS is False and session.active:
                 session.kill()
                 await session.instance.close()
             else:
-                raise SessionError(
-                    f'Duplicate session in channel [{instance.ctx.channel.id}] for user [{instance.ctx.author.id}].'
-                )
+                if session.active is False:
+                    session.active = True
+                    ic(session)
+
+                    return session
+                else:
+                    raise SessionError(
+                        f'Duplicate session in channel [{instance.ctx.channel.id}] for user [{instance.ctx.author.id}].'
+                    )
 
         self = Session()
 
         self.key = (instance.ctx.author.id, instance.ctx.channel.id)
         self.instance = instance
+        self.index = instance.pages.index(instance.page)
+        self.history = instance.history
         self.owner = instance.ctx.author.id
+        self.active = True
 
         sessions.update({self.key: self})
 

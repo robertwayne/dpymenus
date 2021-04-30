@@ -33,7 +33,9 @@ class PaginatedMenu(ButtonMenu):
         super().__init__(ctx)
 
     def __repr__(self):
-        return f'PaginatedMenu({self.ctx})'
+        return (
+            f'PaginatedMenu(active: {self.active}, pages: {self.pages}, page: {self.page}, history: {self.history})'
+        )
 
     @property
     def cancel_page(self) -> Optional['PageType']:

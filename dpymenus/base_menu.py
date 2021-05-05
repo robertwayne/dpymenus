@@ -64,6 +64,7 @@ class BaseMenu(abc.ABC):
         return getattr(self, '_replies_disabled', False)
 
     def disable_replies(self) -> 'BaseMenu':
+        """Disables the Reply feature on Discord from being used with this menu. Overrides the global settings."""
         self._replies_disabled = True
 
         return self
@@ -87,17 +88,6 @@ class BaseMenu(abc.ABC):
         """Prevents message cleanup from running when a menu closes.
         Returns itself for fluent-style chaining."""
         self._persist = True
-
-        return self
-
-    @property
-    def reply(self) -> bool:
-        return getattr(self, '_reply', True)
-
-    def use_replies(self) -> 'BaseMenu':
-        """Uses the Discord reply feature on user commands.
-        Returns itself for fluent-style chaining."""
-        setattr(self, '_reply', True)
 
         return self
 

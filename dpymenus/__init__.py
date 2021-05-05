@@ -13,8 +13,8 @@ import logging
 from .exceptions import PagesError, ButtonsError, EventError, SessionError
 from .sessions import sessions
 from .sessions.session import Session
+from .template import Template, FieldSort, FieldStyle
 from .page import Page
-from .template import Template
 from .base_menu import BaseMenu
 from .text_menu import TextMenu
 from .button_menu import ButtonMenu
@@ -24,3 +24,7 @@ from .poll import Poll
 
 logger = logging.getLogger('dpymenus')
 logger.addHandler(logging.NullHandler())
+
+from icecream import install
+
+install()

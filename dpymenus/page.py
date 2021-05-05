@@ -2,6 +2,8 @@ from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
 
 from discord import Embed
 
+from dpymenus import FieldSort, FieldStyle
+
 if TYPE_CHECKING:
     from dpymenus import Template
 
@@ -137,4 +139,33 @@ class Page(Embed):
                 icon_url=template.author.get('icon_url', ''),
             )
 
+        if template.fields:
+            # check if there are existing fields
+            if self.fields:
+                # if so, we need to determine whether to ignore, combine, or overwrite with the template fields
+                # IGNORE is the default, so always check that first; cascade from most to least likely option
+                if template.field_style == FieldStyle.IGNORE:
+                    pass
+
+                elif template.field_style == FieldStyle.COMBINE:
+                    self.apply_fields(template.field_sort, template.fields)
+
+                elif template.field_style == FieldStyle.OVERRIDE:
+                    # if override is set, we need to remove all existing fields
+                    self.clear_fields()
+                    self.apply_fields(template.field_sort, template.fields)
+
+            else:
+                self.apply_fields(template.field_sort, template.fields)
+
         return self
+
+    def apply_fields(self, sort: FieldSort, fields: List):
+        """Handles adding fields to a templated embed. Checks for sort styles if needed."""
+        for field in fields:
+            # when combining, we determine whether to add the template fields at the start or end
+            # LAST is the default, so always check that first; cascade from most to least likely option
+            if sort == FieldSort.LAST:
+                self.add_field(name=field[0], value=field[1], inline=field[2])
+            else:
+                self.insert_field_at(0, name=field[0], value=field[1], inline=field[2])

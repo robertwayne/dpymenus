@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from dpymenus import Page, PaginatedMenu, Template
+from dpymenus import FieldSort, FieldStyle, Page, PaginatedMenu, Template
 
 
 class TemplateExample(commands.Cog):
@@ -9,7 +9,7 @@ class TemplateExample(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def templates(self, ctx):
+    async def templates2(self, ctx):
         e1 = Page(description='First page test!')
 
         e2 = Page(title='Page 2', description='Second page test!', color=discord.Color.green())
@@ -24,6 +24,12 @@ class TemplateExample(commands.Cog):
             description='This is a default description!',
             color=discord.Color.blue(),
             footer={'text': 'This is a templated footer.'},
+            fields=[
+                ('Template Field A', 'Templated field description for A.', False),
+                ('Template Field B', 'Templated field description for B.', True),
+            ],
+            field_style=FieldStyle.COMBINE,  # this will force our template fields to combine with existing fields
+            field_sort=FieldSort.LAST  # our template fields will always come after existing fields
         )
 
         menu = PaginatedMenu(ctx)

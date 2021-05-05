@@ -29,8 +29,8 @@ jobs:
           path: ~/.cache/pypoetry/virtualenvs
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
 
-    - name: Install depdendencies
-      run: poetry install
+      - name: Install depdendencies
+        run: poetry install
 
-    - name: Format with black via poetry scripts
-      run: poetry run fmt
+      - name: Format with black via poetry scripts
+        run: poetry run fmt

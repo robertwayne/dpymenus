@@ -24,6 +24,7 @@ class BaseMenu(abc.ABC):
     _reply: bool
     _custom_check: Optional[Callable]
     _replies_disabled: bool
+    _start_page_index: int
 
     def __init__(self, ctx: Context):
         self.ctx: Context = ctx
@@ -108,6 +109,17 @@ class BaseMenu(abc.ABC):
         """Overrides the default check method for user responses.
         Returns itself for fluent-style chaining."""
         setattr(self, '_custom_check', fn)
+
+        return self
+
+    @property
+    def start_page_index(self) -> int:
+        return getattr(self, '_start_page_index', 0)
+
+    def set_initial_page(self, index: int) -> 'BaseMenu':
+        """Sets the initial page of the menu when opened based on a pages index in the `add_pages` list.
+        Defaults to 0."""
+        self._start_page_index = index
 
         return self
 
@@ -213,7 +225,7 @@ class BaseMenu(abc.ABC):
             if self.history:
                 self.page = self.pages[session.history[-1]]
             else:
-                self.page = self.pages[0]
+                self.page = self.pages[self.start_page_index]
 
             if REPLY_AS_DEFAULT and self.replies_disabled is False:
                 self.output = await self.destination.reply(embed=self.page.as_safe_embed())

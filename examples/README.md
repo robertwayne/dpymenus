@@ -37,11 +37,12 @@ menus with various databases.
 | button_menu_example.py      | .buttons | Shows a menu that has different buttons on each page.       |
 | paginated_menu_example.py   | .paginated | Shows a menu that has static buttons to move through pages.        |
 | paginated_menu_list_example.py | .paginated2 | Shows a menu that chunks a list of variably sized data and shows 10 items per page. |
+| initial_page_override.py | .paginated3 <page number> | Shows a menu that starts on a page number specified by the user when entering the command. |
+| initial_page_override.py | .paginated4 <page name> | Shows a menu that starts on a page name specified by the user when entering the command. |
 | template_example.py | .templates | Shows a menu utilizing the templating feature in v2. |
 | poll_example.py | .poll | Shows a menu that counts votes for choices and tallies them up. |
 | reloadable_data_example.py | .reloadable | Shows a menu with a single page that has dynamic data updated on button presses. |
 | text_menu_example.py | .text | Shows a menu that reacts based on user text responses. |
 | menu_hooks_example.py | .hooks | Shows a menu utilizing user-defined @before and @after hooks. |
 | menu_chaining_example.py | .chain | Shows a button menu that chains into various other menu types based on input. |
-| cogwatch_integration_example.py | .cogwatch | Demonstrates how to use [cogwatch](https://github.com/robertwayne/cogwatch) with `dpymenus`. |
 

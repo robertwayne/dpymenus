@@ -26,16 +26,13 @@ class PaginatedMenu(ButtonMenu):
     _timeout_page: Optional['PageType']
     _skip_buttons: bool
     _cancel_button: bool
-    _start_page_index: int
     _buttons_list: List
 
     def __init__(self, ctx: Context):
         super().__init__(ctx)
 
     def __repr__(self):
-        return (
-            f'PaginatedMenu(active: {self.active}, pages: {self.pages}, page: {self.page}, history: {self.history})'
-        )
+        return f'PaginatedMenu(active: {self.active}, pages: {self.pages}, page: {self.page}, history: {self.history})'
 
     @property
     def cancel_page(self) -> Optional['PageType']:
@@ -101,22 +98,9 @@ class PaginatedMenu(ButtonMenu):
 
         return self
 
-    @property
-    def start_page_index(self) -> int:
-        return getattr(self, '_start_page_index', 0)
-
-    def set_initial_page(self, index: int) -> 'PaginatedMenu':
-        """Sets the initial page of the menu when opened based on a pages index in the `add_pages` list.
-        Defaults to 0."""
-        self._start_page_index = index
-
-        return self
-
     async def open(self):
         """The entry point to a new PaginatedMenu instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        self.page = self.pages[self.start_page_index]
-
         try:
             if len(self.buttons_list) == 0:
                 self.buttons(GENERIC_BUTTONS)

@@ -8,7 +8,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu, ButtonsError, EventError, SessionError
-from dpymenus.settings import HIDE_WARNINGS
+from dpymenus.settings import BUTTON_DELAY, HIDE_WARNINGS
 
 if TYPE_CHECKING:
     from dpymenus.types import Button
@@ -113,6 +113,7 @@ class ButtonMenu(BaseMenu):
         """Adds reactions to the message object based on what was passed into the page buttons."""
         for button in self.page.buttons_list:
             await self.output.add_reaction(button)
+            await asyncio.sleep(BUTTON_DELAY)
 
     async def _get_reaction_add(self) -> Optional['Button']:
         """Waits for a user reaction add event and returns the event object."""

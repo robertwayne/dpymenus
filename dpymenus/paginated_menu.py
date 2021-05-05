@@ -14,6 +14,7 @@ from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, ButtonsError, Page, PagesError, SessionError
 from dpymenus.constants import GENERIC_BUTTONS
+from dpymenus.settings import BUTTON_DELAY
 
 if TYPE_CHECKING:
     from dpymenus.types import PageType, Button
@@ -216,12 +217,14 @@ class PaginatedMenu(ButtonMenu):
                 if button is None:
                     continue
                 await self.output.add_reaction(button)
+                await asyncio.sleep(BUTTON_DELAY)
         else:
             for button in self.buttons_list[1:4]:
                 if button is None:
                     continue
 
                 await self.output.add_reaction(button)
+                await asyncio.sleep(BUTTON_DELAY)
 
     async def _handle_transition(self):
         """Dictionary mapping of reactions to methods to be called when handling user input on a button."""

@@ -21,10 +21,7 @@ finally:
     SESSION_PER_GUILD_LIMIT = config.get('sessions-per-guild', 3)
     SESSION_PER_USER_LIMIT = config.get('sessions-per-user', 10)
     SESSION_TIMEOUT = config.get('session-timeout', 3600)
-
     ALLOW_SESSION_RESTORE = config.get('allow-session-restore', False)
     HIDE_WARNINGS = config.get('hide-warnings', False)
-
     REPLY_AS_DEFAULT = config.get('reply-as-default', True)
-
-    COGWATCH_INTEGRATION = config.get('cogwatch-integration', False)
+    BUTTON_DELAY = config.get('button-delay', 0.35)

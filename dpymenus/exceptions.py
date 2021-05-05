@@ -17,3 +17,6 @@ class EventError(MenuException):
 
 class SessionError(MenuException):
     pass
+
+class SessionUnfreeze(MenuException):
+    pass

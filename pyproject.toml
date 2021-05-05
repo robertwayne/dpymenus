@@ -67,7 +67,6 @@ sessions-per-user = 10
 session-timeout = 3600
 allow-session-restore = false
 hide-warnings = false
-prevent-multisessions = false
 reply-as-default = false
 cogwatch-integration = false
 

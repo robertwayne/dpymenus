@@ -19,9 +19,9 @@ jobs:
 
     steps:
       - uses: actions/setup-python@v2.2.2
-      with:
-        python-version: 3.8
-        architecture: x64
+        with:
+          python-version: 3.8
+          architecture: x64
 
       - uses: Gr1N/setup-poetry@v4
       - uses: actions/cache@v2

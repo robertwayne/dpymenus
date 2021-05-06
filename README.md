@@ -31,20 +31,11 @@ menu by clicking the buttons">
 **[API Docs](https://dpymenus.readthedocs.io/en/latest/?badge=latest)** <br>
 **[Examples](https://github.com/robertwayne/dpymenus/tree/master/examples)**
 
-- [Getting Started](#getting-started)
-- [Menus](#menus)
-- [Pages](#pages)
-- [Templates](#templates)
-- [Hooks](#hooks)
-- [Configuration](#configuration)
-- [Sessions](#sessions)
-- [Logging](#logging)
-- [Cogwatch Integration](#cogwatch-integration)
-- [Tips](#tips)
+- [Features](#Features)
+- [Using](#Using)
+- [Example](#Example)
 - [Support](#support)
-- [Contribute](#contribute)
-- [FAQ](#faq)
-- [Migration v1 -> v2](#migration)
+- [Contributing](#contributing)
 
 <br>
 <br>
@@ -112,12 +103,11 @@ If you are looking for support on how to use particular library functions, pleas
 **[discussions](https://github.com/robertwayne/dpymenus/discussions)** tab. If you've encountered a bug,
 **[submit an issue](https://github.com/robertwayne/dpymenus/issues/new)**.
 
-In addition, feel free to add me on Discord @ `Rob (롭)#0013` -- I am open to discuss the library and assist
-when I am free, but I prefer you use the GitHub options as it may help other people as well.
+In addition, feel free to add me on Discord @ `Rob (롭)#0013` -- I am open to discuss the library and assist when I am
+free, but I prefer you use the GitHub options as it may help other people as well.
 
 ### Contributing
 
 `dpymenus` is open-source for a reason -- I welcome all additions, bug fixes, and changes if they fit within the scope
-of the library. Please see
-**[the contributing file](https://github.com/robertwayne/dpymenus/blob/master/CONTRIBUTING.md)**
-for more information. Don't be shy!
+of the library. Please see the **[contributing chapter](https://dpymenus.com/contributing.html)**
+in the book for detailed information. Don't be shy!

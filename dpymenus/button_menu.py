@@ -8,7 +8,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu, ButtonsError, EventError, SessionError
-from dpymenus.hook import call_hook
+from dpymenus.hooks import call_hook
 from dpymenus.settings import BUTTON_DELAY, HIDE_WARNINGS
 
 if TYPE_CHECKING:

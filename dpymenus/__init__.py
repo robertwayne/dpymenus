@@ -13,7 +13,7 @@ import logging
 from .exceptions import PagesError, ButtonsError, EventError, SessionError
 from .sessions import sessions
 from .sessions.session import Session
-from .template import Template, FieldSort, FieldStyle
+from .hooks import OPEN, UPDATE, CLOSE, TIMEOUT, BEFORE, AFTER
 from .page import Page
 from .base_menu import BaseMenu
 from .text_menu import TextMenu

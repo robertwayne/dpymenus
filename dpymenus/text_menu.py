@@ -9,7 +9,7 @@ from discord.ext.commands import Context
 from dpymenus import PagesError, SessionError
 from dpymenus.base_menu import BaseMenu
 from dpymenus.constants import QUIT
-from dpymenus.hook import call_hook
+from dpymenus.hooks import call_hook
 
 
 class TextMenu(BaseMenu):

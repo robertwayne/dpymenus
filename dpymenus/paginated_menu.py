@@ -14,7 +14,7 @@ from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, ButtonsError, Page, PagesError, SessionError
 from dpymenus.constants import GENERIC_BUTTONS
-from dpymenus.hook import call_hook
+from dpymenus.hooks import call_hook
 from dpymenus.settings import BUTTON_DELAY
 
 if TYPE_CHECKING:

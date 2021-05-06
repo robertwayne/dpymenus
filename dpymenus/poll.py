@@ -7,7 +7,7 @@ from discord import RawReactionActionEvent, User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, ButtonsError, EventError, PagesError, SessionError
-from dpymenus.hook import call_hook
+from dpymenus.hooks import call_hook
 
 
 class Poll(ButtonMenu):

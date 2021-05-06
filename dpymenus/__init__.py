@@ -25,7 +25,3 @@ from .poll import Poll
 
 logger = logging.getLogger('dpymenus')
 logger.addHandler(logging.NullHandler())
-
-from icecream import install
-
-install()

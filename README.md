@@ -53,7 +53,7 @@ menu by clicking the buttons">
 `dpymenus` is an unofficial add-on for the `discord.py` library that lets you quickly compose various styles of menus
 which react to user input.
 
-- Handles text & button inputs
+- Handles text & button input, normalization, and validation
 - Easy-to-build menus with paginated data, multiple choices, and polls
 - Template system for quickly defining a cohesive style for your menus
 - User-defined callbacks & event hooks for complex use-cases

@@ -29,12 +29,18 @@ finally:
     BUTTON_DELAY = config.get('button-delay', 0.35)
 
     # set constants
-    CONSTANTS_CONFIRM = config.get('constants-confirm', ['y', 'yes', 'ok', 'k', 'kk', 'ready', 'rdy', 'r', 'confirm', 'okay'])
+    CONSTANTS_CONFIRM = config.get(
+        'constants-confirm', ['y', 'yes', 'ok', 'k', 'kk', 'ready', 'rdy', 'r', 'confirm', 'okay']
+    )
     CONSTANTS_DENY = config.get('constants-deny', ['n', 'no', 'deny', 'negative', 'back', 'return'])
     CONSTANTS_QUIT = config.get('constants-quit', ['e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c'])
     CONSTANTS_BUTTONS = config.get('constants-buttons', ['⏮️', '◀️', '⏹️', '▶️', '⏭️'])
 
     if len(CONSTANTS_BUTTONS) < 3:
-        raise ButtonsError('`constants-buttons` in pyproject.toml must have 3 to 5 values to cover all default cases. '
-                           'Partial overwrites are not allowed. See '
-                           'https://github.com/robertwayne/dpymenus-book#constants for more information.')
+        raise ButtonsError(
+            '`constants-buttons` in pyproject.toml must have 3 to 5 values to cover all default cases. '
+            'Partial overwrites are not allowed. See '
+            'https://github.com/robertwayne/dpymenus-book#constants for more information.'
+        )
+
+    print(BUTTON_DELAY)

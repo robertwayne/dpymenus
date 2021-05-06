@@ -29,7 +29,7 @@ class TemplateExample(commands.Cog):
                 ('Template Field B', 'Templated field description for B.', True),
             ],
             field_style=FieldStyle.COMBINE,  # this will force our template fields to combine with existing fields
-            field_sort=FieldSort.LAST  # our template fields will always come after existing fields
+            field_sort=FieldSort.LAST,  # our template fields will always come after existing fields
         )
 
         menu = PaginatedMenu(ctx)

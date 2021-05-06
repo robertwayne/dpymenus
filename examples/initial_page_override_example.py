@@ -38,12 +38,7 @@ class ThirdPaginatedMenu(commands.Cog):
         e3 = Page(title='Admin Help', description='Admin help page test!')
         e3.add_field(name='Example E', value='Example F')
 
-        page_map = {
-            None: e1,
-            'user': e1,
-            'mod': e2,
-            'admin': e3
-        }
+        page_map = {None: e1, 'user': e1, 'mod': e2, 'admin': e3}
 
         menu = PaginatedMenu(ctx)
         menu.add_pages([e1, e2, e3])

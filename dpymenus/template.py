@@ -9,6 +9,7 @@ class FieldStyle(Enum):
     COMBINE: Templated fields are combined with existing fields.
     OVERRIDE: Templated fields override any existing fields.
     """
+
     IGNORE = 2
     COMBINE = 1
     OVERRIDE = 0
@@ -19,6 +20,7 @@ class FieldSort(Enum):
     FIRST: Templated fields are added before existing fields.
     LAST: Templated fields are added after existing fields. Default option.
     """
+
     FIRST = 1
     LAST = 0
 
@@ -27,6 +29,7 @@ class FieldSort(Enum):
 class Template:
     """Defines a Page template. Page templates contain most of the same options as Embed objects, but they are
     generally applied via strings or Dictionaries. See the examples on how templates should be defined."""
+
     title: str = None
     description: str = None
     color: str = None

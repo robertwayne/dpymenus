@@ -2,7 +2,7 @@ from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
 
 from discord import Embed
 
-from dpymenus import FieldSort, FieldStyle
+from dpymenus.template import FieldSort, FieldStyle
 
 if TYPE_CHECKING:
     from dpymenus import Template

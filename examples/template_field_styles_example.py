@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from dpymenus import FieldSort, FieldStyle, Page, PaginatedMenu, Template
+from dpymenus import Page, PaginatedMenu, Template, FieldStyle, FieldSort
 
 
 class TemplateExample(commands.Cog):

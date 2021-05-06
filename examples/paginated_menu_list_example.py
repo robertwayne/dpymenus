@@ -24,6 +24,7 @@ class SecondPaginatedMenu(commands.Cog):
 
         menu = PaginatedMenu(ctx)
         menu.show_command_message()
+        menu.add_pages(pages)
         await menu.open()
 
 

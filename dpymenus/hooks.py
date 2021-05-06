@@ -12,7 +12,7 @@ class HookEvent(Enum):
     CLOSE: When a menu is closed.
     TIMEOUT: When a menu times out.
 
-    See https://github.com/robertwayne/dpymenus-book#hooks for more information.
+    See https://dpymenus.com/hooks.html for more information.
     """
 
     OPEN = 0
@@ -26,7 +26,7 @@ class HookWhen(Enum):
     BEFORE: Executes before the specified event.
     AFTER: Executes after the specified event.
 
-    See https://github.com/robertwayne/dpymenus-book#hooks for more information.
+    See https://dpymenus.com/hooks.html for more information.
     """
 
     BEFORE = 0

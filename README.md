@@ -31,11 +31,11 @@ menu by clicking the buttons">
 **[API Docs](https://dpymenus.readthedocs.io/en/latest/?badge=latest)** <br>
 **[Examples](https://github.com/robertwayne/dpymenus/tree/master/examples)**
 
-- [Features](#Features)
-- [Quick Start](#Quick Start)
-- [Example](#Example)
-- [Support](#Support)
-- [Contributing](#Contributing)
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Example](#examples)
+- [Support](#support)
+- [Contributing](#contributing)
 
 <br>
 <br>
@@ -65,7 +65,7 @@ which react to user input.
 
 Read **["Installation"](https://dpymenus.com/installation.html)** from **[The Book](https://dpymenus.com)**.
 
-## Example
+## Examples
 
 ```python
 from discord.ext import commands

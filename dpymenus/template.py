@@ -8,21 +8,34 @@ class FieldStyle(Enum):
     IGNORE: Templated fields are ignored. Existing fields remain. Default option.
     COMBINE: Templated fields are combined with existing fields.
     OVERRIDE: Templated fields override any existing fields.
+
+    See https://github.com/robertwayne/dpymenus-book#field_overrides for more information.
     """
 
-    IGNORE = 2
+    IGNORE = 0
     COMBINE = 1
-    OVERRIDE = 0
+    OVERRIDE = 2
 
 
 class FieldSort(Enum):
     """Defines how templated fields are sorted when using the FieldsStyle.COMBINE mode.
     FIRST: Templated fields are added before existing fields.
     LAST: Templated fields are added after existing fields. Default option.
+
+    See https://github.com/robertwayne/dpymenus-book#field_overrides for more information.
     """
 
-    FIRST = 1
-    LAST = 0
+    FIRST = 0
+    LAST = 1
+
+
+# map Enum references so we can export them in a user-friendly way
+IGNORE = FieldStyle.IGNORE
+COMBINE = FieldStyle.COMBINE
+OVERRIDE = FieldStyle.OVERRIDE
+
+FIRST = FieldSort.FIRST
+LAST = FieldSort.LAST
 
 
 @dataclass

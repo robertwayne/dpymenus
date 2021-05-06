@@ -14,6 +14,7 @@ from .exceptions import PagesError, ButtonsError, EventError, SessionError
 from .sessions import sessions
 from .sessions.session import Session
 from .hooks import OPEN, UPDATE, CLOSE, TIMEOUT, BEFORE, AFTER
+from .template import Template, IGNORE, COMBINE, OVERRIDE, FIRST, LAST
 from .page import Page
 from .base_menu import BaseMenu
 from .text_menu import TextMenu

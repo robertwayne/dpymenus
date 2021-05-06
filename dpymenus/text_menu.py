@@ -9,6 +9,7 @@ from discord.ext.commands import Context
 from dpymenus import PagesError, SessionError
 from dpymenus.base_menu import BaseMenu
 from dpymenus.constants import QUIT
+from dpymenus.hook import call_hook
 
 
 class TextMenu(BaseMenu):
@@ -84,9 +85,12 @@ class TextMenu(BaseMenu):
             logging.info(exc.message)
 
         else:
+            await call_hook(self, '_hook_after_open')
+
             first_iter = True
 
             while self.active:
+                await call_hook(self, '_hook_before_update')
                 if not first_iter and self.page.on_fail_event:
                     return await self.page.on_fail_event()
 
@@ -99,6 +103,7 @@ class TextMenu(BaseMenu):
                     if self.response_in(QUIT):
                         return await self._cancel_menu()
 
+                    await call_hook(self, '_hook_after_update')
                     await self.page.on_next_event(self)
 
                 first_iter = False

@@ -7,6 +7,7 @@ from discord import RawReactionActionEvent, User
 from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, ButtonsError, EventError, PagesError, SessionError
+from dpymenus.hook import call_hook
 
 
 class Poll(ButtonMenu):
@@ -33,6 +34,8 @@ class Poll(ButtonMenu):
         else:
             await self._set_data()
             await self._add_buttons()
+
+            await call_hook(self, '_hook_after_open')
 
             pending = set()
             while self.active:

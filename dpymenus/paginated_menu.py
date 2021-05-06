@@ -14,6 +14,7 @@ from discord.ext.commands import Context
 
 from dpymenus import ButtonMenu, ButtonsError, Page, PagesError, SessionError
 from dpymenus.constants import GENERIC_BUTTONS
+from dpymenus.hook import call_hook
 from dpymenus.settings import BUTTON_DELAY
 
 if TYPE_CHECKING:
@@ -121,7 +122,10 @@ class PaginatedMenu(ButtonMenu):
             # refresh our message content with the reactions added
             self.output = await self.destination.fetch_message(self.output.id)
 
+            await call_hook(self, '_hook_after_open')
+
             while self.active:
+                await call_hook(self, '_hook_before_update')
                 self.input = await self._get_input()
 
                 if self.output and isinstance(self.output.channel, GuildChannel):
@@ -249,5 +253,8 @@ class PaginatedMenu(ButtonMenu):
             else button: transition
             for button, transition in zip(self.output.reactions, transitions)
         }
+
+        if not transition_map[self.input.name] == self.close:
+            await call_hook(self, '_hook_after_update')
 
         await transition_map[self.input.name]()

@@ -8,6 +8,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import BaseMenu, ButtonsError, EventError, SessionError
+from dpymenus.hook import call_hook
 from dpymenus.settings import BUTTON_DELAY, HIDE_WARNINGS
 
 if TYPE_CHECKING:
@@ -56,7 +57,10 @@ class ButtonMenu(BaseMenu):
             await self._add_buttons()
             _first_iter = True
 
+            await call_hook(self, '_hook_after_open')
+
             while self.active:
+                await call_hook(self, '_hook_before_update')
                 if _first_iter is False:
                     if self.last_visited_page() != self.page.index:
                         await self._add_buttons()
@@ -70,6 +74,7 @@ class ButtonMenu(BaseMenu):
                 self.input = await self._get_input()
 
                 if self.input:
+                    await call_hook(self, '_hook_after_update')
                     await self.page.on_next_event(self)
 
                     if self.last_visited_page() != self.page.index:

@@ -7,6 +7,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import Page, PagesError, Session, SessionError
+from dpymenus.hook import call_hook
 from dpymenus.settings import HISTORY_CACHE_LIMIT, REPLY_AS_DEFAULT
 
 if TYPE_CHECKING:
@@ -113,13 +114,24 @@ class BaseMenu(abc.ABC):
 
         return self
 
+    def add_hook(self, when: str, event: str, callback: Callable) -> 'BaseMenu':
+        """Sets various callback attributes on the menu so users can hook into
+        specific events. See https://github.com/robertwayne/dpymenus-book#hooks
+        for the full list of events and hook structure.
+        Returns itself for fluent-style chaining."""
+        setattr(self, f'_hook_{when}_{event}', callback)
+
+        return self
+
     # Helper Methods
     async def close(self):
         """Gracefully exits out of the menu, performing necessary cleanup of sessions, reactions, and messages."""
+        await call_hook(self, '_hook_before_close')
         Session.get(self.ctx).kill_or_freeze()
         self.active = False
 
         await self._safe_delete_output()
+        await call_hook(self, '_hook_after_close')
 
     async def next(self):
         """Transitions to the next page."""
@@ -217,6 +229,8 @@ class BaseMenu(abc.ABC):
             else:
                 self.page = self.pages[self.start_page_index]
 
+            await call_hook(self, '_hook_before_open')
+
             if REPLY_AS_DEFAULT and self.replies_disabled is False:
                 self.output = await self.destination.reply(embed=self.page.as_safe_embed())
             else:
@@ -267,6 +281,7 @@ class BaseMenu(abc.ABC):
     async def _timeout_menu(self):
         """Closes the menu on an asyncio.TimeoutError event. If an on_timeout_event callback exists, that function
         will be run instead of the default behaviour."""
+        await call_hook(self, '_hook_before_timeout')
         if self.page.on_timeout_event:
             await self.page.on_timeout_event()
             return
@@ -275,6 +290,7 @@ class BaseMenu(abc.ABC):
             await self.output.edit(embed=timeout_page)
 
         await self.close()
+        await call_hook(self, '_hook_before_timeout')
 
     async def _next(self):
         """Sends a message after the `next` method is called. Closes the menu instance if there is no callback for

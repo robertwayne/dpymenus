@@ -7,7 +7,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import Page, PagesError, Session, SessionError
-from dpymenus.hook import call_hook
+from dpymenus.hooks import call_hook
 from dpymenus.settings import HISTORY_CACHE_LIMIT, REPLY_AS_DEFAULT
 
 if TYPE_CHECKING:
@@ -290,7 +290,7 @@ class BaseMenu(abc.ABC):
             await self.output.edit(embed=timeout_page)
 
         await self.close()
-        await call_hook(self, '_hook_before_timeout')
+        await call_hook(self, '_hook_after_timeout')
 
     async def _next(self):
         """Sends a message after the `next` method is called. Closes the menu instance if there is no callback for

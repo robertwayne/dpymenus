@@ -7,7 +7,7 @@ from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
 from dpymenus import Page, PagesError, Session, SessionError
-from dpymenus.hooks import call_hook
+from dpymenus.hooks import HookEvent, HookWhen, call_hook
 from dpymenus.settings import HISTORY_CACHE_LIMIT, REPLY_AS_DEFAULT
 
 if TYPE_CHECKING:
@@ -114,12 +114,12 @@ class BaseMenu(abc.ABC):
 
         return self
 
-    def add_hook(self, when: str, event: str, callback: Callable) -> 'BaseMenu':
+    def add_hook(self, when: HookWhen, event: HookEvent, callback: Callable) -> 'BaseMenu':
         """Sets various callback attributes on the menu so users can hook into
         specific events. See https://github.com/robertwayne/dpymenus-book#hooks
         for the full list of events and hook structure.
         Returns itself for fluent-style chaining."""
-        setattr(self, f'_hook_{when}_{event}', callback)
+        setattr(self, f'_hook_{when.name.lower()}_{event.name.lower()}', callback)
 
         return self
 

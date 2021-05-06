@@ -36,8 +36,6 @@ class ExampleRunner(commands.Bot):
         logging.info('Bot ready.')
 
     async def on_message(self, message):
-        logging.info(message)
-
         if message.author.bot:
             return
 

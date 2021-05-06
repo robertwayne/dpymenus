@@ -26,8 +26,7 @@ class Page(Embed):
 
     def __repr__(self):
         return (
-            f'Page(title={self.title} '
-            f'{"".join([f"{k}={v}" for k, v in {j: getattr(self, j) for j in self.__slots__}])})'
+            f'Page(title={self.title}'
         )
 
     def __str__(self):

@@ -9,7 +9,7 @@ class MyTextMenu(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def text(self, ctx) -> None:
+    async def text(self, ctx):
 
         page1 = Page(
             title='Ping Menu',
@@ -26,7 +26,7 @@ class MyTextMenu(commands.Cog):
         await menu.open()
 
     @staticmethod
-    async def confirm(menu) -> None:
+    async def confirm(menu):
         if menu.response_is(CONFIRM):
             await menu.next()
 

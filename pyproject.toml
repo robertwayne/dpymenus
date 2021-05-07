@@ -23,7 +23,7 @@ fmt = 'scripts:fmt'
 [tool.poetry.dependencies]
 python = '^3.8'
 'discord.py' = '^1.7'
-tomlkit = "^0.7"
+toml = "^0.10"
 emoji = "^1.2"
 
 [tool.poetry.dev-dependencies]

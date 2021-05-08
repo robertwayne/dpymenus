@@ -2,6 +2,5 @@ discord.py==1.7
 toml==0.10
 emoji==1.2
 furo==2021.4.11-beta.34
-recommonmark==0.7.1
 Sphinx==3.5.4
 sphinx-autodoc-typehints==1.12.0

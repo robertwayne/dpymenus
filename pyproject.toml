@@ -19,6 +19,7 @@ classifiers= [
 [tool.poetry.scripts]
 examples = 'runner:__poetry_run'
 fmt = 'scripts:fmt'
+rtd = 'scripts:rtd'
 
 [tool.poetry.dependencies]
 python = '^3.8'
@@ -39,10 +40,6 @@ furo = '^2021.4.11-beta.34'
 recommonmark = '^0.7.1'
 Sphinx = '^3.5.4'
 sphinx-autodoc-typehints = '^1.12.0'
-
-[tool.poetry.extras]
-docs = ['furo', 'recommonmark', 'Sphinx', 'sphinx-autodoc-typehints']
-
 
 [tool.black]
 line-length = 120

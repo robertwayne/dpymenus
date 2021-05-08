@@ -45,7 +45,11 @@ class BaseMenu(abc.ABC):
         return getattr(self, '_timeout', 300)
 
     def set_timeout(self, duration: int) -> 'BaseMenu':
-        """Sets the timeout on a menu. Returns itself for fluent-style chaining."""
+        """Sets the timeout on a menu. Returns itself for fluent-style chaining.
+
+        :param duration: Specifies how long, in seconds, before the menu will time out.
+        :rtype: :class:`BaseMenu`
+        """
         setattr(self, '_timeout', duration)
 
         return self
@@ -55,7 +59,11 @@ class BaseMenu(abc.ABC):
         return getattr(self, '_destination', self.ctx)
 
     def set_destination(self, dest: Union[User, TextChannel]) -> 'BaseMenu':
-        """Sets the message destination for the menu. Returns itself for fluent-style chaining."""
+        """Sets the message destination for the menu. Returns itself for fluent-style chaining.
+
+        :param dest: Where, in Discord, to send and display the menu.
+        :rtype: :class:`BaseMenu`
+        """
         setattr(self, '_destination', dest)
 
         return self
@@ -66,7 +74,10 @@ class BaseMenu(abc.ABC):
 
     def disable_replies(self) -> 'BaseMenu':
         """Disables the Reply feature on Discord from being used with this menu. Overrides the global settings.
-        Returns itself for fluent-style chaining."""
+        Returns itself for fluent-style chaining.
+
+        :rtype: :class:`BaseMenu`
+        """
         self._replies_disabled = True
 
         return self
@@ -77,7 +88,10 @@ class BaseMenu(abc.ABC):
 
     def show_command_message(self) -> 'BaseMenu':
         """Persists user command invocation messages in the chat instead of deleting them after execution.
-        Returns itself for fluent-style chaining."""
+        Returns itself for fluent-style chaining.
+
+        :rtype: :class:`BaseMenu`
+        """
         self._command_message = True
 
         return self
@@ -88,7 +102,10 @@ class BaseMenu(abc.ABC):
 
     def persist_on_close(self) -> 'BaseMenu':
         """Prevents message cleanup from running when a menu closes.
-        Returns itself for fluent-style chaining."""
+        Returns itself for fluent-style chaining.
+
+        :rtype: :class:`BaseMenu`
+        """
         self._persist = True
 
         return self
@@ -99,7 +116,11 @@ class BaseMenu(abc.ABC):
 
     def set_custom_check(self, fn: Callable) -> 'BaseMenu':
         """Overrides the default check method for user responses.
-        Returns itself for fluent-style chaining."""
+        Returns itself for fluent-style chaining.
+
+        :param fn: A reference to a predicate function.
+        :rtype: :class:`BaseMenu`
+        """
         setattr(self, '_custom_check', fn)
 
         return self
@@ -113,7 +134,7 @@ class BaseMenu(abc.ABC):
         Defaults to 0.
 
         :param index: Which page index to start on.
-        :returns: :class:`BaseMenu`
+        :rtype: :class:`BaseMenu`
         """
         self._start_page_index = index
 
@@ -203,9 +224,8 @@ class BaseMenu(abc.ABC):
         """Adds a list of pages to a menu, setting their index based on the position in the list.
         Returns itself for fluent-style chaining.
 
-        :param pages: A list of :class:`PageType` objects.
+        :param pages: A list of pages to display; ordered from first to last in linear menus.
         :param template: An optional :class:`Template` to define a menu style.
-
         :rtype: :class:`BaseMenu`
         """
         self._validate_pages(pages)

@@ -65,7 +65,8 @@ class BaseMenu(abc.ABC):
         return getattr(self, '_replies_disabled', False)
 
     def disable_replies(self) -> 'BaseMenu':
-        """Disables the Reply feature on Discord from being used with this menu. Overrides the global settings."""
+        """Disables the Reply feature on Discord from being used with this menu. Overrides the global settings.
+        Returns itself for fluent-style chaining."""
         self._replies_disabled = True
 
         return self
@@ -109,7 +110,11 @@ class BaseMenu(abc.ABC):
 
     def set_initial_page(self, index: int) -> 'BaseMenu':
         """Sets the initial page of the menu when opened based on a pages index in the `add_pages` list.
-        Defaults to 0."""
+        Defaults to 0.
+
+        :param index: Which page index to start on.
+        :returns: :class:`BaseMenu`
+        """
         self._start_page_index = index
 
         return self
@@ -118,7 +123,14 @@ class BaseMenu(abc.ABC):
         """Sets various callback attributes on the menu so users can hook into
         specific events. See https://github.com/robertwayne/dpymenus-book#hooks
         for the full list of events and hook structure.
-        Returns itself for fluent-style chaining."""
+
+        :param when: Defines which point in the menu lifetime the callback will be executed.
+        :param event: Defines which event in the menu lifetime the callback will be executed on.
+        :param callback: References a function or method which will be executed based on the `when`
+                         and `event` params.
+
+        :rtype: :class:`self`
+        """
         setattr(self, f'_hook_{when.name.lower()}_{event.name.lower()}', callback)
 
         return self
@@ -167,7 +179,7 @@ class BaseMenu(abc.ABC):
         """Transitions to a specific page.
 
         :param page: The name of the `on_next` function for a particular page or its page number. If this is not set,
-        the next page in the list will be called.
+                     the next page in the list will be called.
         """
         if isinstance(page, int):
             self.page = self.pages[page]
@@ -181,12 +193,21 @@ class BaseMenu(abc.ABC):
         await self._next()
 
     def last_visited_page(self) -> int:
-        """Returns the last visited page index."""
+        """Returns the last visited page index.
+
+        :rtype: int
+        """
         return self.history[-2] if len(self.history) > 1 else 0
 
     def add_pages(self, pages: List['PageType'], template: 'Template' = None) -> 'BaseMenu':
         """Adds a list of pages to a menu, setting their index based on the position in the list.
-        Returns itself for fluent-style chaining."""
+        Returns itself for fluent-style chaining.
+
+        :param pages: A list of :class:`PageType` objects.
+        :param template: An optional :class:`Template` to define a menu style.
+
+        :rtype: :class:`BaseMenu`
+        """
         self._validate_pages(pages)
 
         for i, page in enumerate(pages):
@@ -204,7 +225,10 @@ class BaseMenu(abc.ABC):
         return self
 
     async def send_message(self, page: 'PageType'):
-        """Updates the output message if it can be edited, otherwise sends a new message."""
+        """Updates the output message if it can be edited, otherwise sends a new message.
+
+        :param page: A :class:`PageType` to send to Discord.
+        """
         safe_embed = page.as_safe_embed() if type(page) == Page else page
 
         if isinstance(self.output.channel, GuildChannel):

@@ -27,12 +27,17 @@ toml = "^0.10"
 emoji = "^1.2"
 
 [tool.poetry.dev-dependencies]
-cogwatch = '^2.1'
 black = '^21.5b0'
 python-dotenv = '^0.17'
 uvloop = "^0.15"
 pytest = "^6.2"
 icecream = "^2.1.0"
+groundwork-sphinx-theme = "^1.1.1"
+Sphinx = "^3.5.4"
+recommonmark = "^0.7.1"
+furo = "^2021.4.11-beta.34"
+sphinx-autodoc-typehints = "^1.12.0"
+cogwatch = "^2.1.0"
 
 [tool.black]
 line-length = 120

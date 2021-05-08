@@ -4,6 +4,7 @@ import toml
 import logging
 from dpymenus.exceptions import ButtonsError
 
+config = {}
 
 try:
     with open(Path(os.getcwd()) / 'pyproject.toml', 'r') as file:

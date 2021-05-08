@@ -42,5 +42,3 @@ finally:
             'Partial overwrites are not allowed. See '
             'https://github.com/robertwayne/dpymenus-book#constants for more information.'
         )
-
-    print(BUTTON_DELAY)

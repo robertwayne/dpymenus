@@ -23,6 +23,32 @@ class Poll(ButtonMenu):
     def __repr__(self):
         return f'Poll(pages={[p.__str__() for p in self.pages]}, page={self.page.index}, timeout={self.timeout}, data={self.data})'
 
+    # Utility Methods
+    async def results(self) -> Dict[str, int]:
+        """Utility method to get a dictionary of poll results."""
+        return {choice: len(voters) for choice, voters in self.data.items()}
+
+    async def add_results_fields(self):
+        """Utility method to add new fields to your next page automatically."""
+        for choice, voters in self.data.items():
+            next_page = self.pages[self.page.index + 1]
+            next_page.add_field(name=choice, value=str(len(voters)))
+
+    async def generate_results_page(self):
+        """Utility method to build your entire results page automatically."""
+        next_page = self.pages[self.page.index + 1]
+
+        await self.add_results_fields()
+
+        highest_value = max(self.data.values())
+        winning_key = {choice for choice, voters in self.data.items() if voters == highest_value}
+
+        if len(highest_value) == 0:
+            next_page.description = ' '.join([next_page.description, f'It\'s a draw!'])
+
+        else:
+            next_page.description = ' '.join([next_page.description, f'{str(next(iter(winning_key)))} wins!'])
+
     async def open(self):
         """The entry point to a new Poll instance; starts the main menu loop.
         Manages gathering user input, basic validation, sending messages, and cancellation requests."""
@@ -54,32 +80,6 @@ class Poll(ButtonMenu):
                         task.cancel()
 
                     await self._finish_poll()
-
-    # Utility Methods
-    async def results(self) -> Dict[str, int]:
-        """Utility method to get a dictionary of poll results."""
-        return {choice: len(voters) for choice, voters in self.data.items()}
-
-    async def add_results_fields(self):
-        """Utility method to add new fields to your next page automatically."""
-        for choice, voters in self.data.items():
-            next_page = self.pages[self.page.index + 1]
-            next_page.add_field(name=choice, value=str(len(voters)))
-
-    async def generate_results_page(self):
-        """Utility method to build your entire results page automatically."""
-        next_page = self.pages[self.page.index + 1]
-
-        await self.add_results_fields()
-
-        highest_value = max(self.data.values())
-        winning_key = {choice for choice, voters in self.data.items() if voters == highest_value}
-
-        if len(highest_value) == 0:
-            next_page.description = ' '.join([next_page.description, f'It\'s a draw!'])
-
-        else:
-            next_page.description = ' '.join([next_page.description, f'{str(next(iter(winning_key)))} wins!'])
 
     # Internal Methods
     async def _get_vote_add(self):

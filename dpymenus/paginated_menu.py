@@ -42,7 +42,11 @@ class PaginatedMenu(ButtonMenu):
 
     def set_cancel_page(self, embed: Embed) -> 'PaginatedMenu':
         """Sets the function that will be called when the `cancel` event runs. Returns itself for fluent-style
-        chaining."""
+        chaining.
+
+        :param embed: Defines which page to display.
+        :rtype: :class:`PaginatedMenu`
+        """
         self._cancel_page = embed
 
         return self
@@ -52,7 +56,11 @@ class PaginatedMenu(ButtonMenu):
         return getattr(self, '_timeout_page', None)
 
     def set_timeout_page(self, embed: Embed) -> 'PaginatedMenu':
-        """Sets the function that will be called when a menu is cancelled. Returns itself for fluent-style chaining."""
+        """Sets the function that will be called when a menu is cancelled. Returns itself for fluent-style chaining.
+
+        :param embed: Defines which page to display.
+        :rtype: :class:`PaginatedMenu`
+        """
         setattr(self, '_timeout_page', embed)
 
         return self
@@ -62,7 +70,10 @@ class PaginatedMenu(ButtonMenu):
         return getattr(self, '_skip_buttons', False)
 
     def show_skip_buttons(self) -> 'PaginatedMenu':
-        """Adds two extra buttons for jumping to the first and last page. Returns itself for fluent-style chaining."""
+        """Adds two extra buttons for jumping to the first and last page. Returns itself for fluent-style chaining.
+
+        :rtype: :class:`PaginatedMenu`
+        """
         setattr(self, '_skip_buttons', True)
 
         return self
@@ -72,7 +83,10 @@ class PaginatedMenu(ButtonMenu):
         return getattr(self, '_cancel_button', True)
 
     def hide_cancel_button(self) -> 'PaginatedMenu':
-        """Sets whether to show the cancel button or not. Returns itself for fluent-style chaining."""
+        """Sets whether to show the cancel button or not. Returns itself for fluent-style chaining.
+
+        :rtype: :class:`PaginatedMenu`
+        """
         setattr(self, '_cancel_button', True)
 
         return self
@@ -89,7 +103,11 @@ class PaginatedMenu(ButtonMenu):
         will be filled in as the defaults for you. If you enable the skip buttons without having values set, it will
         use those defaults.
 
-        Returns itself for fluent-style chaining."""
+        Returns itself for fluent-style chaining.
+
+        :param buttons: Which emoji reactions will replace the default buttons.
+        :rtype: :class:`PaginatedMenu`
+        """
         _buttons = buttons
 
         if len(_buttons) < 3:
@@ -99,6 +117,16 @@ class PaginatedMenu(ButtonMenu):
         setattr(self, '_buttons_list', _buttons)
 
         return self
+
+    async def send_message(self, page: 'PageType'):
+        """Updates the output message. We override the base implementation because we always want to edit,
+        even in a DM  channel type.
+
+        :param page: A :class:`PageType` to send to Discord.
+        """
+        safe_embed = page.as_safe_embed() if type(page) == Page else page
+
+        await self.output.edit(embed=safe_embed)
 
     async def open(self):
         """The entry point to a new PaginatedMenu instance; starts the main menu loop.
@@ -135,13 +163,6 @@ class PaginatedMenu(ButtonMenu):
                 await self._handle_transition()
 
             await self._safe_clear_reactions()
-
-    async def send_message(self, page: 'PageType'):
-        """Updates the output message. We override the base implementation because we always want to edit,
-        even in a DM  channel type."""
-        safe_embed = page.as_safe_embed() if type(page) == Page else page
-
-        await self.output.edit(embed=safe_embed)
 
     # Internal Methods
     async def _get_input(self) -> Optional[Message]:

@@ -31,13 +31,21 @@ class ButtonMenu(BaseMenu):
         return getattr(self, '_data', {})
 
     def set_data(self, data: Dict) -> 'ButtonMenu':
-        """Sets a dictionary up for persistent state data. Returns itself for fluent-style chaining."""
+        """Sets a dictionary up for persistent state data. Returns itself for fluent-style chaining.
+
+        :param data: Structure representing variables that can be easily accessed across a menu instance.
+        :rtype: :class:`TextMenu`
+        """
         self._data = data
 
         return self
 
     def button_pressed(self, button: 'Button') -> bool:
-        """Checks if the reaction the user pressed is equal to the argument."""
+        """Checks if the reaction the user pressed is equal to the argument.
+
+        :param button: The reaction to compare against user input.
+        :rtype: bool
+        """
         return button == self.input
 
     async def open(self):

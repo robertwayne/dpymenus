@@ -149,8 +149,7 @@ class BaseMenu(abc.ABC):
         :param event: Defines which event in the menu lifetime the callback will be executed on.
         :param callback: References a function or method which will be executed based on the `when`
                          and `event` params.
-
-        :rtype: :class:`self`
+        :rtype: :class:`BaseMenu`
         """
         setattr(self, f'_hook_{when.name.lower()}_{event.name.lower()}', callback)
 
@@ -235,7 +234,7 @@ class BaseMenu(abc.ABC):
                 page = Page.convert_from(page)
 
             if template:
-                page = page.apply_template(template)
+                page = page._apply_template(template)
 
             page.index = i
             self.pages.append(page)

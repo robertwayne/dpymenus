@@ -45,7 +45,11 @@ class Page(Embed):
         return getattr(self, '_buttons_list', [])
 
     def buttons(self, buttons: List) -> 'Page':
-        """Generates reaction buttons when the page is displayed. Returns itself for fluent-style chaining."""
+        """Generates reaction buttons when the page is displayed. Returns itself for fluent-style chaining.
+
+        :param buttons: Specifies which emoji to use on this page.
+        :rtype: :class:`Page`
+        """
         self._buttons_list = buttons
 
         return self
@@ -56,7 +60,11 @@ class Page(Embed):
 
     def on_next(self, func: Callable) -> 'Page':
         """Sets the function that will be called when the `next` event runs.
-        Returns itself for fluent-style chaining."""
+        Returns itself for fluent-style chaining.
+
+        :param func: Reference to a function or method that will execute on this event.
+        :rtype: :class:`Page`
+        """
         self._on_next_event = func
 
         return self
@@ -67,7 +75,11 @@ class Page(Embed):
 
     def on_fail(self, func: Callable) -> 'Page':
         """Sets the function that will be called when the `fail` event runs.
-        Returns itself for fluent-style chaining."""
+        Returns itself for fluent-style chaining.
+
+        :param func: Reference to a function or method that will execute on this event.
+        :rtype: :class:`Page`
+        """
         self._on_fail_event = func
 
         return self
@@ -78,7 +90,11 @@ class Page(Embed):
 
     def on_cancel(self, func: Callable) -> 'Page':
         """Sets the function that will be called when the `cancel` event runs.
-        Returns itself for fluent-style chaining."""
+        Returns itself for fluent-style chaining.
+
+        :param func: Reference to a function or method that will execute on this event.
+        :rtype: :class:`Page`
+        """
         self._on_cancel_event = func
 
         return self
@@ -89,25 +105,37 @@ class Page(Embed):
 
     def on_timeout(self, func: Callable) -> 'Page':
         """Sets the function that will be called when the `timeout` event runs.
-        Returns itself for fluent-style chaining."""
+        Returns itself for fluent-style chaining.
+
+        :param func: Reference to a function or method that will execute on this event.
+        :rtype: :class:`Page`
+        """
         self._on_timeout_event = func
 
         return self
 
     def as_safe_embed(self) -> 'Page':
-        """Returns a page stripped of Callables and Page-specific properties so we can send it as a standard Embed."""
+        """Returns a page stripped of Callables and Page-specific properties so we can send it as a standard Embed.
+
+        :rtype: :class:`Page`
+        """
         safe_embed = self.to_dict()
         return Embed.from_dict(safe_embed)
 
     @staticmethod
     def convert_from(other: Union[Dict[str, Any], Embed]) -> 'Page':
-        """Returns a Page object from an Embed object or valid dictionary."""
+        """Returns a Page object from an Embed object or valid dictionary.
+
+        :param other: Embed or dictionary in a valid Embed format.
+        :rtype: :class:`Page`
+        """
         if type(other) == Embed:
             return Page.from_dict(other.to_dict())
         else:
             return Page.from_dict(other)
 
-    def apply_template(self, template: 'Template') -> 'Page':
+    # Internal Methods
+    def _apply_template(self, template: 'Template') -> 'Page':
         """Applies user-defined template options to a page."""
 
         if not self.title and template.title:
@@ -147,19 +175,19 @@ class Page(Embed):
                     pass
 
                 elif template.field_style == FieldStyle.COMBINE:
-                    self.apply_fields(template.field_sort, template.fields)
+                    self._apply_fields(template.field_sort, template.fields)
 
                 elif template.field_style == FieldStyle.OVERRIDE:
                     # if override is set, we need to remove all existing fields
                     self.clear_fields()
-                    self.apply_fields(template.field_sort, template.fields)
+                    self._apply_fields(template.field_sort, template.fields)
 
             else:
-                self.apply_fields(template.field_sort, template.fields)
+                self._apply_fields(template.field_sort, template.fields)
 
         return self
 
-    def apply_fields(self, sort: FieldSort, fields: List):
+    def _apply_fields(self, sort: FieldSort, fields: List):
         """Handles adding fields to a templated embed. Checks for sort styles if needed."""
         for field in fields:
             # when combining, we determine whether to add the template fields at the start or end

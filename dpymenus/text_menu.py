@@ -30,8 +30,12 @@ class TextMenu(BaseMenu):
         return getattr(self, '_delay', 0.250)
 
     def set_delay(self, delay: float) -> 'TextMenu':
-        """Sets the delay on when a users message will be deleted in guild channels. Returns itself for fluent-style
-        chaining."""
+        """Sets the delay on when a users message will be deleted. Returns itself for fluent-style
+        chaining.
+
+        :param delay: Specifies the duration in seconds.
+        :rtype: :class:`BaseMenu`
+        """
         self._delay = delay
 
         return self
@@ -41,7 +45,11 @@ class TextMenu(BaseMenu):
         return getattr(self, '_data', {})
 
     def set_data(self, data: Dict) -> 'TextMenu':
-        """Sets a dictionary up for persistent state data. Returns itself for fluent-style chaining."""
+        """Sets a dictionary up for persistent state data. Returns itself for fluent-style chaining.
+
+        :param data: Structure representing variables that can be easily accessed across a menu instance.
+        :rtype: :class:`TextMenu`
+        """
         self._data = data
 
         return self
@@ -52,13 +60,21 @@ class TextMenu(BaseMenu):
 
     def normalize_responses(self) -> 'TextMenu':
         """Strips all input data and ignores case when comparing strings with `response_is`. Returns itself for
-        fluent-style chaining."""
+        fluent-style chaining.
+
+        :rtype: :class:`TextMenu`
+        """
         self._normalized = True
 
         return self
 
     def response_is(self, valid_response: Union[str, List[str]]) -> bool:
-        """Helper method which checks if a users response is in the str or list of strings passed in."""
+        """Helper method which checks if a users response is in the str or list of strings passed in.
+        `response_in` exists as an alias to this method.
+
+        :valid_response: Values to compare user input against.
+        :rtype: bool
+        """
         response = self.input.content
         if self.normalized:
             response = ' '.join(response.lower().split())

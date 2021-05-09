@@ -1,4 +1,0 @@
-Types
-========
-
-.. automodule:: types

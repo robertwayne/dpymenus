@@ -1,7 +1,5 @@
-dpymenu's API Documentation
-====================================
-
-.. rst-class:: center
+dpymenus API Documentation
+==========================
 
 Please see `"The Book" <https://dpymenus.com>`_ for a more detailed, guide-like approach to learning
 the library. These docs should be used as reference material for the public API.
@@ -10,12 +8,10 @@ the library. These docs should be used as reference material for the public API.
     :caption: Public
 
     button_menu
-    hook_event
-    hook_when
+    hooks
     page
     paginated_menu
     poll
-    session
     template
     text_menu
 
@@ -25,3 +21,4 @@ the library. These docs should be used as reference material for the public API.
 
     base_menu
     exceptions
+    session

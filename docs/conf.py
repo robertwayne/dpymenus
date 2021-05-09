@@ -35,7 +35,8 @@ master_doc = 'index'
 # ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx_autodoc_typehints',
-              'sphinx.ext.intersphinx']
+              'sphinx.ext.intersphinx',
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -62,11 +63,11 @@ html_theme = 'furo'
 html_static_path = []
 
 # Sort members by type
-autodoc_member_order = 'groupwise'
+autodoc_member_order = 'bysource'
 
 autodoc_mock_imports = ["discord", "emoji"]
 
-add_module_names = False
+# add_module_names = False
 
 # Looks for objects in external projects
 intersphinx_mapping = {
@@ -74,7 +75,7 @@ intersphinx_mapping = {
     'discord': ('https://discordpy.readthedocs.io/en/stable/', None),
 }
 
-always_document_param_types = True
+always_document_param_types = False
 
 # # Ensure that the __init__ method gets documented.
 # def skip(app, what, name, obj, skip, options):

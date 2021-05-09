@@ -25,9 +25,7 @@ class Page(Embed):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        return (
-            f'Page(title={self.title}'
-        )
+        return f'Page(title={self.title}'
 
     def __str__(self):
         return f'Page {self.index} {self.title}'

@@ -5,9 +5,6 @@ from enum import Enum
 
 class FieldStyle(Enum):
     """Defines how templated fields are handled when interacting with existing embed fields.
-    IGNORE: Templated fields are ignored. Existing fields remain. Default option.
-    COMBINE: Templated fields are combined with existing fields.
-    OVERRIDE: Templated fields override any existing fields.
 
     See https://dpymenus.com/field_overrides.html for more information.
     """
@@ -19,8 +16,6 @@ class FieldStyle(Enum):
 
 class FieldSort(Enum):
     """Defines how templated fields are sorted when using the FieldsStyle.COMBINE mode.
-    FIRST: Templated fields are added before existing fields.
-    LAST: Templated fields are added after existing fields. Default option.
 
     See https://dpymenus.com/field_overrides.html for more information.
     """

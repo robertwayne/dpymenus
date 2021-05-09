@@ -7,10 +7,6 @@ if TYPE_CHECKING:
 
 class HookEvent(Enum):
     """Represents the menu events that can be hooked into.
-    OPEN: When a menu is opened.
-    UPDATE: When a menu executes its main loop.
-    CLOSE: When a menu is closed.
-    TIMEOUT: When a menu times out.
 
     See https://dpymenus.com/hooks.html for more information.
     """
@@ -23,8 +19,6 @@ class HookEvent(Enum):
 
 class HookWhen(Enum):
     """Represents when to hook into a specified menu event.
-    BEFORE: Executes before the specified event.
-    AFTER: Executes after the specified event.
 
     See https://dpymenus.com/hooks.html for more information.
     """

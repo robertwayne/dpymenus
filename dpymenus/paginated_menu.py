@@ -156,6 +156,10 @@ class PaginatedMenu(ButtonMenu):
                 await call_hook(self, '_hook_before_update')
                 self.input = await self._get_input()
 
+                # this will be true when input handles a timeout event
+                if not self.output:
+                    return
+
                 if self.output and isinstance(self.output.channel, GuildChannel):
                     await self.output.remove_reaction(self.input, self.ctx.author)
 

@@ -77,6 +77,7 @@ allow-session-restore = false
 hide-warnings = false
 reply-as-default = false
 button-delay = 0.35
+timeout = 5
 
 [build-system]
 requires = ['poetry-core>=1.0.0']

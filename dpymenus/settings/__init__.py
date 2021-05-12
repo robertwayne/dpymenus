@@ -36,7 +36,7 @@ SESSION_PER_USER_LIMIT = config.get('sessions-per-user', 10)
 SESSION_TIMEOUT = config.get('session-timeout', 3600)
 ALLOW_SESSION_RESTORE = config.get('allow-session-restore', False)
 HIDE_WARNINGS = config.get('hide-warnings', False)
-REPLY_AS_DEFAULT = config.get('reply-as-default', True)
+REPLY_AS_DEFAULT = config.get('reply-as-default', False)
 BUTTON_DELAY = config.get('button-delay', 0.35)
 TIMEOUT = config.get('timeout', 120)
 

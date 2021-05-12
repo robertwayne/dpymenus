@@ -38,6 +38,7 @@ ALLOW_SESSION_RESTORE = config.get('allow-session-restore', False)
 HIDE_WARNINGS = config.get('hide-warnings', False)
 REPLY_AS_DEFAULT = config.get('reply-as-default', True)
 BUTTON_DELAY = config.get('button-delay', 0.35)
+TIMEOUT = config.get('timeout', 120)
 
 # set constants
 CONSTANTS_CONFIRM = config.get(

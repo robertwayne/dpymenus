@@ -8,7 +8,7 @@ from discord.ext.commands import Context
 
 from dpymenus import Page, PagesError, Session, SessionError
 from dpymenus.hooks import HookEvent, HookWhen, call_hook
-from dpymenus.settings import HISTORY_CACHE_LIMIT, REPLY_AS_DEFAULT
+from dpymenus.settings import HISTORY_CACHE_LIMIT, REPLY_AS_DEFAULT, TIMEOUT
 
 if TYPE_CHECKING:
     from dpymenus import Template
@@ -42,7 +42,7 @@ class BaseMenu(abc.ABC):
 
     @property
     def timeout(self) -> int:
-        return getattr(self, '_timeout', 300)
+        return getattr(self, '_timeout', TIMEOUT)
 
     def set_timeout(self, duration: int) -> 'BaseMenu':
         """Sets the timeout on a menu. Returns itself for fluent-style chaining.

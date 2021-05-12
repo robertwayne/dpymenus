@@ -220,7 +220,8 @@ class ButtonMenu(BaseMenu):
             if len(page.buttons_list) > 5 and HIDE_WARNINGS is False:
                 logging.warning(
                     'Adding more than 5 buttons to a page at once may result in discord.py '
-                    'throttling the bot client.'
+                    'throttling the bot client. You can offset this with a higher button-delay '
+                    'setting.'
                 )
 
         if self.page.on_fail_event:

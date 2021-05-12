@@ -17,10 +17,8 @@ def load_settings():
             logging.info('Found pyproject.toml; loading data...')
     except FileNotFoundError:
         logging.info(
-            '''
-            Could not find a pyproject.toml file with a valid [dpymenus] header. Using default settings.
-            See https://github.com/robertwayne/dpymenus#configuration on how to set configuration options.
-            '''
+            '''Could not find a pyproject.toml file with a valid [dpymenus] header. Using default settings.
+            See https://github.com/robertwayne/dpymenus#configuration on how to set configuration options.'''
         )
     finally:
         config_data = data.get('dpymenus', {})

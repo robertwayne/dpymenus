@@ -6,8 +6,8 @@ from warnings import warn
 from discord import RawReactionActionEvent, User
 from discord.ext.commands import Context
 
-from dpymenus import ButtonMenu
-from dpymenus.exceptions import ButtonsError, EventError, PagesError, SessionError
+from dpymenus import ButtonMenu, ButtonsError, EventError, PagesError, SessionError
+from dpymenus.hooks import call_hook
 
 
 class Poll(ButtonMenu):
@@ -22,35 +22,6 @@ class Poll(ButtonMenu):
 
     def __repr__(self):
         return f'Poll(pages={[p.__str__() for p in self.pages]}, page={self.page.index}, timeout={self.timeout}, data={self.data})'
-
-    async def open(self):
-        """The entry point to a new Poll instance; starts the main menu loop.
-        Manages gathering user input, basic validation, sending messages, and cancellation requests."""
-        try:
-            self._validate_callbacks()
-            await super()._open()
-        except SessionError as exc:
-            logging.info(exc.message)
-        else:
-            await self._set_data()
-            await self._add_buttons()
-
-            pending = set()
-            while self.active:
-                try:
-                    _, pending = await asyncio.wait(
-                            [
-                                asyncio.create_task(self._get_vote_add()),
-                                asyncio.create_task(self._get_vote_remove()),
-                                asyncio.create_task(self._poll_timer())
-                             ],
-                            return_when=asyncio.FIRST_COMPLETED)
-
-                finally:
-                    for task in pending:
-                        task.cancel()
-
-                    await self._finish_poll()
 
     # Utility Methods
     async def results(self) -> Dict[str, int]:
@@ -73,18 +44,51 @@ class Poll(ButtonMenu):
         winning_key = {choice for choice, voters in self.data.items() if voters == highest_value}
 
         if len(highest_value) == 0:
-            next_page.description = ' '.join([next_page.description, f"It's a draw!"])
+            next_page.description = ' '.join([next_page.description, f'It\'s a draw!'])
 
         else:
             next_page.description = ' '.join([next_page.description, f'{str(next(iter(winning_key)))} wins!'])
+
+    async def open(self):
+        """The entry point to a new Poll instance; starts the main menu loop.
+        Manages gathering user input, basic validation, sending messages, and cancellation requests."""
+        try:
+            self._validate_callbacks()
+            await super()._open()
+        except SessionError as exc:
+            logging.info(exc.message)
+        else:
+            await self._set_data()
+            await self._add_buttons()
+
+            await call_hook(self, '_hook_after_open')
+
+            pending = set()
+            while self.active:
+                try:
+                    _, pending = await asyncio.wait(
+                        [
+                            asyncio.create_task(self._get_vote_add()),
+                            asyncio.create_task(self._get_vote_remove()),
+                            asyncio.create_task(self._poll_timer()),
+                        ],
+                        return_when=asyncio.FIRST_COMPLETED,
+                    )
+
+                finally:
+                    for task in pending:
+                        task.cancel()
+
+                    await self._finish_poll()
 
     # Internal Methods
     async def _get_vote_add(self):
         """Watches for a user adding a reaction on the Poll. Adds them to the relevant state_field values."""
         while True:
             try:
-                reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', timeout=self.timeout,
-                                                             check=self._check_reaction)
+                reaction_event = await self.ctx.bot.wait_for(
+                    'raw_reaction_add', timeout=self.timeout, check=self._check_reaction
+                )
 
             except asyncio.TimeoutError:
                 return
@@ -97,8 +101,11 @@ class Poll(ButtonMenu):
         """Watches for a user removing a reaction on the Poll. Removes them from the relevant state_field values."""
         while True:
             try:
-                reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', timeout=self.timeout,
-                                                             check=self._check_reaction)
+                reaction_event = await self.ctx.bot.wait_for(
+                    'raw_reaction_remove',
+                    timeout=self.timeout,
+                    check=self._check_reaction,
+                )
 
             except asyncio.TimeoutError:
                 return
@@ -145,7 +152,9 @@ class Poll(ButtonMenu):
     def _validate_buttons(self):
         """Checks that Poll objects always have more than two buttons."""
         if len(self.page.buttons_list) < 2:
-            raise ButtonsError(f'A Poll primary page must have at least two buttons. Expected at least 2, found {len(self.page.buttons_list)}.')
+            raise ButtonsError(
+                f'A Poll primary page must have at least two buttons. Expected at least 2, found {len(self.page.buttons_list)}.'
+            )
 
         if len(self.page.buttons_list) > 5:
             warn('Adding more than 5 buttons to a page at once may result in discord.py throttling the bot client.')

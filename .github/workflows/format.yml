@@ -1,0 +1,38 @@
+name: Format Code
+
+on:
+  push:
+    branches:
+      - next
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.8']
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: next
+
+      - uses: actions/setup-python@v2.2.2
+        with:
+          python-version: 3.8
+          architecture: x64
+
+      - uses: Gr1N/setup-poetry@v4
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+
+      - run: |
+          poetry install
+          poetry run fmt

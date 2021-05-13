@@ -1,5 +1,6 @@
-CONFIRM = ['y', 'yes', 'ok', 'k', 'kk', 'ready', 'rdy', 'r', 'confirm', 'okay']
-DENY = ['n', 'no', 'deny', 'negative', 'back', 'return']
-QUIT = ['e', 'exit', 'q', 'quit', 'stop', 'x', 'cancel', 'c']
+from dpymenus.settings import CONSTANTS_BUTTONS, CONSTANTS_CONFIRM, CONSTANTS_DENY, CONSTANTS_QUIT
 
-GENERIC_BUTTONS = ['⏮️', '◀️', '⏹️', '▶️', '⏭️']
+CONFIRM = CONSTANTS_CONFIRM
+DENY = CONSTANTS_DENY
+QUIT = CONSTANTS_QUIT
+GENERIC_BUTTONS = CONSTANTS_BUTTONS

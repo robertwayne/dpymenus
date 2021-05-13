@@ -9,9 +9,12 @@ class MyTextMenu(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def ping(self, ctx) -> None:
+    async def text(self, ctx):
 
-        page1 = Page(title='Ping Menu', description='Are you absolutely sure you want to send a ping command?')
+        page1 = Page(
+            title='Ping Menu',
+            description='Are you absolutely sure you want to send a ping command?',
+        )
         page1.set_footer(text='Type `yes` if you are sure.\nType `quit` to cancel this menu.')
         page1.on_next(self.confirm)
 
@@ -23,11 +26,10 @@ class MyTextMenu(commands.Cog):
         await menu.open()
 
     @staticmethod
-    async def confirm(menu) -> None:
+    async def confirm(menu):
         if menu.response_is(CONFIRM):
             await menu.next()
 
 
 def setup(client):
     client.add_cog(MyTextMenu(client))
-

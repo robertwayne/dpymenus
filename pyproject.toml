@@ -1,0 +1,84 @@
+[tool.poetry]
+name = 'dpymenus'
+version = '2.0.0'
+description = 'Simplified menus for discord.py developers.'
+authors = ['Rob Wagner <rob@robwagner.dev>']
+license = 'MIT'
+readme = 'README.md'
+homepage = 'https://dpymenus.com'
+repository = 'https://github.com/robertwayne/dpymenus'
+keywords = ['discord.py', 'discord bot', 'menus', 'reaction buttons']
+classifiers= [
+    'Operating System :: OS Independent',
+    'Typing :: Typed',
+    'Topic :: Communications :: Chat',
+    'Intended Audience :: Developers',
+    'Development Status :: 5 - Production/Stable',
+]
+
+[tool.poetry.scripts]
+examples = 'runner:__poetry_run'
+fmt = 'scripts:fmt'
+rtd = 'scripts:rtd'
+
+[tool.poetry.dependencies]
+python = '^3.8'
+'discord.py' = '^1.7'
+toml = '^0.10'
+emoji = '^1.2'
+
+[tool.poetry.dev-dependencies]
+black = '^21.5b0'
+cogwatch = '^2.1.0'
+icecream = '^2.1.0'
+pytest = '^6.2'
+python-dotenv = '^0.17'
+uvloop = '^0.15'
+
+# docs
+furo = '^2021.4.11-beta.34'
+recommonmark = '^0.7.1'
+Sphinx = '^3.5.4'
+sphinx-autodoc-typehints = '^1.12.0'
+
+[tool.black]
+line-length = 120
+skip-string-normalization = 1
+target-version = ['py38']
+exclude = '''
+
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+    | docs
+    | assets
+    | venv
+  )/
+)
+'''
+
+[dpymenus]
+# 0 is no limit / disabled
+history-cache-limit = 10
+sessions-per-channel = 1
+sessions-per-guild = 3
+sessions-per-user = 10
+session-timeout = 3600
+allow-session-restore = false
+hide-warnings = false
+reply-as-default = false
+button-delay = 0.35
+timeout = 120
+
+[build-system]
+requires = ['poetry-core>=1.0.0']
+build-backend = 'poetry.core.masonry.api'

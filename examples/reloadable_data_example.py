@@ -10,7 +10,7 @@ class MyButtonMenu(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def random(self, ctx):
+    async def reloadable(self, ctx):
         reload = '🔄'
         close = '❌'
 

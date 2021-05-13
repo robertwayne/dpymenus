@@ -1,5 +1,5 @@
 class MenuException(Exception):
-    def __init__(self, message: str = None):
+    def __init__(self, message: str):
         self.message = message
 
 
@@ -16,4 +16,8 @@ class EventError(MenuException):
 
 
 class SessionError(MenuException):
+    pass
+
+
+class SessionUnfreeze(MenuException):
     pass

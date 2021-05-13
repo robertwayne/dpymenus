@@ -1,50 +1,24 @@
-Welcome to dpymenus's documentation!
-====================================
+dpymenus API Documentation
+==========================
 
-Simplified menus for discord.py developers.
+Please see `"The Book" <https://dpymenus.com>`_ for a more detailed, guide-like approach to learning
+the library. These docs should be used as reference material for the public API.
 
 .. toctree::
-   :maxdepth: 4
-   :caption: Contents:
+    :caption: Public
 
-BaseMenu
------------------
+    button_menu
+    hooks
+    page
+    paginated_menu
+    poll
+    template
+    text_menu
 
-.. autoclass:: dpymenus.BaseMenu
-    :inherited-members:
-    :members:
+.. toctree::
+    :caption: Internal
+    :hidden:
 
-TextMenu
------------------
-
-.. autoclass:: dpymenus.TextMenu
-    :inherited-members:
-    :members:
-
-ButtonMenu
-------------------
-
-.. autoclass:: dpymenus.ButtonMenu
-   :inherited-members:
-   :members:
-
-PaginatedMenu
-------------------
-
-.. autoclass:: dpymenus.PaginatedMenu
-   :inherited-members:
-   :members:
-
-
-Poll
--------------------
-
-.. autoclass:: dpymenus.Poll
-   :inherited-members:
-   :members:
-
-Page
--------------------
-.. autoclass:: dpymenus.Page
-    :inherited-members:
-    :members:
+    base_menu
+    exceptions
+    session

@@ -71,6 +71,7 @@ class ButtonMenu(BaseMenu):
                 await call_hook(self, '_hook_before_update')
                 if _first_iter is False:
                     if self.last_visited_page() != self.page.index:
+                        await asyncio.sleep(BUTTON_DELAY)
                         await self._add_buttons()
                     else:
                         if isinstance(self.output.channel, GuildChannel):

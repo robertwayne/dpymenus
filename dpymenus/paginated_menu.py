@@ -157,7 +157,7 @@ class PaginatedMenu(ButtonMenu):
                 self.input = await self._get_input()
 
                 # this will be true when input handles a timeout event
-                if not self.output:
+                if (not self.output) or (self.output and self.persist and not self.active):
                     return
 
                 if self.output and isinstance(self.output.channel, GuildChannel):
@@ -178,13 +178,14 @@ class PaginatedMenu(ButtonMenu):
 
         done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout)
 
+        if not self.active:
+            self.kill_tasks(pending)
+            return
+
         # if all tasks are still pending, we force a timeout by manually calling cleanup methods
         if len(pending) == len(tasks):
             await self._timeout_menu()
         else:
-            if not self.active:
-                self.kill_tasks(pending)
-
             for future in done:
                 result = future.result()
                 if result:
@@ -193,12 +194,6 @@ class PaginatedMenu(ButtonMenu):
                     return
 
         self.kill_tasks(pending)
-
-    @staticmethod
-    def kill_tasks(pending: List[asyncio.Task]):
-        """Clears all remaining tasks in the task queue."""
-        for task in pending:
-            task.cancel()
 
     def _get_check(self) -> Callable:
         """Returns a check predicate based on detected buttons. Using the standard button list uses a
@@ -214,18 +209,16 @@ class PaginatedMenu(ButtonMenu):
 
         return check
 
-    async def _get_reaction_add(self) -> 'Button':
+    async def _get_reaction_add(self) -> Optional['Button']:
         """Waits for a user reaction add event and returns the event object."""
         check = self._get_check()
         reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=check)
-
         return reaction_event.emoji
 
-    async def _get_reaction_remove(self) -> 'Button':
+    async def _get_reaction_remove(self) -> Optional['Button']:
         """Waits for a user reaction remove event and returns the event object."""
         check = self._get_check()
         reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', check=check)
-
         return reaction_event.emoji
 
     def _check_reaction_defaults(self, event: RawReactionActionEvent) -> bool:

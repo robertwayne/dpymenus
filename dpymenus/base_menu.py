@@ -1,4 +1,5 @@
 import abc
+import asyncio
 import logging
 from typing import Any, Callable, List, Optional, TYPE_CHECKING, Union
 
@@ -8,12 +9,11 @@ from discord.ext.commands import Context
 
 from dpymenus import Page, PagesError, Session, SessionError
 from dpymenus.hooks import HookEvent, HookWhen, call_hook
-from dpymenus.settings import HISTORY_CACHE_LIMIT, REPLY_AS_DEFAULT, TIMEOUT
+from dpymenus.settings import BUTTON_DELAY, HISTORY_CACHE_LIMIT, REPLY_AS_DEFAULT, TIMEOUT
 
 if TYPE_CHECKING:
     from dpymenus import Template
     from dpymenus.types import PageType
-    from dpymenus.sessions import SessionKey
 
 
 class BaseMenu(abc.ABC):
@@ -163,6 +163,10 @@ class BaseMenu(abc.ABC):
         await call_hook(self, '_hook_before_close')
         Session.get(self).kill_or_freeze()
         self.active = False
+
+        if self.output.reactions:
+            await asyncio.sleep(BUTTON_DELAY)
+            await self._safe_clear_reactions()
 
         await self._safe_delete_output()
         await call_hook(self, '_hook_after_close')

@@ -43,13 +43,6 @@ menu by clicking the buttons">
 
 ---
 
-<div align="center">
-  <h1>
-    You are viewing the active dev branch.
-    There are no stability or documentation guarantees on this branch.
-  </h1>
-</div>
-
 ## Features
 
 `dpymenus` is an unofficial add-on for the `discord.py` library that lets you quickly compose various styles of menus

@@ -11,10 +11,11 @@ import os
 from cogwatch import watch
 from discord.ext import commands
 from dotenv import load_dotenv
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO)
 
-load_dotenv()
+load_dotenv(dotenv_path=Path(Path.cwd() / '.env'))
 
 
 class ExampleRunner(commands.Bot):

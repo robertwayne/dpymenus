@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.0] - 2021-13-05
+
+### Added
+
+- Session settings for users can now be set. Please note the system isn't complete yet, but you can now keep 
+  multiple menus alive at the same time, or have the earliest one close if  there are too many. Currently, only the 
+  user limit applies. Please see [the book](https://dpymenus.com/sessions.html) for more information.
+
+### Changed
+
+- Fixed potential .env pathing issues in the example runner.
+- Removed an old dev dependency carry-over from the example runner *(uvloop)*.
+
 ## [2.0.0] - 2021-13-05
 
 ### Highlight Features

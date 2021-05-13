@@ -5,17 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.0.0] - 2021-XX-XX
-@TODO: Add a brief milestone overview.
+## [2.0.0] - 2021-13-05
 
 ### Highlight Features
-
+- **Templates**: you can now apply styles across entire menus by using the new 
+  **[templating system](https://dpymenus.com/templates.html)**
+- **Hooks**: various menu events can now be **[hooked](https://dpymenus.com/hooks.html)** into with your own functions
+- **Settings**: almost all settings are now configurable via a 
+  **[configuration file](https://dpymenus.com/global_configuration.html)**
+- **Documentation**: the **[API docs](https://dpymenus.readthedocs.io/en/latest/)** have been reworked, a 
+  **[book](https://dpymenus.com/)** has been added with lots of detailed information, and 
+  several **[new examples](https://github.com/robertwayne/dpymenus/tree/master/examples)** were added 
+  *(additionally, all old examples were updated)*.
 
 ### Added
 
+- Session handling has been completely rewritten. This technically will not be fully functional until v2.1, but from 
+  an external view, it will work the exact same *(without some of the common annoyances from before)*.
+- The new Discord `reply` feature is now supported by menus. This can be configured via settings.
+- Menus now support setting an initial page with a new method: `.set_initial_page()`.
+- Examples can now be run with a built-in bot.
+
+### Changed
+
+- Buttons are now throttled by default to avoid filling up rate limit buckets too quickly. This was a source of much 
+  confusion. This can be configured via settings.
+- Destination errors now fail gracefully.
+- Fixed many bugs and optimized various logic paths.
+
+### Internal
+- Poetry is now the package and build tool.
+- Black is now the formatter.
+- Almost all the internal code was rewritten resulting in better performance and/or cleaner code. Note that this 
+  could mean your menus will break, if you were using any internally marked methods *(prefixed with an underscore)*.
 
 ### Removed
 
+- `.allow_multisession()` no longer exists. This is the default now *(as per popular request)*, and can be configured 
+  via settings.
+- Support for Python 3.7
 
 ## [1.3.1] - 2021-01-22
 

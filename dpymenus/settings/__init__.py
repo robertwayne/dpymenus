@@ -30,7 +30,7 @@ config = load_settings()
 
 # set global menu settings
 HISTORY_CACHE_LIMIT = config.get('history-cache-limit', 10)
-SESSION_PER_CHANNEL_LIMIT = config.get('sessions-per-channel', 1)
+SESSION_PER_CHANNEL_LIMIT = config.get('sessions-per-channel', 3)
 SESSION_PER_GUILD_LIMIT = config.get('sessions-per-guild', 3)
 SESSION_PER_USER_LIMIT = config.get('sessions-per-user', 10)
 SESSION_TIMEOUT = config.get('session-timeout', 3600)

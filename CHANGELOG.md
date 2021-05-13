@@ -15,8 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Fixed potential .env pathing issues in the example runner.
-- Removed an old dev dependency carry-over from the example runner *(uvloop)*.
+- Updated several book instructions in regard to installing and running examples on Windows.
+- Removed an old dev dependency carry-over from the example runner *(uvloop)* that caused issues on Windows.
 
 ## [2.0.0] - 2021-13-05
 

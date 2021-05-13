@@ -25,7 +25,7 @@ copyright = '2020-2021, Rob Wagner'
 author = 'Rob Wagner'
 
 # The full version, including alpha/beta/rc tags
-release = '2.1.0'
+release = '2.1.1'
 master_doc = 'index'
 
 # -- General configuration ---------------------------------------------------

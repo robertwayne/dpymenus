@@ -23,8 +23,7 @@
 ---
 
 This directory contains runnable examples of various menus. If you wish to run the test bot, you will need to supply a
-personal bot token -- otherwise it will not run. The `databases` directory contains examples showing how to use 
-menus with various databases.
+personal bot token -- otherwise it will not run. See **["Running Examples"](https://dpymenus.com/running_examples.html)** in the book for detailed steps.
 
 ### Run the test bot:
 

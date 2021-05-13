@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed a bug where closing out certain menus would result in trying to remove reactions on None-types (see #54).
 - Fixed a bug with input logic flow on button menus that would result in raising InvalidArgument errors.
+- Fixed a bug where session force closing would raise an InvalidArgument error.
 
 ## [2.1.0] - 2021-13-05
 

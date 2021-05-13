@@ -157,7 +157,7 @@ class PaginatedMenu(ButtonMenu):
                 self.input = await self._get_input()
 
                 # this will be true when input handles a timeout event
-                if (not self.output) or (self.output and self.persist and not self.active):
+                if (not self.output) or (not self.active) or (self.output and self.persist and not self.active):
                     return
 
                 if self.output and isinstance(self.output.channel, GuildChannel):

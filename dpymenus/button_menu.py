@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Dict, Optional, TYPE_CHECKING
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 import emoji
 from discord import Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction
@@ -74,7 +74,7 @@ class ButtonMenu(BaseMenu):
                         await asyncio.sleep(BUTTON_DELAY)
                         await self._add_buttons()
                     else:
-                        if isinstance(self.output.channel, GuildChannel):
+                        if self.output and isinstance(self.output.channel, GuildChannel):
                             await self.output.remove_reaction(self.input, self.ctx.author)
 
                 # refresh our message content with the new reactions added; this is an API hit
@@ -92,6 +92,12 @@ class ButtonMenu(BaseMenu):
                 _first_iter = False
 
     # Internal Methods
+    @staticmethod
+    def kill_tasks(pending: List[asyncio.Task]):
+        """Clears all remaining tasks in the task queue."""
+        for task in pending:
+            task.cancel()
+
     async def _shortcircuit(self):
         """Runs a background loop to poll the menus `active` state. Returns when False.
         Allows for short-circuiting the main loop when it is waiting for user reaction events from discord.py."""
@@ -108,6 +114,10 @@ class ButtonMenu(BaseMenu):
         ]
 
         done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout)
+
+        if not self.active:
+            self.kill_tasks(pending)
+            return
 
         # if all tasks are still pending, we force a timeout by manually calling cleanup methods
         if len(pending) == len(tasks):
@@ -140,6 +150,9 @@ class ButtonMenu(BaseMenu):
         except asyncio.TimeoutError:
             await self._timeout_menu()
 
+        except AttributeError:
+            return
+
         else:
             return await self._get_emoji(event)
 
@@ -153,6 +166,9 @@ class ButtonMenu(BaseMenu):
 
         except asyncio.TimeoutError:
             await self._timeout_menu()
+
+        except AttributeError:
+            return
 
         else:
             return await self._get_emoji(event)

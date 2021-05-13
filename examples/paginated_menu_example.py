@@ -26,7 +26,8 @@ class MyPaginatedMenu(commands.Cog):
 
         menu = PaginatedMenu(ctx)
         menu.add_pages([e1, e2, e3])
-        menu.set_timeout(10)
+        menu.set_timeout(5)
+        menu.persist_on_close()
         await menu.open()
 
         # You can also do fluent-style chaining on the menu methods; similar to a discord.py Embed. For example...

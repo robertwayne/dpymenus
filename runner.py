@@ -7,22 +7,12 @@
 import asyncio
 import logging
 import os
-import sys
 
 from cogwatch import watch
 from discord.ext import commands
 from dotenv import load_dotenv
 
-try:
-    import uvloop
-except ImportError:
-    uvloop = None
-
 logging.basicConfig(level=logging.INFO)
-
-if sys.platform in {'linux', 'macos'}:
-    uvloop.install()
-    logging.info('Using `uvloop` asyncio event loop.')
 
 load_dotenv()
 

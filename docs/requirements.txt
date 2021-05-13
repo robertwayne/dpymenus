@@ -53,6 +53,5 @@ sphinxcontrib-serializinghtml==1.1.4; python_version >= "3.6"
 toml==0.10.2; (python_version >= "2.6" and python_full_version < "3.0.0") or (python_full_version >= "3.3.0")
 typing-extensions==3.10.0.0; python_version >= "3.6" and python_full_version >= "3.5.3"
 urllib3==1.26.4; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version < "4" and python_version >= "3.6"
-uvloop==0.15.2; python_version >= "3.7"
 watchgod==0.7; python_version >= "3.7" and python_version < "4.0"
 yarl==1.6.3; python_version >= "3.6" and python_full_version >= "3.5.3"

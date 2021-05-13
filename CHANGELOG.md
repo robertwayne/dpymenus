@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.1] - 2021-13-05
+
+### Changed
+
+- Fixed a bug where closing out certain menus would result in trying to remove reactions on None-types (see #54).
+- Fixed a bug with input logic flow on button menus that would result in raising InvalidArgument errors.
+- Fixed a bug where session force closing would raise an InvalidArgument error.
+
+## [2.1.0] - 2021-13-05
+
+### Added
+
+- Session settings for users can now be set. Please note the system isn't complete yet, but you can now keep 
+  multiple menus alive at the same time, or have the earliest one close if  there are too many. Currently, only the 
+  user limit applies. Please see [the book](https://dpymenus.com/sessions.html) for more information.
+
+### Changed
+
+- Updated several book instructions in regard to installing and running examples on Windows.
+- Removed an old dev dependency carry-over from the example runner *(uvloop)* that caused issues on Windows.
+
 ## [2.0.0] - 2021-13-05
 
 ### Highlight Features

@@ -1,4 +1,5 @@
 import abc
+import asyncio
 import logging
 from typing import Any, Callable, List, Optional, TYPE_CHECKING, Union
 
@@ -8,7 +9,7 @@ from discord.ext.commands import Context
 
 from dpymenus import Page, PagesError, Session, SessionError
 from dpymenus.hooks import HookEvent, HookWhen, call_hook
-from dpymenus.settings import HISTORY_CACHE_LIMIT, REPLY_AS_DEFAULT, TIMEOUT
+from dpymenus.settings import BUTTON_DELAY, HISTORY_CACHE_LIMIT, REPLY_AS_DEFAULT, TIMEOUT
 
 if TYPE_CHECKING:
     from dpymenus import Template
@@ -28,6 +29,7 @@ class BaseMenu(abc.ABC):
     _start_page_index: int
 
     def __init__(self, ctx: Context):
+        self._id: int = -1
         self.ctx: Context = ctx
         self.pages: List[Page] = []
         self.page: Optional[Page] = None
@@ -159,8 +161,12 @@ class BaseMenu(abc.ABC):
     async def close(self):
         """Gracefully exits out of the menu, performing necessary cleanup of sessions, reactions, and messages."""
         await call_hook(self, '_hook_before_close')
-        Session.get(self.ctx).kill_or_freeze()
+        Session.get(self).kill_or_freeze()
         self.active = False
+
+        if self.output.reactions:
+            await asyncio.sleep(BUTTON_DELAY)
+            await self._safe_clear_reactions()
 
         await self._safe_delete_output()
         await call_hook(self, '_hook_after_close')
@@ -267,6 +273,7 @@ class BaseMenu(abc.ABC):
             logging.info(exc.message)
         else:
             self.history = session.history
+
             if self.history:
                 self.page = self.pages[session.history[-1]]
             else:
@@ -340,7 +347,7 @@ class BaseMenu(abc.ABC):
         the on_next_event on the current page."""
         if self.__class__.__name__ != 'PaginatedMenu':
             if self.page.on_next_event is None:
-                Session.get(self.ctx).kill()
+                Session.get(self).kill()
                 self.active = False
 
         self._update_history()

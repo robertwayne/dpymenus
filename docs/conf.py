@@ -21,11 +21,11 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'dpymenus'
-copyright = '2020, Rob Wagner'
+copyright = '2020-2021, Rob Wagner'
 author = 'Rob Wagner'
 
 # The full version, including alpha/beta/rc tags
-release = '2.0.0a0'
+release = '2.0.0'
 master_doc = 'index'
 
 # -- General configuration ---------------------------------------------------

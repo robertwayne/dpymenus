@@ -182,6 +182,9 @@ class PaginatedMenu(ButtonMenu):
         if len(pending) == len(tasks):
             await self._timeout_menu()
         else:
+            if not self.active:
+                self.kill_tasks(pending)
+
             for future in done:
                 result = future.result()
                 if result:
@@ -189,6 +192,11 @@ class PaginatedMenu(ButtonMenu):
                 else:
                     return
 
+        self.kill_tasks(pending)
+
+    @staticmethod
+    def kill_tasks(pending: List[asyncio.Task]):
+        """Clears all remaining tasks in the task queue."""
         for task in pending:
             task.cancel()
 

@@ -33,7 +33,6 @@ cogwatch = '^2.1.0'
 icecream = '^2.1.0'
 pytest = '^6.2'
 python-dotenv = '^0.17'
-uvloop = '^0.15'
 
 # docs
 furo = '^2021.4.11-beta.34'
@@ -69,7 +68,7 @@ exclude = '''
 [dpymenus]
 # 0 is no limit / disabled
 history-cache-limit = 10
-sessions-per-channel = 1
+sessions-per-channel = 3
 sessions-per-guild = 3
 sessions-per-user = 10
 session-timeout = 3600

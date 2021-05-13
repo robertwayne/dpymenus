@@ -2,8 +2,8 @@ from typing import TYPE_CHECKING, List
 
 from discord.ext.commands import Context
 
-from dpymenus import sessions
-from dpymenus.settings import ALLOW_SESSION_RESTORE
+from dpymenus import SessionError, sessions
+from dpymenus.settings import ALLOW_SESSION_RESTORE, SESSION_PER_USER_LIMIT
 
 if TYPE_CHECKING:
     from dpymenus.types import Menu, SessionKey
@@ -13,11 +13,10 @@ class Session:
     key: 'SessionKey'
     instance: 'Menu'
     history: List[int]
-    owner: int
     active: bool
 
     def __repr__(self):
-        return f'key={self.key}, instance={self.instance}, owner={self.owner}, active={self.active}'
+        return f'key={self.key}, instance={self.instance}, active={self.active}'
 
     def freeze(self):
         """Marks a session as inactive so it can be unfrozen or killed later."""
@@ -29,22 +28,36 @@ class Session:
 
     def kill(self):
         """Removes a session object from the sessions store."""
-        del sessions[(self.owner, self.instance.ctx.channel.id)]
+        del sessions[self.key][self.instance._id]
 
     def kill_or_freeze(self):
         """Kills or freezes a session based on user defined settings."""
         self.freeze() if ALLOW_SESSION_RESTORE else self.kill()
 
     @staticmethod
-    def get(ctx: Context) -> 'Session':
+    def get(instance: 'Menu') -> 'Session':
         """Returns an existing session object from the sessions store."""
-        return sessions.get((ctx.author.id, ctx.channel.id), None)
+        if user_sessions := sessions.get(instance.ctx.author.id, {}):
+            return user_sessions.get(instance._id, {})
+        return user_sessions
+
+    def check_user_limit(self):
+        """Predicate check for the amount of sessions a user has total."""
+        return False if len(sessions.get(self.key)) >= SESSION_PER_USER_LIMIT else True
+
+    def check_channel_limit(self):
+        """Predicate check for the amount of sessions a user has in a single channel total."""
+        return False if len(sessions.get(self.key)) >= SESSION_PER_USER_LIMIT else True
+
+    def check_guild_limit(self):
+        """Predicate check for the amount of sessions a user has in a single channel total."""
+        return False if len(sessions.get(self.key)) >= SESSION_PER_USER_LIMIT else True
 
     @classmethod
     async def create(cls, instance: 'Menu') -> 'Session':
         """Creates a new session based from a menu instance and adds it to the session store. Checks for
         existing sessions in the store and handles safe deletion."""
-        session = Session.get(instance.ctx)
+        session = Session.get(instance)
 
         # this will cascade through several cases:
         # if a session exists and is active, we close it and create a new session
@@ -56,6 +69,13 @@ class Session:
 
                 return session
 
+            # we need to handle several cases here as well:
+            # check the per_* limits, if within the range, create a new session
+            # if not within limits, return an error / close earliest menu
+            elif session.active and ALLOW_SESSION_RESTORE is False:
+                if session.check_user_limit():
+                    pass
+
             elif session.active is False and ALLOW_SESSION_RESTORE:
                 session.active = True
 
@@ -63,12 +83,16 @@ class Session:
 
         self = Session()
 
-        self.key = (instance.ctx.author.id, instance.ctx.channel.id)
+        self.key = instance.ctx.author.id
+        instance._id = id(instance)
         self.instance = instance
         self.history = instance.history
-        self.owner = instance.ctx.author.id
         self.active = True
 
-        sessions.update({self.key: self})
+        if sessions.get(self.key, False):
+            sessions[self.key][instance._id] = self
+        else:
+            sessions[self.key] = {}
+            sessions[self.key][instance._id] = self
 
         return self

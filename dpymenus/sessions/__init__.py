@@ -5,4 +5,4 @@ if TYPE_CHECKING:
     from dpymenus.types import SessionKey
 
 
-sessions: Dict['SessionKey', 'Session'] = dict()
+sessions: Dict['SessionKey', Dict] = dict()

@@ -34,18 +34,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Destination errors now fail gracefully.
 - Fixed many bugs and optimized various logic paths.
 
+### Removed
+
+- `.allow_multisession()` no longer exists. This is the default now *(as per popular request)*, and can be configured
+  via settings.
+- Support for Python 3.7
+
 ### Internal
 
 - Poetry is now the package and build tool.
 - Black is now the formatter.
 - Almost all the internal code was rewritten resulting in better performance and/or cleaner code. Note that this could
   mean your menus will break, if you were using any internally marked methods *(prefixed with an underscore)*.
-
-### Removed
-
-- `.allow_multisession()` no longer exists. This is the default now *(as per popular request)*, and can be configured
-  via settings.
-- Support for Python 3.7
 
 ## [1.3.1] - 2021-01-22
 

@@ -191,6 +191,10 @@ class Page(Embed):
             # when combining, we determine whether to add the template fields at the start or end
             # LAST is the default, so always check that first; cascade from most to least likely option
             if sort == FieldSort.LAST:
-                self.add_field(name=field[0], value=field[1], inline=field[2])
+                self.add_field(
+                    name=field.get('name', ''), value=field.get('value', ''), inline=field.get('inline', False)
+                )
             else:
-                self.insert_field_at(0, name=field[0], value=field[1], inline=field[2])
+                self.insert_field_at(
+                    0, name=field.get('name', ''), value=field.get('value', ''), inline=field.get('inline', False)
+                )

@@ -25,8 +25,8 @@ class TemplateExample(commands.Cog):
             color=discord.Color.blue(),
             footer={'text': 'This is a templated footer.'},
             fields=[
-                ('Template Field A', 'Templated field description for A.', False),
-                ('Template Field B', 'Templated field description for B.', True),
+                {'name': 'Template Field A', 'value': 'Templated field description for A.', 'inline': False},
+                {'name': 'Template Field B', 'value': 'Templated field description for B.', 'inline': True},
             ],
             field_style=FieldStyle.COMBINE,  # this will force our template fields to combine with existing fields
             field_sort=FieldSort.LAST,  # our template fields will always come after existing fields

@@ -55,7 +55,8 @@ class PaginatedMenu(ButtonMenu):
         return getattr(self, '_timeout_page', None)
 
     def set_timeout_page(self, embed: Embed) -> 'PaginatedMenu':
-        """Sets the function that will be called when a menu is cancelled. Returns itself for fluent-style chaining.
+        """Sets the function that will be called when the `timeout` event runs. Returns itself for fluent-style
+        chaining.
 
         :param embed: Defines which page to display.
         :rtype: :class:`PaginatedMenu`

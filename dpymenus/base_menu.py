@@ -144,8 +144,8 @@ class BaseMenu(abc.ABC):
 
     def add_hook(self, when: HookWhen, event: HookEvent, callback: Callable) -> 'BaseMenu':
         """Sets various callback attributes on the menu so users can hook into
-        specific events. See https://github.com/robertwayne/dpymenus-book#hooks
-        for the full list of events and hook structure.
+        specific events. See https://dpymenus.com/lifecycle for the full list of events
+        and hook structure.
 
         :param when: Defines which point in the menu lifetime the callback will be executed.
         :param event: Defines which event in the menu lifetime the callback will be executed on.

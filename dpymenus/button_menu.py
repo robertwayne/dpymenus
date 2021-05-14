@@ -127,11 +127,9 @@ class ButtonMenu(BaseMenu):
                 result = future.result()
                 if result:
                     return result
-                else:
-                    return
+                return
 
-            for task in pending:
-                task.cancel()
+        self.kill_tasks(pending)
 
     async def _add_buttons(self):
         """Adds reactions to the message object based on what was passed into the page buttons."""

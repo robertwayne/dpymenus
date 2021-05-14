@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.2] - 2021-14-05
+
+### Changed
+
+- Fixed a bug where PaginatedMenus did not check for an existing cancel page when closing *(`.set_cancel_page()`)*.
+
 ## [2.1.1] - 2021-13-05
 
 ### Changed

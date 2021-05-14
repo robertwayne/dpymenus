@@ -5,7 +5,6 @@ from typing import Callable, List, Optional, TYPE_CHECKING
 from discord import (
     Embed,
     Emoji,
-    Message,
     RawReactionActionEvent,
     Reaction,
 )
@@ -169,32 +168,6 @@ class PaginatedMenu(ButtonMenu):
             await self._safe_clear_reactions()
 
     # Internal Methods
-    async def _get_input(self) -> Optional[Message]:
-        """Waits for a user reaction input event and returns the message object."""
-        tasks = [
-            asyncio.create_task(task())
-            for task in [self._get_reaction_add, self._get_reaction_remove, self._shortcircuit]
-        ]
-
-        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout)
-
-        if not self.active:
-            self.kill_tasks(pending)
-            return
-
-        # if all tasks are still pending, we force a timeout by manually calling cleanup methods
-        if len(pending) == len(tasks):
-            await self._timeout_menu()
-        else:
-            for future in done:
-                result = future.result()
-                if result:
-                    return result
-                else:
-                    return
-
-        self.kill_tasks(pending)
-
     def _get_check(self) -> Callable:
         """Returns a check predicate based on detected buttons. Using the standard button list uses a
         simpler, and faster, predicate. Using custom buttons has to iterate over buttons to ensure they
@@ -261,7 +234,7 @@ class PaginatedMenu(ButtonMenu):
         transitions = [
             self.to_first,
             self.previous,
-            self.close,
+            self._cancel_menu,
             self.next,
             self.to_last,
         ]

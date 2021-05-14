@@ -190,8 +190,7 @@ class PaginatedMenu(ButtonMenu):
                 result = future.result()
                 if result:
                     return result
-                else:
-                    return
+                return
 
         self.kill_tasks(pending)
 

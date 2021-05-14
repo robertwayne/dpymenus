@@ -5,7 +5,6 @@ from typing import Callable, List, Optional, TYPE_CHECKING
 from discord import (
     Embed,
     Emoji,
-    Message,
     RawReactionActionEvent,
     Reaction,
 )

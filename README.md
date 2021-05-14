@@ -56,7 +56,9 @@ which react to user input.
 
 ## Quick Start
 
-Read **["Installation"](https://dpymenus.com/installation.html)** from **[The Book](https://dpymenus.com)**.
+```pip install dpymenus```
+
+Read **["Installation"](https://dpymenus.com/installation.html)** from **[The Book](https://dpymenus.com)** for further information.
 
 ## Examples
 

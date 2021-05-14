@@ -7,13 +7,13 @@ the library. These docs should be used as reference material for the public API.
 .. toctree::
     :caption: Public
 
-    button_menu
-    hooks
-    page
     paginated_menu
-    poll
-    template
+    button_menu
     text_menu
+    poll
+    page
+    template
+    hooks
 
 .. toctree::
     :caption: Internal

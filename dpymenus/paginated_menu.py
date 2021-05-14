@@ -235,7 +235,7 @@ class PaginatedMenu(ButtonMenu):
         transitions = [
             self.to_first,
             self.previous,
-            self.close,
+            self._cancel_menu,
             self.next,
             self.to_last,
         ]

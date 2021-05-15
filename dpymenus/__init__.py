@@ -6,7 +6,7 @@ __title__ = 'dpymenus'
 __author__ = 'Rob Wagner <rob@robwagner.dev>'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2020-2021 Rob Wagner'
-__version__ = '2.1.2'
+__version__ = '2.1.3'
 
 import logging
 

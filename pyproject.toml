@@ -1,6 +1,6 @@
 [tool.poetry]
 name = 'dpymenus'
-version = '2.1.2'
+version = '2.1.3'
 description = 'Simplified menus for discord.py developers.'
 authors = ['Rob Wagner <rob@robwagner.dev>']
 license = 'MIT'

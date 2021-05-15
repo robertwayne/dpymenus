@@ -186,13 +186,25 @@ class PaginatedMenu(ButtonMenu):
     async def _get_reaction_add(self) -> Optional['Button']:
         """Waits for a user reaction add event and returns the event object."""
         check = self._get_check()
-        reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=check)
+        try:
+
+            reaction_event = await self.ctx.bot.wait_for('raw_reaction_add', check=check)
+
+        except AttributeError:
+            return
+
         return reaction_event.emoji
 
     async def _get_reaction_remove(self) -> Optional['Button']:
         """Waits for a user reaction remove event and returns the event object."""
         check = self._get_check()
-        reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', check=check)
+
+        try:
+            reaction_event = await self.ctx.bot.wait_for('raw_reaction_remove', check=check)
+
+        except AttributeError:
+            return
+
         return reaction_event.emoji
 
     def _check_reaction_defaults(self, event: RawReactionActionEvent) -> bool:

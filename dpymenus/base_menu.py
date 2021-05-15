@@ -294,10 +294,8 @@ class BaseMenu(abc.ABC):
     async def _safe_delete_input(self):
         """Safely deletes a message if the bot has permissions and show command messages is set to false."""
         if self.command_message is False:
-            try:
+            if isinstance(self.output.channel, GuildChannel):
                 await self.input.delete()
-            except PermissionError:
-                return
 
     async def _safe_delete_output(self):
         """Safely deletes a message if the bot has permissions and persist is set to false."""

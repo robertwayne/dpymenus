@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.3] - 2021-15-05
+
+### Changed
+
+- Fixed a regression where buttons weren't being handled safely in DM's.
+- Fixed an uncommon occurrence where closing menus would raise an AttributeError instead of returning.
+
 ## [2.1.2] - 2021-14-05
 
 ### Changed

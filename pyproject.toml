@@ -28,7 +28,7 @@ toml = '^0.10'
 emoji = '^1.2'
 
 [tool.poetry.dev-dependencies]
-black = '^21.5b0'
+black = '^21.5b1'
 cogwatch = '^2.1.0'
 icecream = '^2.1.0'
 pytest = '^6.2'

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.4] - 2021-19-05
+
+### Changed
+
+- Optimized how menus handle reaction events in different channel types.
+
 ## [2.1.3] - 2021-15-05
 
 ### Changed

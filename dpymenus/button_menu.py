@@ -3,7 +3,7 @@ import logging
 from typing import Dict, List, Optional, TYPE_CHECKING
 
 import emoji
-from discord import Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction
+from discord import DMChannel, Emoji, Message, PartialEmoji, RawReactionActionEvent, Reaction
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
 
@@ -108,9 +108,13 @@ class ButtonMenu(BaseMenu):
 
     async def _get_input(self) -> Optional[Message]:
         """Waits for a user reaction input event and returns the message object."""
+        task_list = [self._get_reaction_add, self._shortcircuit]
+        if isinstance(self.output.channel, DMChannel):
+            task_list.append(self._get_reaction_remove)
+
         tasks = [
             asyncio.create_task(task())
-            for task in [self._get_reaction_add, self._get_reaction_remove, self._shortcircuit]
+            for task in task_list
         ]
 
         done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout)

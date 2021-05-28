@@ -5,7 +5,7 @@ from discord.ext import commands
 from dpymenus import Page, ButtonMenu
 
 
-class MyButtonMenu(commands.Cog):
+class SecondButtonMenu(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -38,4 +38,4 @@ class MyButtonMenu(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(MyButtonMenu(client))
+    client.add_cog(SecondButtonMenu(client))

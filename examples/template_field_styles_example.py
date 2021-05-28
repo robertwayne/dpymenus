@@ -4,7 +4,7 @@ from discord.ext import commands
 from dpymenus import Page, PaginatedMenu, Template, FieldStyle, FieldSort
 
 
-class TemplateExample(commands.Cog):
+class SecondTemplateExample(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -39,4 +39,4 @@ class TemplateExample(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(TemplateExample(client))
+    client.add_cog(SecondTemplateExample(client))

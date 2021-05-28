@@ -23,13 +23,13 @@ rtd = 'scripts:rtd'
 
 [tool.poetry.dependencies]
 python = '^3.8'
-'discord.py' = '^1.7'
+'discord.py' = { git = 'https://github.com/Rapptz/discord.py.git' }
 toml = '^0.10'
 emoji = '^1.2'
 
 [tool.poetry.dev-dependencies]
 black = '^21.5b1'
-cogwatch = '^2.1.0'
+cogwatch = { git = 'https://github.com/robertwayne/cogwatch', branch = 'next' }
 icecream = '^2.1.0'
 pytest = '^6.2'
 python-dotenv = '^0.17'

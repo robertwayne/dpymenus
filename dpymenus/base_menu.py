@@ -6,6 +6,8 @@ from typing import Any, Callable, List, Optional, TYPE_CHECKING, Union
 from discord import Message, Reaction, TextChannel, User
 from discord.abc import GuildChannel
 from discord.ext.commands import Context
+from discord.types.components import ButtonStyle
+from discord.ui import Button, View, Item
 
 from dpymenus import Page, PagesError, Session, SessionError
 from dpymenus.hooks import HookEvent, HookWhen, call_hook
@@ -284,7 +286,7 @@ class BaseMenu(abc.ABC):
             if REPLY_AS_DEFAULT and self.replies_disabled is False:
                 self.output = await self.destination.reply(embed=self.page.as_safe_embed())
             else:
-                self.output = await self.destination.send(embed=self.page.as_safe_embed())
+                self.output = await self.destination.send(embed=self.page.as_safe_embed(), view=self.page.view)
 
             self.input = self.ctx.message
             self._update_history()

@@ -52,7 +52,7 @@ class ButtonMenu(BaseMenu):
         """The entry point to a new ButtonMenu instance; starts the main menu loop.
         Manages collecting user input, validation, sending messages, and cancellation requests."""
         try:
-            self._validate_buttons()
+            # self._validate_buttons()
             await super()._open()
 
         except (ButtonsError, EventError) as exc:
@@ -112,10 +112,7 @@ class ButtonMenu(BaseMenu):
         if isinstance(self.output.channel, DMChannel):
             task_list.append(self._get_reaction_remove)
 
-        tasks = [
-            asyncio.create_task(task())
-            for task in task_list
-        ]
+        tasks = [asyncio.create_task(task()) for task in task_list]
 
         done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED, timeout=self.timeout)
 
@@ -229,12 +226,12 @@ class ButtonMenu(BaseMenu):
 
             if page.on_next_event:
                 _cb_count += 1
-
-            if len(page.buttons_list) < 1:
-                raise ButtonsError(
-                    'Any page with an `on_next` event capture must have at least one button.\n'
-                    f'{page} {page.title} only has {len(page.buttons_list)} buttons.'
-                )
+            #
+            # if len(page.buttons_list) < 1 and len(page.view.children) < 1:
+            #     raise ButtonsError(
+            #         'Any page with an `on_next` event capture must have at least one button.\n'
+            #         f'{page} {page.title} only has {len(page.buttons_list)} buttons.'
+            #     )
 
             if len(page.buttons_list) > 5 and HIDE_WARNINGS is False:
                 logging.warning(

@@ -1,6 +1,7 @@
 from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
 
 from discord import Embed
+from discord.ui import View
 
 from dpymenus.template import FieldSort, FieldStyle
 
@@ -14,6 +15,7 @@ class Page(Embed):
     __slots__ = (
         *Embed.__slots__,
         '_index',
+        '_view',
         '_buttons_list',
         '_on_next_event',
         '_on_fail_event',
@@ -37,6 +39,20 @@ class Page(Embed):
     @index.setter
     def index(self, i: int):
         self._index = i
+
+    @property
+    def view(self) -> View:
+        return getattr(self, '_view', None)
+
+    def set_view(self, view: View) -> 'Page':
+        """Adds a discord.py view to a page.
+
+        :param view: Specifies a view object to use on this page.
+        :rtype: :class:`Page`
+        """
+        self._view = view
+
+        return self
 
     @property
     def buttons_list(self) -> List:

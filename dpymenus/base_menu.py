@@ -165,6 +165,7 @@ class BaseMenu(abc.ABC):
         await call_hook(self, '_hook_before_close')
         Session.get(self).kill_or_freeze()
         self.active = False
+        self.page._view = None
 
         if self.output.reactions:
             await asyncio.sleep(BUTTON_DELAY)
@@ -259,11 +260,11 @@ class BaseMenu(abc.ABC):
         safe_embed = page.as_safe_embed() if type(page) == Page else page
 
         if isinstance(self.output.channel, GuildChannel):
-            return await self.output.edit(embed=safe_embed)
+            return await self.output.edit(embed=safe_embed, view=self.page.view)
         else:
             await self.output.delete()
 
-        self.output = await self.destination.send(embed=safe_embed)
+        self.output = await self.destination.send(embed=safe_embed, view=self.page.view)
 
     # Internal Methods
     async def _open(self):
@@ -284,7 +285,7 @@ class BaseMenu(abc.ABC):
             await call_hook(self, '_hook_before_open')
 
             if REPLY_AS_DEFAULT and self.replies_disabled is False:
-                self.output = await self.destination.reply(embed=self.page.as_safe_embed())
+                self.output = await self.destination.reply(embed=self.page.as_safe_embed(), view=self.page.view)
             else:
                 self.output = await self.destination.send(embed=self.page.as_safe_embed(), view=self.page.view)
 
@@ -346,9 +347,10 @@ class BaseMenu(abc.ABC):
         """Sends a message after the `next` method is called. Closes the menu instance if there is no callback for
         the on_next_event on the current page."""
         if self.__class__.__name__ != 'PaginatedMenu':
-            if self.page.on_next_event is None:
+            if self.page.on_next_event is None and self.page.view is None:
                 Session.get(self).kill()
                 self.active = False
+                self.page._view = None
 
         self._update_history()
         await self.send_message(self.page)

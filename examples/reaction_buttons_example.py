@@ -8,12 +8,12 @@ reverse = '⏪'
 stop = '⏹️'
 
 
-class MyButtonMenu(commands.Cog):
+class ReactionButtonMenu(commands.Cog):
     def __init__(self, client):
         self.client = client
 
     @commands.command()
-    async def buttons(self, ctx):
+    async def reactions(self, ctx):
         page1 = Page(title='Button Menu', description='Follow the arrows!')
         page1.add_field(name='Example A', value='Example B')
         page1.buttons([forward, stop]).on_next(self.first)
@@ -49,4 +49,4 @@ class MyButtonMenu(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(MyButtonMenu(client))
+    client.add_cog(ReactionButtonMenu(client))

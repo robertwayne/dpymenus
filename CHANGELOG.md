@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.5] - 2021-2-06
+
+Fixes a security issue in the `urllib` dependency for versions prior to 1.26.5.
+
 ## [2.1.4] - 2021-19-05
 
 ### Changed

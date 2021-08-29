@@ -1,6 +1,10 @@
 <h1 align="center">Discord Menus</h1>
 
 <div align="center">
+  <p>With the recent news that `discord.py` will no longer be mainainted, as well as my bot being moved over to Rust + Twilight for several months now, this project will no longer be maintained.<p>
+</div>
+
+<div align="center">
   <strong><i>Simplified menus for discord.py developers.</i></strong>
   <br>
   <br>
